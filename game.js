@@ -118,39 +118,15 @@ class GameState {
     getSameSizeTouchingBoxes(box) {
         // TODO: Only touching if touching along half of their size
         const touching = [];
-        
-        if (box.x > 0) {
-            for (let y = box.y; y < box.y + box.size; ++y) {
-                const other = this.board[y * this.width + box.x - 1]
-                if (other && other.size == box.size) {
-                    touching.push(other)
-                }
+        function appendSameSize(other) {
+            if (other.size == box.size) {
+                touching.push(other);
             }
         }
-        if (box.x + box.size < this.width - 1) {
-            for (let y = box.y; y < box.y + box.size; ++y) {
-                const other = this.board[y * this.width + box.x + box.size]
-                if (other && other.size == box.size) {
-                    touching.push(other)
-                }
-            }
-        }
-        if (box.y + box.size < this.height - 1) {
-            for (let x = box.x; x < box.x + box.size; ++x) {
-                const other = this.board[(box.y + box.size + 1) * this.width + x]
-                if (other && other.size == box.size) {
-                    touching.push(other)
-                }
-            }
-        }
-        if (box.y > 0) {
-            for (let x = box.x; x < box.x + box.size; ++x) {
-                const other = this.board[(box.y - 1) * this.width + x]
-                if (other && other.size == box.size) {
-                    touching.push(other)
-                }
-            }
-        }
+        this.getTopNeighbors(box).forEach(appendSameSize);
+        this.getBottomNeighbors(box).forEach(appendSameSize);
+        this.getLeftNeighbors(box).forEach(appendSameSize);
+        this.getRightNeighbors(box).forEach(appendSameSize);
         if (touching.length > 0) {
             touching.push(box)
             console.log("Touching", touching)
