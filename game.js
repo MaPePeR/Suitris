@@ -232,8 +232,7 @@ class GameState {
         }
     }
 
-    shift(boxes, dir_param, dir, neighbor_param, allow_upshift) {
-        let smallest_up_pushable = null;
+    shift(boxes, dir_param, dir, neighbor_param) {
         const boxes_to_shift = new Set();
         function r_shift(boxes, nextBoxes) {
             if (boxes.length == 0) {
@@ -242,11 +241,6 @@ class GameState {
             for (const box of boxes) {
                 if (box === WALL) {
                     return false;
-                }
-                if (allow_upshift && box.neighbors_t.length == 0) {
-                    if (smallest_up_pushable === null || box.size < smallest_up_pushable.size) {
-                        smallest_up_pushable = box;
-                    }
                 }
                 for (const neighbor of box[neighbor_param]) {
                     nextBoxes.push(neighbor);
@@ -265,11 +259,6 @@ class GameState {
                 this.insertBoxIntoBoard(box)
             });
             return true;
-        } else if (allow_upshift && smallest_up_pushable) {
-            this.removeBoxFromBoard(smallest_up_pushable)
-            smallest_up_pushable.y -= 1;
-            this.insertBoxIntoBoard(smallest_up_pushable)
-            return null;
         }
         return false;
     }
@@ -310,12 +299,12 @@ class GameState {
             if (!free_right || (free_left && preferLeft)) {
                 box.x -= 1;
             }
-        } else if (preferLeft && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l', false) !== false) {
+        } else if (preferLeft && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')) {
             box.width += 1;
             box.x -= 1;
-        } else if (this.shift(box.neighbors_r, 'x', 1, 'neighbors_r', false) !== false) {
+        } else if (this.shift(box.neighbors_r, 'x', 1, 'neighbors_r')) {
             box.width += 1;
-        } else if (this.shift(box.neighbors_l, 'x', -1, 'neighbors_l', false) !== false) {
+        } else if (this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')) {
             box.width += 1;
             box.x -= 1;
         } else {
@@ -327,12 +316,12 @@ class GameState {
     growBoxY(box) {
         const free_top = box.neighbors_t.length == 0;
         const free_bottom = box.neighbors_b.length == 0;
-        if (free_bottom || this.shift(box.neighbors_b, 'y', 1, 'neighbors_b', false) !== false) {
+        if (free_bottom || this.shift(box.neighbors_b, 'y', 1, 'neighbors_b')) {
             // Bottom is free
             box.height += 1;
             return true;
         }
-        if (free_top || this.shift(box.neighbors_t, 'y', -1, 'neighbors_t', false) !== false) {
+        if (free_top || this.shift(box.neighbors_t, 'y', -1, 'neighbors_t')) {
             // Top is free
             box.height += 1;
             box.y -= 1;
