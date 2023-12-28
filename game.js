@@ -118,10 +118,10 @@ class GameState {
 
     getNeighbors(start, stride, end) {
         const neighbors = [];
-        if (start < this.board.length && end >= 0) {
+        if (0 <= start && start < this.board.length && 0 <= end) {
             end = Math.min(end, this.board.length)
             for (let pos = start; pos < end; pos += stride) {
-                if (0 <= pos && pos <= this.board.length && this.board[pos]) {
+                if (this.board[pos] && (neighbors.length == 0 || neighbors[neighbors.length - 1] !== this.board[pos])) {
                     neighbors.push(this.board[pos]);
                 }
             }
@@ -138,7 +138,8 @@ class GameState {
     }
 
     getLeftNeighbors(box) {
-        return this.getNeighbors(box.y * this.width + (this.width + box.x - 1) % this.width, this.width, (box.bottomY() + 1) * this.width + box.x - 1);
+        if (box.x == 0) return [];
+        return this.getNeighbors(box.y * this.width + box.x - 1, this.width, (box.bottomY() + 1) * this.width + box.x - 1);
     }
 
     getRightNeighbors(box) {
@@ -315,4 +316,36 @@ function test_neighbors() {
     for (const box of b) {
         compare_test(box.neighbors_b, [WALL], "wall bottom", box)
     }
+
+    compare_test(l1.neighbors_b, [l2], "left to bottom", l1)
+    compare_test(l2.neighbors_b, [l3], "left to bottom", l2)
+    compare_test(l3.neighbors_b, [], "left to bottom", l3)
+
+    compare_test(l1.neighbors_t, [], "left to top", l1)
+    compare_test(l2.neighbors_t, [l1], "left to top", l2)
+    compare_test(l3.neighbors_t, [l2], "left to top", l3)
+
+    compare_test(r1.neighbors_b, [r2], "right to bottom", r1)
+    compare_test(r2.neighbors_b, [r3], "right to bottom", r2)
+    compare_test(r3.neighbors_b, [], "right to bottom", r3)
+
+    compare_test(r1.neighbors_t, [], "right to top", r1)
+    compare_test(r2.neighbors_t, [r1], "right to top", r2)
+    compare_test(r3.neighbors_t, [r2], "right to top", r3)
+
+    compare_test(t1.neighbors_r, [t2], "top to right", t1)
+    compare_test(t2.neighbors_r, [t3], "top to right", t2)
+    compare_test(t3.neighbors_r, [], "top to right", t3)
+
+    compare_test(t1.neighbors_l, [], "top to left", t1)
+    compare_test(t2.neighbors_l, [t1], "top to left", t2)
+    compare_test(t3.neighbors_l, [t2], "top to left", t3)
+
+    compare_test(b1.neighbors_r, [b2], "bottom to right", b1)
+    compare_test(b2.neighbors_r, [b3], "bottom to right", b2)
+    compare_test(b3.neighbors_r, [], "bottom to right", b3)
+
+    compare_test(b1.neighbors_l, [], "bottom to left", b1)
+    compare_test(b2.neighbors_l, [b1], "bottom to left", b2)
+    compare_test(b3.neighbors_l, [b2], "bottom to left", b3)
 }
