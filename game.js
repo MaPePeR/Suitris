@@ -226,7 +226,7 @@ class GameState {
     }
 
     move(direction) {
-        if (this.fallingBox) {
+        if (this.running && this.fallingBox) {
             const newx = Math.max(0, Math.min(this.width - this.fallingBox.width, this.fallingBox.x + direction))
             if (this.fallingBox.x != newx) {
                 if (direction < 0 && this.getLeftNeighbors(this.fallingBox).length > 0) {
@@ -244,7 +244,7 @@ class GameState {
     }
 
     moveDown() {
-        if (this.fallingBox) {
+        if (this.running && this.fallingBox) {
             if (this.canFall(this.fallingBox)) {
                 this.fallingBox.y += 1
                 if (this.checkTouching(this.fallingBox)) {
@@ -398,6 +398,16 @@ class GameState {
             }
         } else if (this.running) {
             this.nextBox();
+            for (let i = 0; i < this.fallingBox.height; ++i) {
+                for (let j = 0; j < this.fallingBox.width; ++j) {
+                    if (this.board[(this.fallingBox.y + i) * this.width + this.fallingBox.x + j]) {
+                        this.running = false;
+                        clearInterval(this.interval);
+                        console.log("Game over");
+                        return;
+                    }
+                }
+            }
         }
         if (VALIDATION) {
             for (let y = 0; y < GAME_HEIGHT; ++y) {
