@@ -288,7 +288,10 @@ class GameState {
             } else {
                 console.log("GrowX failed", box)
             }
-        } else {
+        }
+        if (box.height < box.size) {
+            this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
+            this.setFixedNeighbors(box)
             if (this.growBoxY(box)) {
                 console.log("GrowY successful", box)
             } else {
