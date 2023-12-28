@@ -1,5 +1,6 @@
 const groundBox = new Object()
 
+const VALIDATION = true;
 WALL = "WALL!!";
 
 class Box {
@@ -88,6 +89,11 @@ class GameState {
         box.fixedIndex = this.fixedBoxes.length - 1
         for (let i = 0; i < box.height; ++i) {
             for (let j = 0; j < box.width; ++j) {
+                if (VALIDATION) {
+                    if (this.board[(box.y + i) * this.width + box.x + j] !== null) {
+                        throw new Error("Overwriting box at x=" + (box.x + j) + " y=" + (box.y + i))
+                    }
+                }
                 this.board[(box.y + i) * this.width + box.x + j] = box;
             }
         }
@@ -95,17 +101,34 @@ class GameState {
     }
 
     removeBoxFromBoard(box) {
-        if (box.fixedIndex === null) return
-        if (box.fixedIndex == this.fixedBoxes.length - 1) {
-            this.fixedBoxes.pop()
+        const oldIndex = box.fixedIndex;
+        if (box.fixedIndex !== null) {
+            if (box.fixedIndex == this.fixedBoxes.length - 1) {
+                this.fixedBoxes.pop()
+            } else {
+                const swapBox = this.fixedBoxes.pop()
+                swapBox.fixedIndex = box.fixedIndex
+                this.fixedBoxes[box.fixedIndex] = swapBox
+            }
         } else {
-            const swapBox = this.fixedBoxes.pop()
-            swapBox.fixedIndex = box.fixedIndex
-            this.fixedBoxes[box.fixedIndex] = swapBox
+            console.warn("Removing box from board that does not have fixed index");
+            if (VALIDATION) {
+                if (this.fixedBoxes.indexOf(box) !== -1) {
+                    throw new Error("Box to remove does not have fixed index, but is in fixedBoxes");
+                }
+            }
         }
         box.fixedIndex = null;
-        for (let i = 0; i < box.width; ++i) {
-            for (let j = 0; j < box.height; ++j) {
+        for (let i = 0; i < box.height; ++i) {
+            for (let j = 0; j < box.width; ++j) {
+                if (VALIDATION) {
+                    const cell = this.board[(box.y + i) * this.width + box.x + j]
+                    if (cell !== box) {
+                        if (oldIndex !== null && cell != null) {
+                            throw new Error("Box in board does not match box to remove at x=" + (box.x + j) + " y=" + (box.y + i))
+                        }
+                    }
+                }
                 this.board[(box.y + i) * this.width + box.x + j] = null;
             }
         }
@@ -306,11 +329,14 @@ class GameState {
                 box.x -= 1;
             }
         } else if (preferLeft && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')) {
+            if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             box.width += 1;
             box.x -= 1;
         } else if (this.shift(box.neighbors_r, 'x', 1, 'neighbors_r')) {
+            if (VALIDATION && this.getRightNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             box.width += 1;
         } else if (this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')) {
+            if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             box.width += 1;
             box.x -= 1;
         } else {
@@ -367,6 +393,51 @@ class GameState {
             }
         } else if (this.running) {
             this.nextBox();
+        }
+        if (VALIDATION) {
+            for (let y = 0; y < GAME_HEIGHT; ++y) {
+                for (let x = 0; x < GAME_WIDTH; ++x) {
+                    const cell = this.board[y * this.width + x];
+                    if (cell) {
+                        if (cell !== null) {
+                            const number = cell.fixedIndex;
+                            if (cell.x <= x && x <= cell.rightX() && cell.y <= y && y <= cell.bottomY()) {
+
+                            } else {
+                                throw new Error("Found box in board at wrong place")
+                            }
+                            if (number === null) {
+                                throw new Error("Found box in board with fixedIndex=null")
+                            }
+                        } else {
+                            throw new Error("Found sumething truthy that is null?")
+                        }
+                    }
+                }
+            }
+            for (let i = 0; i < this.fixedBoxes.length; ++i) {
+                const box = this.fixedBoxes[i];
+                if (box.fixedIndex != i) {
+                    throw new Error("Found fixed box with wrong index")
+                }
+                for (let y = box.y; y <= box.bottomY(); ++y) {
+                    for (let x = box.x; x <= box.rightX(); ++x) {
+                        if (this.board[y * this.width + x] != box) {
+                            throw new Error("Box in fixedBoxes is not placed in board at x+" + x +" y=" + y)
+                        }
+                    }
+                }
+            }
+            for (let i = 0; i < this.growingBoxes.length; ++i) {
+                const box = this.growingBoxes[i];
+                for (let y = box.y; y <= box.bottomY(); ++y) {
+                    for (let x = box.x; x <= box.rightX(); ++x) {
+                        if (this.board[y * this.width + x] != null) {
+                            throw new Error("Growing box overlaps with fixed box at x+" + x +" y=" + y)
+                        }
+                    }
+                }
+            }
         }
     }
 }
