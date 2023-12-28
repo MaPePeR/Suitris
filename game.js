@@ -3,10 +3,12 @@ const groundBox = new Object()
 WALL = "WALL!!";
 
 class Box {
-    constructor(x, y, size) {
+    constructor(x, y, size, width, height) {
         this.x = x;
         this.y = y;
         this.size = size;
+        this.width = width;
+        this.height = height;
         this.fixedIndex = null;
         this.neighbors_t = [];
         this.neighbors_b = [];
@@ -15,29 +17,19 @@ class Box {
     }
 
     bottomY() {
-        return this.y + this.size - 1;
-    }
-    
-    rightX() {
-        return this.x + this.size - 1;
-    }
-}
-
-class GrowingBox extends Box {
-    constructor(x, y, size) {
-        super(Math.round(x), Math.round(y), size);
-        this.center_x = x;
-        this.center_y = y;
-        this.width = 1;
-        this.height = 1;
-    }
-
-    bottomY() {
         return this.y + this.height - 1;
     }
 
     rightX() {
         return this.x  + this.width - 1;
+    }
+}
+
+class GrowingBox extends Box {
+    constructor(x, y, size) {
+        super(Math.round(x), Math.round(y), size, 1, 1);
+        this.center_x = x;
+        this.center_y = y;
     }
 }
 
@@ -72,16 +64,16 @@ class GameState {
             throw "Invalid state. Already have falling box";
         }
         const size = 1 + Math.floor(Math.random() * 4)
-        this.fallingBox = new Box(Math.floor(this.width / 2) - Math.floor(size / 2), 0, size);
+        this.fallingBox = new Box(Math.floor(this.width / 2) - Math.floor(size / 2), 0, size, size, size);
     }
 
     canFall(box) {
-        if (box.y + box.size == this.height) {
+        if (box.bottomY() + 1 == this.height) {
             return false;
         }
-        const h = (box.y + box.size) * this.width
-        for (let x = box.x; x < box.x + box.size; ++x) {
-            if (this.board[h + x]) {
+        const h = (box.bottomY() + 1) * this.width + box.x;
+        for (let i = 0; i < box.width; ++i) {
+            if (this.board[h + i]) {
                 return false;
             }
         }
@@ -94,8 +86,8 @@ class GameState {
         }
         this.fixedBoxes.push(box)
         box.fixedIndex = this.fixedBoxes.length - 1
-        for (let i = 0; i < box.size; ++i) {
-            for (let j = 0; j < box.size; ++j) {
+        for (let i = 0; i < box.height; ++i) {
+            for (let j = 0; j < box.width; ++j) {
                 this.board[(box.y + i) * this.width + box.x + j] = box;
             }
         }
@@ -112,8 +104,8 @@ class GameState {
             this.fixedBoxes[box.fixedIndex] = swapBox
         }
         box.fixedIndex = null;
-        for (let i = 0; i < box.size; ++i) {
-            for (let j = 0; j < box.size; ++j) {
+        for (let i = 0; i < box.width; ++i) {
+            for (let j = 0; j < box.height; ++j) {
                 this.board[(box.y + i) * this.width + box.x + j] = null;
             }
         }
@@ -207,7 +199,7 @@ class GameState {
 
     move(direction) {
         if (this.fallingBox) {
-            const newx = Math.max(0, Math.min(this.width - this.fallingBox.size, this.fallingBox.x + direction))
+            const newx = Math.max(0, Math.min(this.width - this.fallingBox.width, this.fallingBox.x + direction))
             if (this.fallingBox.x != newx) {
                 this.fallingBox.x = newx;
                 const touching = this.getSameSizeTouchingBoxes(this.fallingBox);
@@ -330,7 +322,7 @@ class GameState {
     }
 
     nextTick() {
-        console.log("tick", this.fallingBox, this.gravityBoxes, this.fixedBoxes)
+        console.log("tick", this.fallingBox, this.growingBoxes.length, this.gravityBoxes.length, this.fixedBoxes.length)
         console.log(this.board.slice((this.height - 1 ) * this.width))
         if (this.fallingBox) {
             if (this.canFall(this.fallingBox)) {
@@ -384,21 +376,21 @@ function compare_test(expected, actual, ...msg) {
 }
 function test_neighbors() {
     const state = new GameState(5, 5)
-    const l1 = new Box(0, 1, 1);
-    const l2 = new Box(0, 2, 1);
-    const l3 = new Box(0, 3, 1);
+    const l1 = new Box(0, 1, 1, 1, 1);
+    const l2 = new Box(0, 2, 1, 1, 1);
+    const l3 = new Box(0, 3, 1, 1, 1);
     const l = [l1, l2, l3];
-    const r1 = new Box(4, 1, 1);
-    const r2 = new Box(4, 2, 1);
-    const r3 = new Box(4, 3, 1);
+    const r1 = new Box(4, 1, 1, 1, 1);
+    const r2 = new Box(4, 2, 1, 1, 1);
+    const r3 = new Box(4, 3, 1, 1, 1);
     const r = [r1, r2, r3];
-    const t1 = new Box(1, 0, 1);
-    const t2 = new Box(2, 0, 1);
-    const t3 = new Box(3, 0, 1);
+    const t1 = new Box(1, 0, 1, 1, 1);
+    const t2 = new Box(2, 0, 1, 1, 1);
+    const t3 = new Box(3, 0, 1, 1, 1);
     const t = [t1, t2, t3];
-    const b1 = new Box(1, 4, 1);
-    const b2 = new Box(2, 4, 1);
-    const b3 = new Box(3, 4, 1);
+    const b1 = new Box(1, 4, 1, 1, 1);
+    const b2 = new Box(2, 4, 1, 1, 1);
+    const b3 = new Box(3, 4, 1, 1, 1);
     const b = [b1, b2, b3];
     [l, r, t, b].forEach(arr => {
         arr.forEach(box => {
@@ -411,7 +403,7 @@ function test_neighbors() {
         });
     });
 
-    const box = new Box(1, 1, 3);
+    const box = new Box(1, 1, 3, 3, 3);
     state.insertBoxIntoBoard(box)
     state.setFixedNeighbors(box)
     compare_test(state.getBottomNeighbors(box), b, "bottom", box);

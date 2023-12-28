@@ -55,8 +55,8 @@ function drawBox(ctx, box, state) {
         ctx.fill()
         ctx.stroke()
     } else {
-        ctx.fillRect(box.x * PIX_PER_BOX, box.y * PIX_PER_BOX, box.size * PIX_PER_BOX, box.size * PIX_PER_BOX)
-        ctx.strokeRect(box.x * PIX_PER_BOX, box.y * PIX_PER_BOX, box.size * PIX_PER_BOX, box.size * PIX_PER_BOX)
+        ctx.fillRect(box.x * PIX_PER_BOX, box.y * PIX_PER_BOX, box.width * PIX_PER_BOX, box.height * PIX_PER_BOX)
+        ctx.strokeRect(box.x * PIX_PER_BOX, box.y * PIX_PER_BOX, box.width * PIX_PER_BOX, box.height * PIX_PER_BOX)
     }
 }
 
@@ -104,12 +104,12 @@ function setup() {
             current_game.fixedBoxes.forEach(box => {
                 drawBox(ctx, box, 'fixed')
             })
-            /*ctx.strokeStyle = 'black';
-            for (let y = GAME_HEIGHT - 1; y < GAME_HEIGHT; ++y ) {
+            /*
+            ctx.strokeStyle = 'black';
+            for (let y = 0; y < GAME_HEIGHT; ++y ) {
                 for (let x = 0; x < GAME_WIDTH; ++x) {
                     const cell = current_game.board[y * GAME_WIDTH + x]
-                    console.log(cell)
-                    if (cell instanceof Box) {
+                    if (cell) {
                         ctx.moveTo(x * PIX_PER_BOX, y * PIX_PER_BOX);
                         ctx.lineTo((x+1) * PIX_PER_BOX, (y+1) * PIX_PER_BOX);
                         ctx.moveTo(x * PIX_PER_BOX, (y+1) * PIX_PER_BOX);
@@ -118,7 +118,8 @@ function setup() {
                         ctx.strokeText(cell.fixedIndex + ' ' + cell.size, (x + 0.5) * PIX_PER_BOX, (y + 0.5) * PIX_PER_BOX )
                     }
                 }
-            }*/
+            }
+            */
         }
     })();
 
