@@ -258,19 +258,17 @@ class GameState {
     growBox(box) {
         this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
         this.setFixedNeighbors(box)
-        if (box.width == box.height && box.height == box.size) {
-            this.insertBoxIntoBoard(new Box(box.x, box.y, box.size));
+        if (box.width * box.height >= box.size * box.size) {
+            this.insertBoxIntoBoard(new Box(box.x, box.y, box.size, box.width, box.height));
             this.growingBoxes.splice(this.growingBoxes.indexOf(box), 1) // TODO Remove growing box without searching
             return;
         }
-        if (box.width <= box.height) {
-            if (this.growBoxX(box)) {
-                console.log("GrowX successful", box)
-            } else {
-                console.log("GrowX failed", box)
-            }
+        if (this.growBoxX(box)) {
+            console.log("GrowX successful", box)
+        } else {
+            console.log("GrowX failed", box)
         }
-        if (box.height < box.size) {
+        if (box.height * box.width < box.size * box.size) {
             this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
             this.setFixedNeighbors(box)
             if (this.growBoxY(box)) {
