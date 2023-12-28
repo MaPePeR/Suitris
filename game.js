@@ -1,5 +1,7 @@
 const groundBox = new Object()
 
+WALL = "WALL!!";
+
 class Box {
     constructor(x, y, size) {
         this.x = x;
@@ -97,6 +99,7 @@ class GameState {
                 this.board[(box.y + i) * this.width + box.x + j] = box;
             }
         }
+        this.setFixedNeighbors(box)
     }
 
     removeBoxFromBoard(box) {
@@ -166,6 +169,25 @@ class GameState {
         return touching
     }
 
+    setFixedNeighbors(box) {
+        box.neighbors_t = this.getTopNeighbors(box);
+        if (box.y == 0) {
+            box.neighbors_t.push(WALL)
+        }
+        box.neighbors_b = this.getBottomNeighbors(box);
+        if (box.bottomY() == this.height - 1) {
+            box.neighbors_b.push(WALL)
+        }
+        box.neighbors_l = this.getLeftNeighbors(box);
+        if (box.x == 0) {
+            box.neighbors_l.push(WALL)
+        }
+        box.neighbors_r = this.getRightNeighbors(box);
+        if (box.rightX() == this.width - 1) {
+            box.neighbors_r.push(WALL)
+        }
+    }
+
     combineBoxes(boxes) {
         let center_x = 0;
         let center_y = 0;
@@ -179,7 +201,7 @@ class GameState {
             return
         }
         const newBox = new GrowingBox(center_x / boxes.length, center_y / boxes.length, newsize);
-        newBox.targetSize = newsize;
+        this.setFixedNeighbors(newBox)
         this.growingBoxes.push(newBox)
     }
 
@@ -210,8 +232,109 @@ class GameState {
         }
     }
 
-    growBox(box) {
+    shift(boxes, dir_param, dir, neighbor_param, allow_upshift) {
+        let smallest_up_pushable = null;
+        const boxes_to_shift = new Set();
+        function r_shift(boxes, nextBoxes) {
+            if (boxes.length == 0) {
+                return true;
+            }
+            for (const box of boxes) {
+                if (box === WALL) {
+                    return false;
+                }
+                if (allow_upshift && box.neighbors_t.length == 0) {
+                    if (smallest_up_pushable === null || box.size < smallest_up_pushable.size) {
+                        smallest_up_pushable = box;
+                    }
+                }
+                for (const neighbor of box[neighbor_param]) {
+                    nextBoxes.push(neighbor);
+                }
+                boxes_to_shift.add(box);
+            }
+            boxes.length = 0;
+            return r_shift(nextBoxes, boxes);
+        };
+        if (r_shift([...boxes], [])) {
+            boxes_to_shift.forEach(box => {
+                this.removeBoxFromBoard(box)
+                box[dir_param] += dir;
+            });
+            boxes_to_shift.forEach(box => {
+                this.insertBoxIntoBoard(box)
+            });
+            return true;
+        } else if (allow_upshift && smallest_up_pushable) {
+            this.removeBoxFromBoard(smallest_up_pushable)
+            smallest_up_pushable.y -= 1;
+            this.insertBoxIntoBoard(smallest_up_pushable)
+            return null;
+        }
+        return false;
+    }
 
+    growBox(box) {
+        this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
+        this.setFixedNeighbors(box)
+        if (box.width == box.height && box.height == box.size) {
+            this.insertBoxIntoBoard(new Box(box.x, box.y, box.size));
+            this.growingBoxes.splice(this.growingBoxes.indexOf(box), 1) // TODO Remove growing box without searching
+            return;
+        }
+        if (box.width <= box.height) {
+            if (this.growBoxX(box)) {
+                console.log("GrowX successful", box)
+            } else {
+                console.log("GrowX failed", box)
+            }
+        } else {
+            if (this.growBoxY(box)) {
+                console.log("GrowY successful", box)
+            } else {
+                console.log("GrowY failed", box)
+            }
+        }
+        //TODO Option to move the box itself upwards if it cannot grow in width
+    }
+    growBoxX(box) {
+        const free_left = box.neighbors_l.length == 0;
+        const free_right = box.neighbors_r.length == 0;
+        const preferLeft = 2 * (box.x - box.center_x) >= box.width;
+        if (free_left || free_right) {
+            // Left or right is free
+            box.width += 1;
+            if (!free_right || (free_left && preferLeft)) {
+                box.x -= 1;
+            }
+        } else if (preferLeft && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l', false) !== false) {
+            box.width += 1;
+            box.x -= 1;
+        } else if (this.shift(box.neighbors_r, 'x', 1, 'neighbors_r', false) !== false) {
+            box.width += 1;
+        } else if (this.shift(box.neighbors_l, 'x', -1, 'neighbors_l', false) !== false) {
+            box.width += 1;
+            box.x -= 1;
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    growBoxY(box) {
+        const free_top = box.neighbors_t.length == 0;
+        const free_bottom = box.neighbors_b.length == 0;
+        if (free_bottom || this.shift(box.neighbors_b, 'y', 1, 'neighbors_b', false) !== false) {
+            // Bottom is free
+            box.height += 1;
+            return true;
+        }
+        if (free_top || this.shift(box.neighbors_t, 'y', -1, 'neighbors_t', false) !== false) {
+            // Top is free
+            box.height += 1;
+            box.y -= 1;
+            return true;
+        }
     }
 
     nextTick() {
