@@ -201,6 +201,12 @@ class GameState {
         if (this.fallingBox) {
             const newx = Math.max(0, Math.min(this.width - this.fallingBox.width, this.fallingBox.x + direction))
             if (this.fallingBox.x != newx) {
+                if (direction < 0 && this.getLeftNeighbors(this.fallingBox).length > 0) {
+                    return;
+                }
+                if (direction > 0 && this.getRightNeighbors(this.fallingBox).length > 0) {
+                    return;
+                }
                 this.fallingBox.x = newx;
                 if (this.checkTouching(this.fallingBox)) {
                     this.fallingBox = null;
