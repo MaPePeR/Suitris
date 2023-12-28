@@ -51,7 +51,7 @@ function drawBox(ctx, box, state) {
     ctx.fillStyle = colors[box.size - 1]
     if (state == 'growing') {
         ctx.beginPath();
-        ctx.roundRect(box.x * PIX_PER_BOX, box.y * PIX_PER_BOX, box.size * PIX_PER_BOX, box.size * PIX_PER_BOX, [5]);
+        ctx.roundRect(box.x * PIX_PER_BOX, box.y * PIX_PER_BOX, box.width * PIX_PER_BOX, box.height * PIX_PER_BOX, [5]);
         ctx.fill()
         ctx.stroke()
     } else {

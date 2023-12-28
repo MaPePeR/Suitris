@@ -6,6 +6,36 @@ class Box {
         this.y = y;
         this.size = size;
         this.fixedIndex = null;
+        this.neighbors_t = [];
+        this.neighbors_b = [];
+        this.neighbors_l = [];
+        this.neighbors_r = [];
+    }
+
+    bottomY() {
+        return this.y + this.size - 1;
+    }
+    
+    rightX() {
+        return this.x + this.size - 1;
+    }
+}
+
+class GrowingBox extends Box {
+    constructor(x, y, size) {
+        super(Math.round(x), Math.round(y), size);
+        this.center_x = x;
+        this.center_y = y;
+        this.width = 1;
+        this.height = 1;
+    }
+
+    bottomY() {
+        return this.y + this.height - 1;
+    }
+
+    rightX() {
+        return this.x  + this.width - 1;
     }
 }
 
@@ -100,19 +130,20 @@ class GameState {
     }
 
     getTopNeighbors(box) {
-        return this.getNeighbors((box.y - 1) * this.width + box.x, 1, (box.y - 1) * this.width + box.size);
+        return this.getNeighbors((box.y - 1) * this.width + box.x, 1, (box.y - 1) * this.width + box.rightX() + 1);
     }
 
     getBottomNeighbors(box) {
-        return this.getNeighbors((box.y + box.size) * this.width + box.x, 1, (box.y + box.size) * this.width + box.size);
+        return this.getNeighbors((box.bottomY() + 1) * this.width + box.x, 1, (box.bottomY() + 1) * this.width + box.rightX() + 1);
     }
 
     getLeftNeighbors(box) {
-        return this.getNeighbors(box.y * this.width + box.x - 1, this.width, (box.y + box.size) * this.width);
+        return this.getNeighbors(box.y * this.width + (this.width + box.x - 1) % this.width, this.width, (box.bottomY() + 1) * this.width + box.x - 1);
     }
 
     getRightNeighbors(box) {
-        return this.getNeighbors(box.y * this.width + box.x + box.size, this.width, (box.y + box.size) * this.width);
+        if (box.rightX() + 1 >= this.width) return [];
+        return this.getNeighbors(box.y * this.width + box.rightX() + 1, this.width, (box.bottomY() + 1) * this.width + box.rightX() + 1);
     }
 
     getSameSizeTouchingBoxes(box) {
@@ -146,7 +177,7 @@ class GameState {
         if (newsize > 11) {
             return
         }
-        const newBox = new Box(Math.round(center_x / boxes.length), Math.round(center_y / boxes.length), 1);
+        const newBox = new GrowingBox(center_x / boxes.length, center_y / boxes.length, newsize);
         newBox.targetSize = newsize;
         this.growingBoxes.push(newBox)
     }
@@ -221,5 +252,67 @@ class GameState {
         } else if (this.running) {
             this.nextBox();
         }
+    }
+}
+
+
+function compare_test(expected, actual, ...msg) {
+    const e = new Set(expected);
+    const a = new Set(actual);
+    if (a.size != e.size) {
+        console.log("Sizes do not match: ", actual, expected, ...msg);
+    }
+    /*if () {
+        throw "Value " + JSON.stringify(actual) + " does not match expected value" + JSON.stringify(expected);
+    }*/
+}
+function test_neighbors() {
+    const state = new GameState(5, 5)
+    const l1 = new Box(0, 1, 1);
+    const l2 = new Box(0, 2, 1);
+    const l3 = new Box(0, 3, 1);
+    const l = [l1, l2, l3];
+    const r1 = new Box(4, 1, 1);
+    const r2 = new Box(4, 2, 1);
+    const r3 = new Box(4, 3, 1);
+    const r = [r1, r2, r3];
+    const t1 = new Box(1, 0, 1);
+    const t2 = new Box(2, 0, 1);
+    const t3 = new Box(3, 0, 1);
+    const t = [t1, t2, t3];
+    const b1 = new Box(1, 4, 1);
+    const b2 = new Box(2, 4, 1);
+    const b3 = new Box(3, 4, 1);
+    const b = [b1, b2, b3];
+    [l, r, t, b].forEach(arr => {
+        arr.forEach(box => {
+            state.insertBoxIntoBoard(box)
+        });
+    });
+    [l, r, t, b].forEach(arr => {
+        arr.forEach(box => {
+            state.setFixedNeighbors(box)
+        });
+    });
+
+    const box = new Box(1, 1, 3);
+    state.insertBoxIntoBoard(box)
+    state.setFixedNeighbors(box)
+    compare_test(state.getBottomNeighbors(box), b, "bottom", box);
+    compare_test(state.getTopNeighbors(box), t, "top", box);
+    compare_test(state.getLeftNeighbors(box), l, "left", box);
+    compare_test(state.getRightNeighbors(box), r, "right", box);
+
+    for (const box of l) {
+        compare_test(box.neighbors_l, [WALL], "wall left", box)
+    }
+    for (const box of r) {
+        compare_test(box.neighbors_r, [WALL], "wall right", box)
+    }
+    for (const box of t) {
+        compare_test(box.neighbors_t, [WALL], "wall top", box)
+    }
+    for (const box of b) {
+        compare_test(box.neighbors_b, [WALL], "wall bottom", box)
     }
 }
