@@ -207,8 +207,13 @@ class GameState {
         let center_x = 0;
         let center_y = 0;
         boxes.forEach(box => {
-            center_x += 0.5 * (box.x + box.rightX());
-            center_y += 0.5 * (box.y + box.bottomY());
+            if (box instanceof GrowingBox) {
+                center_x += box.center_x;
+                center_y += box.center_y;
+            } else {
+                center_x += 0.5 * (box.x + box.rightX());
+                center_y += 0.5 * (box.y + box.bottomY());
+            }
             this.removeBoxFromBoard(box)
         })
         const newsize = boxes[0].size + boxes.length - 1;
