@@ -261,6 +261,7 @@ class GameState {
             });
             boxes_to_shift.forEach(box => {
                 this.insertBoxIntoBoard(box)
+                this.checkTouching(box)
             });
             return true;
         }
@@ -288,6 +289,9 @@ class GameState {
             } else {
                 console.log("GrowY failed", box)
             }
+        }
+        if (this.checkTouching(box)) {
+            this.growingBoxes.splice(this.growingBoxes.indexOf(box), 1) // TODO Remove growing box without searching
         }
         //TODO Option to move the box itself upwards if it cannot grow in width
     }
