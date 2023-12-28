@@ -202,9 +202,7 @@ class GameState {
             const newx = Math.max(0, Math.min(this.width - this.fallingBox.width, this.fallingBox.x + direction))
             if (this.fallingBox.x != newx) {
                 this.fallingBox.x = newx;
-                const touching = this.getSameSizeTouchingBoxes(this.fallingBox);
-                if (touching.length > 0) {
-                    this.combineBoxes(touching);
+                if (this.checkTouching(this.fallingBox)) {
                     this.fallingBox = null;
                 }
             }
@@ -215,12 +213,20 @@ class GameState {
         if (this.fallingBox) {
             if (this.canFall(this.fallingBox)) {
                 this.fallingBox.y += 1
-                const touching = this.getSameSizeTouchingBoxes(this.fallingBox);
-                if (touching.length > 0) {
-                    this.combineBoxes(touching);
+                if (this.checkTouching(this.fallingBox)) {
                     this.fallingBox = null;
                 }
             }
+        }
+    }
+
+    checkTouching(box) {
+        const touching = this.getSameSizeTouchingBoxes(box);
+        if (touching.length > 0) {
+            this.combineBoxes(touching)
+            return true;
+        } else {
+            return false;
         }
     }
 
@@ -323,17 +329,11 @@ class GameState {
         console.log("tick", this.fallingBox, this.growingBoxes.length, this.gravityBoxes.length, this.fixedBoxes.length)
         console.log(this.board.slice((this.height - 1 ) * this.width))
         if (this.fallingBox) {
-            if (this.canFall(this.fallingBox)) {
-                this.fallingBox.y +=1;
-                const touching = this.getSameSizeTouchingBoxes(this.fallingBox);
-                if (touching.length > 0) {
-                    console.log("Falling box touched something")
-                    this.combineBoxes(touching)
-                    this.fallingBox = null;
-                }
-            } else {
+            if (!this.canFall(this.fallingBox)) {
                 this.insertBoxIntoBoard(this.fallingBox);
                 this.fallingBox = null;
+            } else {
+                this.moveDown()
             }
         } else if (this.growingBoxes.length > 0) {
             for (let i = 0; i < this.growingBoxes.length; ++i) {
@@ -345,9 +345,9 @@ class GameState {
                 let box = this.gravityBoxes[i];
                 if (this.canFall(box)) {
                     box.y += 1;
-                    const touching = this.getSameSizeTouchingBoxes(this.fallingBox);
-                    if (touching.length > 0) {
-                        this.combineBoxes(touching);
+                    if (this.checkTouching(this.box)) {
+                        swapOut(this.gravityBoxes, i);
+                        --i;
                     }
                 } else {
                     this.insertBoxIntoBoard(box)
