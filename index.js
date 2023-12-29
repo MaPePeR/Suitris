@@ -83,6 +83,11 @@ function setup() {
     const p_context_bg = getCtx(p_canvas_bg, { alpha: false } );
     const p_context_fg = getCtx(p_canvas_fg, null);
 
+    p_context_bg.then(ctx => {
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, GAME_WIDTH * PIX_PER_BOX, GAME_HEIGHT * PIX_PER_BOX)
+    })
+
     const p_f_draw_fg = (async () => {
         const ctx = await p_context_fg
         return () => {
