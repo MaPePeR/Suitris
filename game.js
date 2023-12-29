@@ -54,11 +54,12 @@ class GameState {
         this.fallingBox = null;
         this.growingBoxes = [];
         this.running = false;
+        this.tickCount = 0;
     }
 
     start() {
         this.running = true;
-        this.interval = setInterval(this.nextTick.bind(this), 500);
+        this.interval = setInterval(this.nextTick.bind(this), 500 / 4);
     }
 
     nextBox() {
@@ -414,20 +415,23 @@ class GameState {
     }
 
     nextTick() {
+        this.tickCount = (this.tickCount + 1) % 4;
         console.log(this.tickCount, "tick", this.fallingBox, this.growingBoxes.length, this.fixedBoxes.length)
         console.log(this.board.slice((this.height - 1 ) * this.width))
-        if (this.fallingBox) {
+        if (this.tickCount == 0 && this.fallingBox) {
             if (!this.canFall(this.fallingBox)) {
                 this.insertBoxIntoBoard(this.fallingBox);
                 this.fallingBox = null;
             } else {
                 this.moveDown()
             }
-        } else if (this.growingBoxes.length > 0) {
+        }
+        if (this.growingBoxes.length > 0) {
             for (let i = 0; i < this.growingBoxes.length; ++i) {
                 this.growBox(this.growingBoxes[i])
             }
-        } else if (this.running) {
+        }
+        if (this.tickCount == 0 && this.running) {
             let didGravity = false;
             for (let i = 0; i < this.fixedBoxes.length; ++i) {
                 const box = this.fixedBoxes[i];
@@ -441,7 +445,7 @@ class GameState {
                     didGravity = true;
                 }
             }
-            if (!didGravity && this.growingBoxes.length == 0) {
+            if (!this.fallingBox && !didGravity && this.growingBoxes.length == 0) {
                 this.nextBox();
                 for (let i = 0; i < this.fallingBox.height; ++i) {
                     for (let j = 0; j < this.fallingBox.width; ++j) {
