@@ -1,5 +1,5 @@
-const GAME_WIDTH = 15
-const GAME_HEIGHT = 20
+const GAME_WIDTH = 24
+const GAME_HEIGHT = 32
 const sizes = [1,2,3,4,5,6,7,8,9,10,11]
 const colors = [
     '#ff2813ff',
