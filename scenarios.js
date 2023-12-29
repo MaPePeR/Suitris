@@ -52,3 +52,33 @@ function scenario4() {
     current_game.start()
 
 }
+
+
+
+function scenario4() {
+    if (current_game) {
+        current_game.running = false;
+        clearInterval(current_game.interval);
+    }
+    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    current_game.insertBoxIntoBoard(new Box(0, 22, 1, 1, 1))
+    current_game.fallingBox = new Box(0, 18, 1, 1, 1)
+    current_game.insertBoxIntoBoard(new Box(1, 21, 2, 2, 2));
+    current_game.insertBoxIntoBoard(new Box(0, 23, 3, 3, 3));
+    
+    current_game.insertBoxIntoBoard(new Box(0, 26, 6, 6, 6));
+    current_game.insertBoxIntoBoard(new Box(4, 22, 4, 4, 4));
+    current_game.start()
+
+}
+
+function scenario5() {
+    if (current_game) {
+        current_game.running = false;
+        clearInterval(current_game.interval);
+    }
+    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    current_game.insertBoxIntoBoard(new Box(0, GAME_HEIGHT - 6, 4, 3, 6));
+    current_game.fallingBox = new Box(3, GAME_HEIGHT - 6 - 4 - 3, 4, 4, 4);
+    current_game.start()
+}

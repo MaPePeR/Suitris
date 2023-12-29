@@ -224,7 +224,7 @@ class GameState {
         let newBox = null;
         let closestDistance = Infinity
         for (const box of boxes) {
-            if (box.x <= center_x && center_x < box.rightX() && box.y <= center_y && center_y < box.bottomY()) {
+            if (box.x <= center_x && center_x < box.x + box.width && box.y <= center_y && center_y < box.y + box.height) {
                 // center is inside this box.
                 newBox = new GrowingBox(center_x, center_y, newsize);
                 break;
@@ -235,8 +235,9 @@ class GameState {
                 const distance = dx*dx + dy*dy;
                 if (distance < closestDistance) {
                     closestDistance = distance
-                    const newx = center_x + (box.x < center_x ? -1 : 1) * (dx + 0.5);
-                    const newy = center_y + (box.y < center_y ? -1 : 1) * (dy + 0.5);
+                                            /* Center is Right/Below              Center is left/above  else Center is inbetween */
+                    const newx = center_x + (box.x + box.width  <= center_x ? -1 : (center_x < box.x ? 1 : 0)) * (dx + 0.5);
+                    const newy = center_y + (box.y + box.height <= center_y ? -1 : (center_y < box.y ? 1 : 0)) * (dy + 0.5);
                     if (VALIDATION) {
                         if (!(box.x <= newx && newx < box.x + box.width  && box.y <= newy && newy < box.y + box.height)) {
                             throw new Error("Calculted point is not in box");
