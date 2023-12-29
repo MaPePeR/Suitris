@@ -3,6 +3,8 @@ const groundBox = new Object()
 const VALIDATION = true;
 WALL = "WALL!!";
 
+const ALLOW_PUSH = true;
+
 class Box {
     constructor(x, y, size, width, height) {
         this.x = x;
@@ -226,15 +228,31 @@ class GameState {
 
     move(direction) {
         if (this.running && this.fallingBox) {
+            this.setFixedNeighbors(this.fallingBox)
             const newx = Math.max(0, Math.min(this.width - this.fallingBox.width, this.fallingBox.x + direction))
             if (this.fallingBox.x != newx) {
-                if (direction < 0 && this.getLeftNeighbors(this.fallingBox).length > 0) {
-                    return;
+                let didshift = false;
+                if (ALLOW_PUSH) {
+                    this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
                 }
-                if (direction > 0 && this.getRightNeighbors(this.fallingBox).length > 0) {
-                    return;
+                if (direction < 0 && this.fallingBox.neighbors_l.length > 0) {
+                    if (ALLOW_PUSH && this.shift(this.fallingBox.neighbors_l, 'x', -1, 'neighbors_l')) {
+                        didshift = true;
+                    } else {
+                        return;
+                    }
+                }
+                if (direction > 0 && this.fallingBox.neighbors_r.length > 0) {
+                    if (ALLOW_PUSH && this.shift(this.fallingBox.neighbors_r, 'x', 1, 'neighbors_r')) {
+                        didshift = true;
+                    } else {
+                        return;
+                    }
                 }
                 this.fallingBox.x = newx;
+                if (didshift) {
+                    this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
+                }
                 if (this.checkTouching(this.fallingBox)) {
                     this.fallingBox = null;
                 }
@@ -393,7 +411,7 @@ class GameState {
                     didGravity = true;
                 }
             }
-            if (!didGravity) {
+            if (!didGravity && this.growingBoxes.length == 0) {
                 this.nextBox();
                 for (let i = 0; i < this.fallingBox.height; ++i) {
                     for (let j = 0; j < this.fallingBox.width; ++j) {
