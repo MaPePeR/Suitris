@@ -221,7 +221,36 @@ class GameState {
         if (newsize > 11) {
             return
         }
-        const newBox = new GrowingBox(center_x / boxes.length, center_y / boxes.length, newsize);
+        center_x /= boxes.length;
+        center_y /= boxes.length;
+        let newBox = null;
+        let closestDistance = Infinity
+        for (const box of boxes) {
+            if (box.x <= center_x && center_x < box.rightX() && box.y <= center_y && center_y < box.bottomY()) {
+                // center is inside this box.
+                newBox = new GrowingBox(center_x, center_y, newsize);
+                break;
+            } else {
+                // Distance point to box from https://stackoverflow.com/a/18157551/2256700
+                const dx = Math.max(box.x - center_x, 0, center_x - (box.x + box.width));
+                const dy = Math.max(box.y - center_y, 0, center_y - (box.y + box.height));
+                const distance = dx*dx + dy*dy;
+                if (distance < closestDistance) {
+                    closestDistance = distance
+                    const newx = center_x + (box.x < center_x ? -1 : 1) * (dx + 0.5);
+                    const newy = center_y + (box.y < center_y ? -1 : 1) * (dy + 0.5);
+                    if (VALIDATION) {
+                        if (!(box.x <= newx && newx < box.x + box.width  && box.y <= newy && newy < box.y + box.height)) {
+                            throw new Error("Calculted point is not in box");
+                        }
+                    }
+                    newBox = new GrowingBox(newx, newy, newsize)
+                }
+            }
+        }
+        if (!newBox) {
+            throw new Error("Failed to create growing box");
+        }
         this.setFixedNeighbors(newBox)
         this.growingBoxes.push(newBox)
     }
