@@ -84,11 +84,13 @@ class GameState {
     }
 
     insertBoxIntoBoard(box) {
-        if (box.fixedIndex !== null) {
-            throw "Box is already in board"
+        if (!(box instanceof GrowingBox)) {
+            if (box.fixedIndex !== null) {
+                throw "Box is already in board"
+            }
+            this.fixedBoxes.push(box)
+            box.fixedIndex = this.fixedBoxes.length - 1
         }
-        this.fixedBoxes.push(box)
-        box.fixedIndex = this.fixedBoxes.length - 1
         for (let i = 0; i < box.height; ++i) {
             for (let j = 0; j < box.width; ++j) {
                 if (VALIDATION) {
@@ -209,13 +211,8 @@ class GameState {
         let center_x = 0;
         let center_y = 0;
         boxes.forEach(box => {
-            if (box instanceof GrowingBox) {
-                center_x += box.center_x;
-                center_y += box.center_y;
-            } else {
-                center_x += box.x + 0.5 * box.width;
-                center_y += box.y + 0.5 * box.height;
-            }
+            center_x += box.x + 0.5 * box.width;
+            center_y += box.y + 0.5 * box.height;
             this.removeBoxFromBoard(box)
         })
         const newsize = boxes[0].size + boxes.length - 1;
@@ -254,6 +251,7 @@ class GameState {
         }
         this.setFixedNeighbors(newBox)
         this.growingBoxes.push(newBox)
+        this.insertBoxIntoBoard(newBox)
     }
 
     move(direction) {
@@ -346,6 +344,7 @@ class GameState {
     growBox(box) {
         this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
         this.setFixedNeighbors(box)
+        this.removeBoxFromBoard(box)
         if (box.width * box.height >= box.size * box.size) {
             this.insertBoxIntoBoard(new Box(box.x, box.y, box.size, box.width, box.height));
             this.growingBoxes.splice(this.growingBoxes.indexOf(box), 1) // TODO Remove growing box without searching
@@ -367,6 +366,8 @@ class GameState {
         }
         if (this.checkTouching(box)) {
             this.growingBoxes.splice(this.growingBoxes.indexOf(box), 1) // TODO Remove growing box without searching
+        } else {
+            this.insertBoxIntoBoard(box)
         }
         //TODO Option to move the box itself upwards if it cannot grow in width
     }
@@ -426,10 +427,16 @@ class GameState {
                 this.moveDown()
             }
         }
+        if (this.fallingBox) {
+            this.insertBoxIntoBoard(this.fallingBox);
+        }
         if (this.growingBoxes.length > 0) {
             for (let i = 0; i < this.growingBoxes.length; ++i) {
                 this.growBox(this.growingBoxes[i])
             }
+        }
+        if (this.fallingBox) {
+            this.removeBoxFromBoard(this.fallingBox);
         }
         if (this.tickCount == 0 && this.running) {
             let didGravity = false;
@@ -472,7 +479,9 @@ class GameState {
                                 throw new Error("Found box in board at wrong place")
                             }
                             if (number === null) {
-                                throw new Error("Found box in board with fixedIndex=null")
+                                if (!(cell instanceof GrowingBox)) {
+                                    throw new Error("Found box in board with fixedIndex=null")
+                                }
                             }
                         } else {
                             throw new Error("Found sumething truthy that is null?")
@@ -497,8 +506,8 @@ class GameState {
                 const box = this.growingBoxes[i];
                 for (let y = box.y; y <= box.bottomY(); ++y) {
                     for (let x = box.x; x <= box.rightX(); ++x) {
-                        if (this.board[y * this.width + x] != null) {
-                            throw new Error("Growing box overlaps with fixed box at x+" + x +" y=" + y)
+                        if (this.board[y * this.width + x] != box) {
+                            throw new Error("Growing box not in board at x+" + x +" y=" + y)
                         }
                     }
                 }
