@@ -50,7 +50,6 @@ class GameState {
         this.board.fill(null)
         this.fixedBoxes = [];
         this.fallingBox = null;
-        this.gravityBoxes = [];
         this.growingBoxes = [];
         this.running = false;
     }
@@ -367,7 +366,7 @@ class GameState {
     }
 
     nextTick() {
-        console.log("tick", this.fallingBox, this.growingBoxes.length, this.gravityBoxes.length, this.fixedBoxes.length)
+        console.log(this.tickCount, "tick", this.fallingBox, this.growingBoxes.length, this.fixedBoxes.length)
         console.log(this.board.slice((this.height - 1 ) * this.width))
         if (this.fallingBox) {
             if (!this.canFall(this.fallingBox)) {
@@ -380,31 +379,21 @@ class GameState {
             for (let i = 0; i < this.growingBoxes.length; ++i) {
                 this.growBox(this.growingBoxes[i])
             }
-        } else if (this.gravityBoxes.length > 0) {
-            console.log("Mutliple boxes are falling")
-            for (let i = 0; i < this.gravityBoxes.length; ++i) {
-                let box = this.gravityBoxes[i];
+        } else if (this.running) {
+            let didGravity = false;
+            for (let i = 0; i < this.fixedBoxes.length; ++i) {
+                const box = this.fixedBoxes[i];
                 if (this.canFall(box)) {
                     this.removeBoxFromBoard(box);
                     box.y += 1;
                     this.insertBoxIntoBoard(box)
                     if (this.checkTouching(box)) {
-                        swapOut(this.gravityBoxes, i);
-                        --i;
+                        break;
                     }
-                } else {
-                    swapOut(this.gravityBoxes, i)
-                    --i;
+                    didGravity = true;
                 }
             }
-        } else if (this.running) {
-            for (let i = 0; i < this.fixedBoxes.length; ++i) {
-                const box = this.fixedBoxes[i];
-                if (this.canFall(box)) {
-                    this.gravityBoxes.push(box);
-                }
-            }
-            if (this.gravityBoxes.length == 0) {
+            if (!didGravity) {
                 this.nextBox();
                 for (let i = 0; i < this.fallingBox.height; ++i) {
                     for (let j = 0; j < this.fallingBox.width; ++j) {

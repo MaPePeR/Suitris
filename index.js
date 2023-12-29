@@ -86,9 +86,6 @@ function setup() {
             if (current_game.fallingBox) {
                 drawBox(ctx, current_game.fallingBox, 'falling')
             }
-            current_game.gravityBoxes.forEach(box => {
-                drawBox(ctx, box, 'gravity')
-            });
             current_game.growingBoxes.forEach(box => {
                 drawBox(ctx, box, 'growing')
             });
