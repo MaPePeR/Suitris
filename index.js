@@ -54,6 +54,11 @@ function drawBox(ctx, box, state) {
         ctx.roundRect(box.x * PIX_PER_BOX, box.y * PIX_PER_BOX, box.width * PIX_PER_BOX, box.height * PIX_PER_BOX, [5]);
         ctx.fill()
         ctx.stroke()
+        ctx.fillStyle = 'black'
+        ctx.beginPath();
+        ctx.ellipse(box.center_x * PIX_PER_BOX, box.center_y * PIX_PER_BOX, 5, 5, 0, 0, 2 * Math.PI)
+        ctx.fill()
+        ctx.stroke()
     } else {
         ctx.fillRect(box.x * PIX_PER_BOX, box.y * PIX_PER_BOX, box.width * PIX_PER_BOX, box.height * PIX_PER_BOX)
         ctx.strokeRect(box.x * PIX_PER_BOX, box.y * PIX_PER_BOX, box.width * PIX_PER_BOX, box.height * PIX_PER_BOX)
