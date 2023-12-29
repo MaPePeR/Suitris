@@ -30,7 +30,7 @@ class Box {
 
 class GrowingBox extends Box {
     constructor(x, y, size) {
-        super(Math.round(x), Math.round(y), size, 1, 1);
+        super(Math.floor(x), Math.floor(y), size, 1, 1);
         this.center_x = x;
         this.center_y = y;
     }
@@ -212,8 +212,8 @@ class GameState {
                 center_x += box.center_x;
                 center_y += box.center_y;
             } else {
-                center_x += 0.5 * (box.x + box.rightX());
-                center_y += 0.5 * (box.y + box.bottomY());
+                center_x += box.x + 0.5 * box.width;
+                center_y += box.y + 0.5 * box.height;
             }
             this.removeBoxFromBoard(box)
         })
@@ -343,21 +343,15 @@ class GameState {
     growBoxX(box) {
         const free_left = box.neighbors_l.length == 0;
         const free_right = box.neighbors_r.length == 0;
-        const preferLeft = 2 * (box.x - box.center_x) >= box.width;
-        if (free_left || free_right) {
-            // Left or right is free
-            box.width += 1;
-            if (!free_right || (free_left && preferLeft)) {
-                box.x -= 1;
-            }
-        } else if (preferLeft && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')) {
+        const preferLeft = box.center_x < box.x + box.width / 2;
+        if (preferLeft && (free_left || (!free_left && !free_right && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')))) {
             if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             box.width += 1;
             box.x -= 1;
-        } else if (this.shift(box.neighbors_r, 'x', 1, 'neighbors_r')) {
+        } else if (free_right || (!free_left && !free_right && this.shift(box.neighbors_r, 'x', 1, 'neighbors_r'))) {
             if (VALIDATION && this.getRightNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             box.width += 1;
-        } else if (this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')) {
+        } else if (!preferLeft && (free_left || (!free_left && !free_right && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')))) {
             if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             box.width += 1;
             box.x -= 1;
@@ -370,12 +364,19 @@ class GameState {
     growBoxY(box) {
         const free_top = box.neighbors_t.length == 0;
         const free_bottom = box.neighbors_b.length == 0;
-        if (free_bottom || this.shift(box.neighbors_b, 'y', 1, 'neighbors_b')) {
+        const prefer_top = box.y + box.height / 2 > box.center_y;
+        if (prefer_top && (free_top || (!free_top && !free_bottom &&this.shift(box.neighbors_t, 'y', -1, 'neighbors_t')))) {
+            // Top is free
+            box.height += 1;
+            box.y -= 1;
+            return true;
+        }
+        if (free_bottom || (!free_top && !free_bottom && this.shift(box.neighbors_b, 'y', 1, 'neighbors_b'))) {
             // Bottom is free
             box.height += 1;
             return true;
         }
-        if (free_top || this.shift(box.neighbors_t, 'y', -1, 'neighbors_t')) {
+        if (!prefer_top && (free_top || (!free_top && !free_bottom && this.shift(box.neighbors_t, 'y', -1, 'neighbors_t')))) {
             // Top is free
             box.height += 1;
             box.y -= 1;
