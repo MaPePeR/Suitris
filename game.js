@@ -451,15 +451,28 @@ class GameState {
 
     shrinkToSquare(box) {
         if (box.width < box.size) {
-            //TODO: Grow horizontally
+            this.growBoxX(box);
+            this.checkTouching(box)
         }
         else if (box.height < box.size) {
-            //TODO: Grow vertically
+            this.growBoxY(box);
+            this.checkTouching(box)
         }
         if (box.width > box.size && (box.width - 1) * box.height >= box.size * box.size) {
-            //TODO: Shrink vertically
+            const shrinkLeft = box.center_x > box.width / 2;
+            this.removeBoxFromBoard(box)
+            if (shrinkLeft) {
+                box.x += 1;
+                box.center_x -= 1;
+            }
+            box.width -=1;
+            this.insertBoxIntoBoard(box)
         } else if (box.height > box.size && box.width * (box.height - 1) >= box.size * box.size) {
-            //TODO: Shrink horizontally
+            this.removeBoxFromBoard(box)
+            box.y += 1;
+            box.center_y -= 1;
+            box.height -= 1
+            this.insertBoxIntoBoard(box)
         }
     }
 
