@@ -351,8 +351,6 @@ class GameState {
                 throw new Error("Cannot grow non active box");
             }
         }
-        this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
-        this.setFixedNeighbors(box)
         if (box.width * box.height >= box.size * box.size) {
             this.removeBoxFromBoard(box)
             box.state = BoxState.TO_BE_REMOVED
@@ -369,8 +367,6 @@ class GameState {
             console.log("GrowX failed", box)
         }
         if (box.height * box.width < box.size * box.size) {
-            this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
-            this.setFixedNeighbors(box)
             if (this.growBoxY(box)) {
                 console.log("GrowY successful", box)
             } else {
@@ -382,6 +378,8 @@ class GameState {
         }
     }
     growBoxX(box) {
+        this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
+        this.setFixedNeighbors(box)
         const preferLeft = box.center_x < box.width / 2;
         return (preferLeft && this.growBoxLeft(box))
             || this.growBoxRight(box)
@@ -417,6 +415,8 @@ class GameState {
     }
 
     growBoxY(box) {
+        this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
+        this.setFixedNeighbors(box)
         const prefer_top = box.height / 2 > box.center_y;
         return (prefer_top && this.growBoxTop(box))
             || this.growBoxBottom(box)
