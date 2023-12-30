@@ -24,6 +24,7 @@ class Box {
         this.neighbors_l = [];
         this.neighbors_r = [];
         this.state = BoxState.NEW;
+        this.lastGravity = 0;
     }
 
     bottomY() {
@@ -62,6 +63,7 @@ class GameState {
         this.growingBoxes = [];
         this.running = false;
         this.tickCount = 0;
+        this.gravityTick = 0;
     }
 
     start() {
@@ -468,22 +470,30 @@ class GameState {
             }
         }
         if (this.tickCount == 0 && this.running) {
+            this.gravityTick = (this.gravityTick + 1) % 2
             let didGravity = false;
-            for (let i = 0; i < this.fixedBoxes.length; ++i) {
-                const box = this.fixedBoxes[i];
-                if (box.state !== BoxState.ACTIVE) {
-                    continue;
-                }
-                if (this.canFall(box)) {
-                    this.removeBoxFromBoard(box);
-                    box.y += 1;
-                    this.insertBoxIntoBoard(box)
-                    if (this.checkTouching(box)) {
-                        break;
+            do {
+                didGravity = false;
+                for (let i = 0; i < this.fixedBoxes.length; ++i) {
+                    const box = this.fixedBoxes[i];
+                    if (box.state !== BoxState.ACTIVE) {
+                        if (box.state == BoxState.NEW) {
+                            box.lastGravity = this.gravityTick;
+                        }
+                        continue;
                     }
-                    didGravity = true;
+                    if (this.gravityTick != box.lastGravity && this.canFall(box)) {
+                        box.lastGravity = this.gravityTick;
+                        didGravity = true;
+                        this.removeBoxFromBoard(box);
+                        box.y += 1;
+                        this.insertBoxIntoBoard(box)
+                        if (this.checkTouching(box)) {
+                            break;
+                        }
+                    }
                 }
-            }
+            } while(didGravity);
             if (!this.fallingBox) {
                 this.nextBox();
                 for (let i = 0; i < this.fallingBox.height; ++i) {
