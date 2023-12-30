@@ -39,8 +39,8 @@ class Box {
 class GrowingBox extends Box {
     constructor(x, y, size) {
         super(Math.floor(x), Math.floor(y), size, 1, 1);
-        this.center_x = x;
-        this.center_y = y;
+        this.center_x = x - this.x;
+        this.center_y = y - this.y;
     }
 }
 
@@ -389,11 +389,12 @@ class GameState {
     growBoxX(box) {
         const free_left = box.neighbors_l.length == 0;
         const free_right = box.neighbors_r.length == 0;
-        const preferLeft = box.center_x < box.x + box.width / 2;
+        const preferLeft = box.center_x < box.width / 2;
         if (preferLeft && (free_left || (!free_left && !free_right && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')))) {
             if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             this.removeBoxFromBoard(box);
             box.width += 1;
+            box.center_x += 1;
             box.x -= 1;
             this.insertBoxIntoBoard(box);
         } else if (free_right || (!free_left && !free_right && this.shift(box.neighbors_r, 'x', 1, 'neighbors_r'))) {
@@ -405,6 +406,7 @@ class GameState {
             if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             this.removeBoxFromBoard(box);
             box.width += 1;
+            box.center_x += 1;
             box.x -= 1;
             this.insertBoxIntoBoard(box);
         } else {
@@ -416,11 +418,12 @@ class GameState {
     growBoxY(box) {
         const free_top = box.neighbors_t.length == 0;
         const free_bottom = box.neighbors_b.length == 0;
-        const prefer_top = box.y + box.height / 2 > box.center_y;
+        const prefer_top = box.height / 2 > box.center_y;
         if (prefer_top && (free_top || (!free_top && !free_bottom &&this.shift(box.neighbors_t, 'y', -1, 'neighbors_t')))) {
             // Top is free
             this.removeBoxFromBoard(box);
             box.height += 1;
+            box.center_y += 1;
             box.y -= 1;
             this.insertBoxIntoBoard(box);
             return true;
@@ -436,6 +439,7 @@ class GameState {
             // Top is free
             this.removeBoxFromBoard(box);
             box.height += 1;
+            box.center_y += 1;
             box.y -= 1;
             this.insertBoxIntoBoard(box);
             return true;
