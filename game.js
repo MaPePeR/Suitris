@@ -304,6 +304,10 @@ class GameState {
     }
 
     checkTouching(box) {
+        if (box.state == BoxState.TO_BE_REMOVED || box.state == BoxState.REMOVED) {
+            console.warn("Checking box for touching that is not active anymore", box)
+            return;
+        }
         const touching = this.getSameSizeTouchingBoxes(box);
         if (touching.length > 0) {
             this.combineBoxes(touching)
