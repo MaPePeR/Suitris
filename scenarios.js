@@ -82,3 +82,61 @@ function scenario5() {
     current_game.fallingBox = new Box(3, GAME_HEIGHT - 6 - 4 - 3, 4, 4, 4);
     current_game.start()
 }
+
+/* Couldn't reproduce :(
+function scenario6() {
+    if (current_game) {
+        current_game.running = false;
+        clearInterval(current_game.interval);
+    }
+
+    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    current_game.fallingBox = new Box(7, 23, 1, 1, 1);
+    current_game.insertBoxIntoBoard(new Box(8, 23, 4, 4, 4));
+    current_game.insertBoxIntoBoard(new Box(12, 24, 3, 3, 3));
+    current_game.insertBoxIntoBoard(new Box(13, 29, 3, 3, 3));
+    //current_game.insertBoxIntoBoard(new Box(10, 23, 4, 4, 4))
+    current_game.insertBoxIntoBoard(new Box(17, 26, 6, 6, 6));
+    current_game.insertBoxIntoBoard(new Box(8, 27, 5, 5, 5));
+    
+    current_game.running = true;
+    current_game.move(1)
+    for (let i = 0; i < 8; ++i) {
+        current_game.nextTick()
+    }
+    current_game.move(1)
+    debugger
+    //current_game.start()
+}
+*/
+
+function scenario7() {
+    if (current_game) {
+        current_game.running = false;
+        clearInterval(current_game.interval);
+    }
+    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    current_game.fallingBox = new Box(5, 30, 1, 1, 1);
+    current_game.insertBoxIntoBoard(new Box(6, 30, 2, 2, 2));
+    current_game.insertBoxIntoBoard(new Box(13, 30, 2, 2, 2));
+    current_game.insertBoxIntoBoard(new Box(15, 29, 3, 3, 3));
+    current_game.insertBoxIntoBoard(new Box(18, 26, 6, 6, 6));
+    current_game.insertBoxIntoBoard(new Box(14, 25, 4, 4, 4));
+
+    current_game.tickCount = 3;
+    current_game.running = true;
+    current_game.nextTick()
+
+    current_game.move(1)
+    current_game.move(1)
+    current_game.nextTick()
+    current_game.move(1)
+    current_game.move(1)
+    current_game.move(1)
+    current_game.nextTick()
+    current_game.move(1)
+    current_game.move(1)
+    current_game.move(1)
+    current_game.move(1)
+    current_game.nextTick()
+}

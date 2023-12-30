@@ -115,7 +115,18 @@ class GameState {
                 this.fixedBoxes[box.fixedIndex] = swapBox
             }
         } else {
-            console.warn("Removing box from board that does not have fixed index");
+            if (box instanceof GrowingBox) {
+                const growingIndex = this.growingBoxes.indexOf(box)
+                if (growingIndex === -1) {
+                    throw new Error("Growing box not found in list of growing boxes")
+                } else {
+                    //TODO: This will result in errors, when the nextTick function iterates over the growing boxes.
+                    // Need to remove growing boxes from list if they are combined into something
+                    swapOut(this.growingBoxes, growingIndex)
+                }
+            } else {
+                console.warn("Removing box from board that does not have fixed index");
+            }
             if (VALIDATION) {
                 if (this.fixedBoxes.indexOf(box) !== -1) {
                     throw new Error("Box to remove does not have fixed index, but is in fixedBoxes");
