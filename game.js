@@ -61,6 +61,7 @@ class GameState {
         this.fixedBoxes = [];
         this.fallingBox = null;
         this.growingBoxes = [];
+        this.nonSquareBoxes = [];
         this.running = false;
         this.tickCount = 0;
         this.gravityTick = 0;
@@ -360,7 +361,11 @@ class GameState {
         if (box.width * box.height >= box.size * box.size) {
             this.removeBoxFromBoard(box)
             box.state = BoxState.TO_BE_REMOVED
-            this.insertFixedBoxIntoBoard(new Box(box.x, box.y, box.size, box.width, box.height));
+            const newbox = new Box(box.x, box.y, box.size, box.width, box.height)
+            this.insertFixedBoxIntoBoard(newbox);
+            if (newbox.width !== newbox.height) {
+                this.nonSquareBoxes.push(newbox);
+            }
             return;
         }
         if (this.growBoxX(box)) {
@@ -437,6 +442,20 @@ class GameState {
         }
     }
 
+    shrinkToSquare(box) {
+        if (box.width < box.size) {
+            //TODO: Grow horizontally
+        }
+        else if (box.height < box.size) {
+            //TODO: Grow vertically
+        }
+        if (box.width > box.size && (box.width - 1) * box.height >= box.size * box.size) {
+            //TODO: Shrink vertically
+        } else if (box.height > box.size && box.width * (box.height - 1) >= box.size * box.size) {
+            //TODO: Shrink horizontally
+        }
+    }
+
     switchBoxStatesForNextTick(arr) {
         for (let i = 0; i < arr.length; ++i) {
             if (arr[i].state === BoxState.TO_BE_REMOVED) {
@@ -459,6 +478,17 @@ class GameState {
                 this.fallingBox = null;
             } else {
                 this.moveDown()
+            }
+        }
+        if (this.nonSquareBoxes.length > 0) {
+            for (let i = 0; i < this.nonSquareBoxes.length; ++i) {
+                const box = this.nonSquareBoxes[i];
+                if (box.width == box.height) {
+                    swapOut(this.nonSquareBoxes, i)
+                    --i;
+                } else {
+                    this.shrinkToSquare(box);
+                }
             }
         }
         if (this.growingBoxes.length > 0) {
