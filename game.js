@@ -382,39 +382,51 @@ class GameState {
         }
     }
     growBoxX(box) {
+        const preferLeft = box.center_x < box.width / 2;
+        return (preferLeft && this.growBoxLeft(box))
+            || this.growBoxRight(box)
+            || (!preferLeft && this.growBoxLeft(box));
+    }
+
+    growBoxLeft(box) {
         const free_left = box.neighbors_l.length == 0;
         const free_right = box.neighbors_r.length == 0;
-        const preferLeft = box.center_x < box.width / 2;
-        if (preferLeft && (free_left || (!free_left && !free_right && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')))) {
+        if (free_left || (!free_left && !free_right && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l'))) {
             if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             this.removeBoxFromBoard(box);
             box.width += 1;
             box.center_x += 1;
             box.x -= 1;
             this.insertBoxIntoBoard(box);
-        } else if (free_right || (!free_left && !free_right && this.shift(box.neighbors_r, 'x', 1, 'neighbors_r'))) {
+            return true;
+        }
+        return false;
+    }
+
+    growBoxRight(box) {
+        const free_left = box.neighbors_l.length == 0;
+        const free_right = box.neighbors_r.length == 0;
+        if (free_right || (!free_left && !free_right && this.shift(box.neighbors_r, 'x', 1, 'neighbors_r'))) {
             if (VALIDATION && this.getRightNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             this.removeBoxFromBoard(box);
             box.width += 1;
             this.insertBoxIntoBoard(box);
-        } else if (!preferLeft && (free_left || (!free_left && !free_right && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')))) {
-            if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
-            this.removeBoxFromBoard(box);
-            box.width += 1;
-            box.center_x += 1;
-            box.x -= 1;
-            this.insertBoxIntoBoard(box);
-        } else {
-            return false;
+            return true;
         }
-        return true;
+        return false;
     }
 
     growBoxY(box) {
+        const prefer_top = box.height / 2 > box.center_y;
+        return (prefer_top && this.growBoxTop(box))
+            || this.growBoxBottom(box)
+            || (!prefer_top && this.growBoxTop(box));
+    }
+
+    growBoxTop(box) {
         const free_top = box.neighbors_t.length == 0;
         const free_bottom = box.neighbors_b.length == 0;
-        const prefer_top = box.height / 2 > box.center_y;
-        if (prefer_top && (free_top || (!free_top && !free_bottom &&this.shift(box.neighbors_t, 'y', -1, 'neighbors_t')))) {
+        if (free_top || (!free_top && !free_bottom &&this.shift(box.neighbors_t, 'y', -1, 'neighbors_t'))) {
             // Top is free
             this.removeBoxFromBoard(box);
             box.height += 1;
@@ -423,6 +435,10 @@ class GameState {
             this.insertBoxIntoBoard(box);
             return true;
         }
+        return false;
+    }
+
+    growBoxBottom(box, free_top, free_bottom) {
         if (free_bottom || (!free_top && !free_bottom && this.shift(box.neighbors_b, 'y', 1, 'neighbors_b'))) {
             // Bottom is free
             this.removeBoxFromBoard(box);
@@ -430,16 +446,8 @@ class GameState {
             this.insertBoxIntoBoard(box);
             return true;
         }
-        if (!prefer_top && (free_top || (!free_top && !free_bottom && this.shift(box.neighbors_t, 'y', -1, 'neighbors_t')))) {
-            // Top is free
-            this.removeBoxFromBoard(box);
-            box.height += 1;
-            box.center_y += 1;
-            box.y -= 1;
-            this.insertBoxIntoBoard(box);
-            return true;
-        }
-    }
+        return false;
+    } 
 
     shrinkToSquare(box) {
         if (box.width < box.size) {
