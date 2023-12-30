@@ -16,6 +16,8 @@ class Box {
     constructor(x, y, size, width, height) {
         this.x = x;
         this.y = y;
+        this.center_x = width / 2;
+        this.center_y = height / 2;
         this.size = size;
         this.width = width;
         this.height = height;
@@ -33,14 +35,6 @@ class Box {
 
     rightX() {
         return this.x  + this.width - 1;
-    }
-}
-
-class GrowingBox extends Box {
-    constructor(x, y, size) {
-        super(Math.floor(x), Math.floor(y), size, 1, 1);
-        this.center_x = x - this.x;
-        this.center_y = y - this.y;
     }
 }
 
@@ -97,9 +91,6 @@ class GameState {
         if (VALIDATION) {
             if (this.fixedBoxes.indexOf(box) >= 0) {
                 throw new Error("Box already in fixed boxes array");
-            }
-            if (box instanceof GrowingBox) {
-                throw new Error("Box is GrowingBox, not Box")
             }
         }
         this.fixedBoxes.push(box)
@@ -223,12 +214,14 @@ class GameState {
         }
         center_x /= boxes.length;
         center_y /= boxes.length;
-        let newBox = null;
+        let newx = null;
+        let newy = null;
         let closestDistance = Infinity
         for (const box of boxes) {
             if (box.x <= center_x && center_x < box.x + box.width && box.y <= center_y && center_y < box.y + box.height) {
                 // center is inside this box.
-                newBox = new GrowingBox(center_x, center_y, newsize);
+                newx = center_x;
+                newy = center_y;
                 break;
             } else {
                 // Distance point to box from https://stackoverflow.com/a/18157551/2256700
@@ -238,20 +231,22 @@ class GameState {
                 if (distance < closestDistance) {
                     closestDistance = distance
                                             /* Center is Right/Below              Center is left/above  else Center is inbetween */
-                    const newx = center_x + (box.x + box.width  <= center_x ? -1 : (center_x < box.x ? 1 : 0)) * (dx + 0.5);
-                    const newy = center_y + (box.y + box.height <= center_y ? -1 : (center_y < box.y ? 1 : 0)) * (dy + 0.5);
+                    newx = center_x + (box.x + box.width  <= center_x ? -1 : (center_x < box.x ? 1 : 0)) * (dx + 0.5);
+                    newy = center_y + (box.y + box.height <= center_y ? -1 : (center_y < box.y ? 1 : 0)) * (dy + 0.5);
                     if (VALIDATION) {
                         if (!(box.x <= newx && newx < box.x + box.width  && box.y <= newy && newy < box.y + box.height)) {
                             throw new Error("Calculted point is not in box");
                         }
                     }
-                    newBox = new GrowingBox(newx, newy, newsize)
                 }
             }
         }
-        if (!newBox) {
+        if (newx === null || newy === null) {
             throw new Error("Failed to create growing box");
         }
+        const newBox = new Box(Math.floor(newx), Math.floor(newy), newsize, 1, 1);
+        newBox.center_x = newx - newBox.x;
+        newBox.center_y = newy - newBox.y;
         this.setFixedNeighbors(newBox)
         this.growingBoxes.push(newBox)
         this.insertBoxIntoBoard(newBox)

@@ -56,7 +56,7 @@ function drawBox(ctx, box, state) {
         ctx.stroke()
         ctx.fillStyle = 'black'
         ctx.beginPath();
-        ctx.ellipse(box.center_x * PIX_PER_BOX, box.center_y * PIX_PER_BOX, 5, 5, 0, 0, 2 * Math.PI)
+        ctx.ellipse((box.x + box.center_x) * PIX_PER_BOX, (box.y + box.center_y) * PIX_PER_BOX, 5, 5, 0, 0, 2 * Math.PI)
         ctx.fill()
         ctx.stroke()
     } else {
