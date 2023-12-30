@@ -484,7 +484,7 @@ class GameState {
                     didGravity = true;
                 }
             }
-            if (!this.fallingBox && !didGravity && this.growingBoxes.length == 0) {
+            if (!this.fallingBox) {
                 this.nextBox();
                 for (let i = 0; i < this.fallingBox.height; ++i) {
                     for (let j = 0; j < this.fallingBox.width; ++j) {
