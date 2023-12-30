@@ -142,3 +142,27 @@ function scenario8() {
         current_game.nextTick()
     }
 }
+
+function scenario9() {
+    newGame();
+
+    const nonSquareBox = new Box(0, GAME_HEIGHT - 5, 4, 3, 5)
+    current_game.insertFixedBoxIntoBoard(nonSquareBox);
+    current_game.nonSquareBoxes.push(nonSquareBox)
+    current_game.insertFixedBoxIntoBoard(new Box(4, GAME_HEIGHT - 4, 4, 4, 4));
+
+    current_game.running = true;
+    for (let i = 0; i < 8 * 4; ++i) {
+        current_game.nextTick()
+    }
+}
+
+function scenario10() {
+    newGame();
+
+    const nonSquareBox = new Box(0, GAME_HEIGHT - 4, 5, 5, 4)
+    current_game.insertFixedBoxIntoBoard(nonSquareBox);
+    current_game.nonSquareBoxes.push(nonSquareBox)
+    current_game.insertFixedBoxIntoBoard(new Box(8, GAME_HEIGHT - 5, 5, 5, 5)); //Propup
+    current_game.insertFixedBoxIntoBoard(new Box(8 - 4, GAME_HEIGHT - 5 - 5, 5, 5, 5));
+}

@@ -462,6 +462,9 @@ class GameState {
             this.growBoxY(box);
             this.checkTouching(box)
         }
+        if (box.state === BoxState.TO_BE_REMOVED) {
+            return;
+        }
         if (box.width > box.size && (box.width - 1) * box.height >= box.size * box.size) {
             const shrinkLeft = box.center_x > box.width / 2;
             this.removeBoxFromBoard(box)
