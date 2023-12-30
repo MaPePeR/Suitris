@@ -5,6 +5,13 @@ WALL = "WALL!!";
 
 const ALLOW_PUSH = true;
 
+const BoxState = {
+    NEW: "NEW",
+    ACTIVE: "ACTIVE",
+    TO_BE_REMOVED: "TO_BE_REMOVED",
+    REMOVED: "REMOVED",
+}
+
 class Box {
     constructor(x, y, size, width, height) {
         this.x = x;
@@ -12,11 +19,11 @@ class Box {
         this.size = size;
         this.width = width;
         this.height = height;
-        this.fixedIndex = null;
         this.neighbors_t = [];
         this.neighbors_b = [];
         this.neighbors_l = [];
         this.neighbors_r = [];
+        this.state = BoxState.NEW;
     }
 
     bottomY() {
@@ -83,14 +90,21 @@ class GameState {
         return true;
     }
 
-    insertBoxIntoBoard(box) {
-        if (!(box instanceof GrowingBox)) {
-            if (box.fixedIndex !== null) {
-                throw "Box is already in board"
+    insertFixedBoxIntoBoard(box) {
+        if (VALIDATION) {
+            if (this.fixedBoxes.indexOf(box) >= 0) {
+                throw new Error("Box already in fixed boxes array");
             }
-            this.fixedBoxes.push(box)
-            box.fixedIndex = this.fixedBoxes.length - 1
+            if (box instanceof GrowingBox) {
+                throw new Error("Box is GrowingBox, not Box")
+            }
         }
+        this.fixedBoxes.push(box)
+        this.insertBoxIntoBoard(box)
+        this.setFixedNeighbors(box)
+    }
+
+    insertBoxIntoBoard(box) {
         for (let i = 0; i < box.height; ++i) {
             for (let j = 0; j < box.width; ++j) {
                 if (VALIDATION) {
@@ -101,47 +115,20 @@ class GameState {
                 this.board[(box.y + i) * this.width + box.x + j] = box;
             }
         }
-        this.setFixedNeighbors(box)
     }
 
     removeBoxFromBoard(box) {
-        const oldIndex = box.fixedIndex;
-        if (box.fixedIndex !== null) {
-            if (box.fixedIndex == this.fixedBoxes.length - 1) {
-                this.fixedBoxes.pop()
-            } else {
-                const swapBox = this.fixedBoxes.pop()
-                swapBox.fixedIndex = box.fixedIndex
-                this.fixedBoxes[box.fixedIndex] = swapBox
-            }
-        } else {
-            if (box instanceof GrowingBox) {
-                const growingIndex = this.growingBoxes.indexOf(box)
-                if (growingIndex === -1) {
-                    throw new Error("Growing box not found in list of growing boxes")
-                } else {
-                    //TODO: This will result in errors, when the nextTick function iterates over the growing boxes.
-                    // Need to remove growing boxes from list if they are combined into something
-                    swapOut(this.growingBoxes, growingIndex)
-                }
-            } else {
-                console.warn("Removing box from board that does not have fixed index");
-            }
-            if (VALIDATION) {
-                if (this.fixedBoxes.indexOf(box) !== -1) {
-                    throw new Error("Box to remove does not have fixed index, but is in fixedBoxes");
-                }
+        if (VALIDATION) {
+            if (box.state !== BoxState.ACTIVE && box.state !== BoxState.NEW) {
+                throw new Error("Box to be removed is not active");
             }
         }
-        box.fixedIndex = null;
         for (let i = 0; i < box.height; ++i) {
             for (let j = 0; j < box.width; ++j) {
                 if (VALIDATION) {
                     const cell = this.board[(box.y + i) * this.width + box.x + j]
                     if (cell !== box) {
-                        if (oldIndex !== null && cell != null) {
-                            throw new Error("Box in board does not match box to remove at x=" + (box.x + j) + " y=" + (box.y + i))
-                        }
+                        throw new Error("Box in board does not match box to remove at x=" + (box.x + j) + " y=" + (box.y + i))
                     }
                 }
                 this.board[(box.y + i) * this.width + box.x + j] = null;
@@ -225,6 +212,7 @@ class GameState {
             center_x += box.x + 0.5 * box.width;
             center_y += box.y + 0.5 * box.height;
             this.removeBoxFromBoard(box)
+            box.state = BoxState.TO_BE_REMOVED;
         })
         const newsize = boxes[0].size + boxes.length - 1;
         if (newsize > 11) {
@@ -274,6 +262,7 @@ class GameState {
                 let didshift = false;
                 if (ALLOW_PUSH) {
                     this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
+                    this.growingBoxes.forEach((box) => this.setFixedNeighbors(box));
                 }
                 if (direction < 0 && this.fallingBox.neighbors_l.length > 0) {
                     if (ALLOW_PUSH && this.shift(this.fallingBox.neighbors_l, 'x', -1, 'neighbors_l')) {
@@ -289,9 +278,12 @@ class GameState {
                         return;
                     }
                 }
+                this.removeBoxFromBoard(this.fallingBox)
                 this.fallingBox.x = newx;
+                this.insertBoxIntoBoard(this.fallingBox)
                 if (didshift) {
                     this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
+                    this.growingBoxes.forEach((box) => this.setFixedNeighbors(box));
                 }
                 if (this.checkTouching(this.fallingBox)) {
                     this.fallingBox = null;
@@ -303,7 +295,9 @@ class GameState {
     moveDown() {
         if (this.running && this.fallingBox) {
             if (this.canFall(this.fallingBox)) {
+                this.removeBoxFromBoard(this.fallingBox)
                 this.fallingBox.y += 1
+                this.insertBoxIntoBoard(this.fallingBox)
                 if (this.checkTouching(this.fallingBox)) {
                     this.fallingBox = null;
                 }
@@ -354,12 +348,17 @@ class GameState {
     }
 
     growBox(box) {
+        if (VALIDATION) {
+            if (box.state !== BoxState.ACTIVE) {
+                throw new Error("Cannot grow non active box");
+            }
+        }
         this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
         this.setFixedNeighbors(box)
-        this.removeBoxFromBoard(box)
         if (box.width * box.height >= box.size * box.size) {
-            this.insertBoxIntoBoard(new Box(box.x, box.y, box.size, box.width, box.height));
-            this.growingBoxes.splice(this.growingBoxes.indexOf(box), 1) // TODO Remove growing box without searching
+            this.removeBoxFromBoard(box)
+            box.state = BoxState.TO_BE_REMOVED
+            this.insertFixedBoxIntoBoard(new Box(box.x, box.y, box.size, box.width, box.height));
             return;
         }
         if (this.growBoxX(box)) {
@@ -377,11 +376,8 @@ class GameState {
             }
         }
         if (this.checkTouching(box)) {
-            this.growingBoxes.splice(this.growingBoxes.indexOf(box), 1) // TODO Remove growing box without searching
-        } else {
-            this.insertBoxIntoBoard(box)
+            box.state = BoxState.TO_BE_REMOVED;
         }
-        //TODO Option to move the box itself upwards if it cannot grow in width
     }
     growBoxX(box) {
         const free_left = box.neighbors_l.length == 0;
@@ -389,15 +385,21 @@ class GameState {
         const preferLeft = box.center_x < box.x + box.width / 2;
         if (preferLeft && (free_left || (!free_left && !free_right && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')))) {
             if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
+            this.removeBoxFromBoard(box);
             box.width += 1;
             box.x -= 1;
+            this.insertBoxIntoBoard(box);
         } else if (free_right || (!free_left && !free_right && this.shift(box.neighbors_r, 'x', 1, 'neighbors_r'))) {
             if (VALIDATION && this.getRightNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
+            this.removeBoxFromBoard(box);
             box.width += 1;
+            this.insertBoxIntoBoard(box);
         } else if (!preferLeft && (free_left || (!free_left && !free_right && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l')))) {
             if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
+            this.removeBoxFromBoard(box);
             box.width += 1;
             box.x -= 1;
+            this.insertBoxIntoBoard(box);
         } else {
             return false;
         }
@@ -410,20 +412,38 @@ class GameState {
         const prefer_top = box.y + box.height / 2 > box.center_y;
         if (prefer_top && (free_top || (!free_top && !free_bottom &&this.shift(box.neighbors_t, 'y', -1, 'neighbors_t')))) {
             // Top is free
+            this.removeBoxFromBoard(box);
             box.height += 1;
             box.y -= 1;
+            this.insertBoxIntoBoard(box);
             return true;
         }
         if (free_bottom || (!free_top && !free_bottom && this.shift(box.neighbors_b, 'y', 1, 'neighbors_b'))) {
             // Bottom is free
+            this.removeBoxFromBoard(box);
             box.height += 1;
+            this.insertBoxIntoBoard(box);
             return true;
         }
         if (!prefer_top && (free_top || (!free_top && !free_bottom && this.shift(box.neighbors_t, 'y', -1, 'neighbors_t')))) {
             // Top is free
+            this.removeBoxFromBoard(box);
             box.height += 1;
             box.y -= 1;
+            this.insertBoxIntoBoard(box);
             return true;
+        }
+    }
+
+    switchBoxStatesForNextTick(arr) {
+        for (let i = 0; i < arr.length; ++i) {
+            if (arr[i].state === BoxState.TO_BE_REMOVED) {
+                arr[i].state == BoxState.REMOVED;
+                swapOut(arr, i);
+                --i;
+            } else if (arr[i].state === BoxState.NEW) {
+                arr[i].state = BoxState.ACTIVE;
+            }
         }
     }
 
@@ -433,27 +453,27 @@ class GameState {
         console.log(this.board.slice((this.height - 1 ) * this.width))
         if (this.tickCount == 0 && this.fallingBox) {
             if (!this.canFall(this.fallingBox)) {
-                this.insertBoxIntoBoard(this.fallingBox);
+                this.fixedBoxes.push(this.fallingBox);
                 this.fallingBox = null;
             } else {
                 this.moveDown()
             }
         }
-        if (this.fallingBox) {
-            this.insertBoxIntoBoard(this.fallingBox);
-        }
         if (this.growingBoxes.length > 0) {
             for (let i = 0; i < this.growingBoxes.length; ++i) {
+                if (this.growingBoxes[i].state !== BoxState.ACTIVE) {
+                    continue;
+                }
                 this.growBox(this.growingBoxes[i])
             }
-        }
-        if (this.fallingBox) {
-            this.removeBoxFromBoard(this.fallingBox);
         }
         if (this.tickCount == 0 && this.running) {
             let didGravity = false;
             for (let i = 0; i < this.fixedBoxes.length; ++i) {
                 const box = this.fixedBoxes[i];
+                if (box.state !== BoxState.ACTIVE) {
+                    continue;
+                }
                 if (this.canFall(box)) {
                     this.removeBoxFromBoard(box);
                     box.y += 1;
@@ -476,24 +496,26 @@ class GameState {
                         }
                     }
                 }
+                this.fallingBox.state = BoxState.ACTIVE
+                this.insertBoxIntoBoard(this.fallingBox)
             }
         }
+        this.switchBoxStatesForNextTick(this.fixedBoxes)
+        this.switchBoxStatesForNextTick(this.growingBoxes)
+
         if (VALIDATION) {
             for (let y = 0; y < GAME_HEIGHT; ++y) {
                 for (let x = 0; x < GAME_WIDTH; ++x) {
                     const cell = this.board[y * this.width + x];
                     if (cell) {
                         if (cell !== null) {
-                            const number = cell.fixedIndex;
                             if (cell.x <= x && x <= cell.rightX() && cell.y <= y && y <= cell.bottomY()) {
 
                             } else {
                                 throw new Error("Found box in board at wrong place")
                             }
-                            if (number === null) {
-                                if (!(cell instanceof GrowingBox)) {
-                                    throw new Error("Found box in board with fixedIndex=null")
-                                }
+                            if (cell.state !== BoxState.ACTIVE && cell.state !== BoxState.NEW) {
+                                throw new Error("Found box in board that is not active or new");
                             }
                         } else {
                             throw new Error("Found sumething truthy that is null?")
@@ -503,9 +525,6 @@ class GameState {
             }
             for (let i = 0; i < this.fixedBoxes.length; ++i) {
                 const box = this.fixedBoxes[i];
-                if (box.fixedIndex != i) {
-                    throw new Error("Found fixed box with wrong index")
-                }
                 for (let y = box.y; y <= box.bottomY(); ++y) {
                     for (let x = box.x; x <= box.rightX(); ++x) {
                         if (this.board[y * this.width + x] != box) {
@@ -559,7 +578,7 @@ function test_neighbors() {
     const b = [b1, b2, b3];
     [l, r, t, b].forEach(arr => {
         arr.forEach(box => {
-            state.insertBoxIntoBoard(box)
+            state.insertFixedBoxIntoBoard(box)
         });
     });
     [l, r, t, b].forEach(arr => {
@@ -569,7 +588,7 @@ function test_neighbors() {
     });
 
     const box = new Box(1, 1, 3, 3, 3);
-    state.insertBoxIntoBoard(box)
+    state.insertFixedBoxIntoBoard(box)
     state.setFixedNeighbors(box)
     compare_test(state.getBottomNeighbors(box), b, "bottom", box);
     compare_test(state.getTopNeighbors(box), t, "top", box);
