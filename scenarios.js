@@ -1,3 +1,11 @@
+function newGame() {
+    if (current_game) {
+        current_game.running = false;
+        clearInterval(current_game.interval);
+    }
+    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+}
+
 function setFallingBox(box) {
     current_game.fallingBox = box
     current_game.fallingBox.state = BoxState.ACTIVE
@@ -5,11 +13,7 @@ function setFallingBox(box) {
 }
 
 function scenario1() {
-    if (current_game) {
-        current_game.running = false;
-        clearInterval(current_game.interval);
-    }
-    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    newGame();
     current_game.insertFixedBoxIntoBoard(new Box(0, 21, 5, 3, 9));
     setFallingBox(new Box(2, 14, 5, 5, 5));
     current_game.insertFixedBoxIntoBoard(new Box(1, GAME_HEIGHT - 2, 2, 2, 2));
@@ -18,11 +22,7 @@ function scenario1() {
 }
 
 function scenario2() {
-    if (current_game) {
-        current_game.running = false;
-        clearInterval(current_game.interval);
-    }
-    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    newGame();
     current_game.insertFixedBoxIntoBoard(new Box(12, 29, 3, 3, 3));
     setFallingBox(new Box(14, 29 - 3 - 2, 3, 3, 3));
     current_game.insertFixedBoxIntoBoard(new Box(12, 29 - 2, 2, 2, 2));
@@ -30,11 +30,7 @@ function scenario2() {
 }
 
 function scenario3() {
-    if (current_game) {
-        current_game.running = false;
-        clearInterval(current_game.interval);
-    }
-    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    newGame();
     current_game.insertFixedBoxIntoBoard(new Box (12, 29, 1, 1, 1));
     setFallingBox(new Box (12, 26, 1, 1, 1));
     current_game.insertFixedBoxIntoBoard(new Box (11, 30, 2, 2, 2));
@@ -44,11 +40,7 @@ function scenario3() {
 
 
 function scenario4() {
-    if (current_game) {
-        current_game.running = false;
-        clearInterval(current_game.interval);
-    }
-    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    newGame();
     const growingBox = new GrowingBox(11, 26, 7, 5, 5)
     growingBox.center_x = 13.5
     growingBox.center_y = 28
@@ -61,11 +53,7 @@ function scenario4() {
 
 
 function scenario5() {
-    if (current_game) {
-        current_game.running = false;
-        clearInterval(current_game.interval);
-    }
-    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    newGame();
     current_game.insertFixedBoxIntoBoard(new Box(0, 22, 1, 1, 1))
     setFallingBox(new Box(0, 18, 1, 1, 1));
     current_game.insertFixedBoxIntoBoard(new Box(1, 21, 2, 2, 2));
@@ -78,11 +66,7 @@ function scenario5() {
 }
 
 function scenario6() {
-    if (current_game) {
-        current_game.running = false;
-        clearInterval(current_game.interval);
-    }
-    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    newGame();
     current_game.insertFixedBoxIntoBoard(new Box(0, GAME_HEIGHT - 6, 4, 3, 6));
     setFallingBox(new Box(3, GAME_HEIGHT - 6 - 4 - 3, 4, 4, 4));
     current_game.start()
@@ -116,11 +100,7 @@ function scenario6() {
 */
 
 function scenario7() {
-    if (current_game) {
-        current_game.running = false;
-        clearInterval(current_game.interval);
-    }
-    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    newGame();
     setFallingBox(new Box(5, 30, 1, 1, 1));
     current_game.insertFixedBoxIntoBoard(new Box(6, 30, 2, 2, 2));
     current_game.insertFixedBoxIntoBoard(new Box(13, 30, 2, 2, 2));
@@ -147,11 +127,7 @@ function scenario7() {
 }
 
 function scenario8() {
-    if (current_game) {
-        current_game.running = false;
-        clearInterval(current_game.interval);
-    }
-    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    newGame();
     current_game.insertFixedBoxIntoBoard(new Box(0, GAME_HEIGHT - 1, 1, 1,1));
     current_game.insertFixedBoxIntoBoard(new Box(1, GAME_HEIGHT - 3, 3, 3, 3));
     current_game.insertFixedBoxIntoBoard(new Box(4, GAME_HEIGHT - 1, 1, 1, 1));
