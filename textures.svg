@@ -884,7 +884,7 @@
     <use
        x="0"
        y="0"
-       xlink:href="#g30796"
+       xlink:href="#box_size_4"
        id="use37259-2"
        transform="matrix(0.98748053,0,0,0.98748131,12.032173,3.6339815)"
        style="display:inline;stroke-width:1.01268" />
@@ -915,7 +915,7 @@
        style="display:none"
        sodipodi:insensitive="true">
       <g
-         id="g49207"
+         id="box_size_11"
          inkscape:label="box_size_11">
         <rect
            style="display:inline;opacity:1;fill:#028000;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none"
@@ -933,7 +933,7 @@
        style="display:none"
        sodipodi:insensitive="true">
       <g
-         id="g48395"
+         id="box_size_10"
          inkscape:label="box_size_10">
         <rect
            style="display:inline;opacity:1;fill:#00d654;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none"
@@ -951,7 +951,7 @@
        style="display:none"
        sodipodi:insensitive="true">
       <g
-         id="g48392"
+         id="box_size_9"
          inkscape:label="box_size_9">
         <rect
            style="display:inline;opacity:1;fill:#b4ff13;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none"
@@ -969,7 +969,7 @@
        style="display:none"
        sodipodi:insensitive="true">
       <g
-         id="g48389"
+         id="box_size_8"
          inkscape:label="box_size_8">
         <rect
            style="display:inline;opacity:1;fill:#ff5fd4;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none"
@@ -988,7 +988,7 @@
        transform="translate(35.9125,-18.700001)"
        sodipodi:insensitive="true">
       <g
-         id="g48380"
+         id="box_size_7"
          inkscape:label="box_size_7">
         <rect
            style="display:inline;fill:#00ff69;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none"
@@ -1006,7 +1006,7 @@
        style="display:none"
        sodipodi:insensitive="true">
       <g
-         id="g48377"
+         id="box_size_6"
          inkscape:label="box_size_6">
         <rect
            style="display:inline;fill:#ff1318;fill-opacity:1;stroke:#000000;stroke-width:0.264999;stroke-linecap:round"
@@ -1024,7 +1024,7 @@
        style="display:none;stroke-width:0.08;stroke-dasharray:none"
        sodipodi:insensitive="true">
       <g
-         id="g48372"
+         id="box_size_5"
          inkscape:label="box_size_5">
         <rect
            style="display:inline;fill:#ff7313;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none"
@@ -1042,7 +1042,7 @@
        style="display:none"
        sodipodi:insensitive="true">
       <g
-         id="g30796"
+         id="box_size_4"
          inkscape:label="box_size_4"
          style="display:inline;stroke-width:1.19897"
          transform="matrix(0.18909647,0,0,0.18909647,-13.010802,-7.0069895)">
@@ -1093,49 +1093,49 @@
       <use
          x="0"
          y="0"
-         xlink:href="#g30796"
+         xlink:href="#box_size_4"
          id="use37259"
          transform="matrix(0.98748053,0,0,0.98748131,6.0321734,16.032174)"
          style="stroke-width:1.01268" />
       <use
          x="0"
          y="0"
-         xlink:href="#g30796"
+         xlink:href="#box_size_4"
          id="use37259-0"
          transform="matrix(1.481479,0,0,0.74080107,6.0482685,20.024137)"
          style="display:inline;stroke-width:0.954558" />
       <use
          x="0"
          y="0"
-         xlink:href="#g30796"
+         xlink:href="#box_size_4"
          id="use37259-0-2"
          transform="matrix(1.9752573,0,0,0.49387121,3.0643565,23.016091)"
          style="display:inline;stroke-width:1.01247" />
       <use
          x="0"
          y="0"
-         xlink:href="#g30796"
+         xlink:href="#box_size_4"
          id="use37259-0-2-9"
          transform="matrix(3.9519922,0,0,0.24600207,1.1287611,25.008015)"
          style="display:inline;stroke-width:1.0142" />
       <use
          x="0"
          y="0"
-         xlink:href="#g30796"
+         xlink:href="#box_size_4"
          id="use37259-8"
          transform="matrix(0.24493415,0,0,3.9504921,0.00798028,9.0793551)"
          style="display:inline;stroke-width:1.01659" />
       <use
          x="0"
          y="0"
-         xlink:href="#g30796"
+         xlink:href="#box_size_4"
          id="use37259-8-8"
          transform="matrix(0.493764,0,0,1.975295,1.0101109,15.03948)"
          style="display:inline;stroke-width:1.01256" />
       <use
          x="0"
          y="0"
-         xlink:href="#g30796"
+         xlink:href="#box_size_4"
          id="use37259-8-8-8"
          transform="matrix(0.7406188,0,0,1.4815239,3.0241303,14.048271)"
          style="display:inline;stroke-width:0.954651" />
