@@ -17,6 +17,50 @@ const colors = [
 
 const PIX_PER_BOX = 600 / GAME_WIDTH
 
+const $game_object = document.getElementById('game');
+const $game_svg = $game_object.contentDocument.querySelector('svg');
+const $portrait_viewBox_rect = $game_svg.getElementById('portraitViewBox')
+const $landscape_viewBox_rect = $game_svg.getElementById('landscapeViewBox')
+function handleResize() {
+    const width = $game_svg.clientWidth;
+    const height = $game_svg.clientHeight;
+
+    const p_viewBox_height = +$portrait_viewBox_rect.getAttribute('height')
+    const p_viewBox_width = +$portrait_viewBox_rect.getAttribute('width')
+    const p_aspect = p_viewBox_width / p_viewBox_height
+
+    const p_height =  Math.min(height, width / p_aspect)
+    const p_width =  p_height * p_aspect
+    const p_area = p_width * p_height / (p_viewBox_width * p_viewBox_height)
+
+    const l_viewBox_height = +$landscape_viewBox_rect.getAttribute('height')
+    const l_viewBox_width = +$landscape_viewBox_rect.getAttribute('width')
+    const l_aspect = l_viewBox_width / l_viewBox_height
+    
+    const l_height =  Math.min(height, width / l_aspect)
+    const l_width = l_height * l_aspect
+    const l_area = l_width  * l_height / (l_viewBox_width * l_viewBox_height)
+
+    if (p_area > l_area) { // Portrait Mode
+        const pix_per_n = (width / p_viewBox_width)
+        const dx = Math.max(0, (width - p_width) / pix_per_n)
+        const dy = Math.max(0, (height - p_height) / pix_per_n)
+        const portrait_viewBox_string = `${$portrait_viewBox_rect.getAttribute('x') - dx/2} ${+$portrait_viewBox_rect.getAttribute('y') - dy} ${p_viewBox_width + dx} ${p_viewBox_height + dy}`
+        $game_svg.setAttribute('viewBox', portrait_viewBox_string)
+    } else { // Landscape Mode
+        const pix_per_n = (width / l_viewBox_width)
+        const dx = Math.max(0, (width - l_width) / pix_per_n)
+        const dy = Math.max(0, (height - l_height) / pix_per_n)
+        const landscape_viewBox_string = `${$landscape_viewBox_rect.getAttribute('x') -dx/2} ${+$landscape_viewBox_rect.getAttribute('y') - dy} ${l_viewBox_width + dx} ${l_viewBox_height + dy}`
+        $game_svg.setAttribute('viewBox', landscape_viewBox_string)
+    }
+    $game_svg.setAttribute('width', width)
+    $game_svg.setAttribute('height', height)
+}
+window.addEventListener('resize', handleResize)
+handleResize()
+
+
 async function getEl(id) {
     const el = document.getElementById(id)
     if (el) {
