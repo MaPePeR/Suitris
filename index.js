@@ -47,12 +47,16 @@ function handleResize() {
         const dy = Math.max(0, (height - p_height) / pix_per_n)
         const portrait_viewBox_string = `${$portrait_viewBox_rect.getAttribute('x') - dx/2} ${+$portrait_viewBox_rect.getAttribute('y') - dy} ${p_viewBox_width + dx} ${p_viewBox_height + dy}`
         $game_svg.setAttribute('viewBox', portrait_viewBox_string)
+        $game_svg.classList.remove('landscape')
+        $game_svg.classList.add('portrait')
     } else { // Landscape Mode
         const pix_per_n = (width / l_viewBox_width)
         const dx = Math.max(0, (width - l_width) / pix_per_n)
         const dy = Math.max(0, (height - l_height) / pix_per_n)
         const landscape_viewBox_string = `${$landscape_viewBox_rect.getAttribute('x') -dx/2} ${+$landscape_viewBox_rect.getAttribute('y') - dy} ${l_viewBox_width + dx} ${l_viewBox_height + dy}`
         $game_svg.setAttribute('viewBox', landscape_viewBox_string)
+        $game_svg.classList.add('landscape')
+        $game_svg.classList.remove('portrait')
     }
     $game_svg.setAttribute('width', width)
     $game_svg.setAttribute('height', height)
