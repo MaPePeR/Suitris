@@ -25,15 +25,15 @@
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="1.4142136"
-     inkscape:cx="-42.072854"
-     inkscape:cy="362.03867"
+     inkscape:zoom="0.70710678"
+     inkscape:cx="717.71338"
+     inkscape:cy="755.19004"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="layer9">
+     inkscape:current-layer="svg5">
     <inkscape:grid
        type="xygrid"
        id="grid132"
@@ -678,7 +678,7 @@
      inkscape:label="Background"
      style="display:inline">
     <rect
-       style="opacity:1;fill:#97ffe5;fill-opacity:1;stroke:none;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+       style="display:inline;opacity:1;fill:#97ffe5;fill-opacity:1;stroke:none;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
        id="rect54298"
        width="126.33734"
        height="102.5"
@@ -686,7 +686,7 @@
        y="-28"
        inkscape:label="Wallbackground" />
     <rect
-       style="opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.16;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+       style="display:inline;opacity:1;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.16;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
        id="rect61500"
        width="300.00006"
        height="10"
@@ -696,7 +696,50 @@
     <g
        id="g59659"
        inkscape:label="machine"
-       transform="translate(-4.0000014,-8)">
+       transform="translate(-4.0000014,-8)"
+       style="display:inline">
+      <path
+         style="display:inline;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.04px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="m 2.9999997,59.5 v 1 L 0.99999967,61 H 5.9999996 L 3.9999997,60.5 v -1"
+         id="path62598"
+         transform="translate(4.0000014,8)" />
+      <use
+         x="0"
+         y="0"
+         xlink:href="#path62598"
+         id="use62600"
+         transform="translate(20.5)"
+         style="display:inline" />
+      <rect
+         style="display:none;opacity:0.358434;fill:#adff2f;fill-opacity:1;stroke:none;stroke-width:0.04;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+         id="rect50745"
+         width="12"
+         height="12"
+         x="18"
+         y="36"
+         inkscape:label="arrow_down_area"
+         sodipodi:insensitive="true"
+         transform="translate(4.0000014,8)" />
+      <rect
+         style="display:none;opacity:0.358434;fill:#ff8c00;fill-opacity:1;stroke:none;stroke-width:0.04;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+         id="rect50745-2"
+         width="12"
+         height="11.999998"
+         x="11.999998"
+         y="48"
+         inkscape:label="arrow_right_area"
+         sodipodi:insensitive="true"
+         transform="translate(4.0000014,8)" />
+      <rect
+         style="display:none;opacity:0.358434;fill:#1e90ff;fill-opacity:1;stroke:none;stroke-width:0.04;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+         id="rect50747"
+         width="12"
+         height="12"
+         x="5.9999995"
+         y="36"
+         inkscape:label="arrow_left_area"
+         sodipodi:insensitive="true"
+         transform="translate(4.0000014,8)" />
       <rect
          style="display:inline;opacity:1;fill:#9f9f9f;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
          id="rect59415"
@@ -735,37 +778,24 @@
          id="use59794-3"
          transform="rotate(-90,19,53)"
          style="display:inline" />
-      <path
-         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.04px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         d="M 5,42.5 6,41 h 20 l 1,1.5 z"
-         id="path60648" />
     </g>
     <rect
-       style="display:none;opacity:0.358434;fill:#adff2f;fill-opacity:1;stroke:none;stroke-width:0.04;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
-       id="rect50745"
-       width="12"
-       height="12"
-       x="18"
-       y="36"
-       inkscape:label="arrow_down_area"
+       style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.07996;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+       id="machineLandscapePos"
+       width="31.5"
+       height="26.5"
+       x="28.5"
+       y="8"
+       inkscape:label="machineLandscapePos"
        sodipodi:insensitive="true" />
     <rect
-       style="display:none;opacity:0.358434;fill:#ff8c00;fill-opacity:1;stroke:none;stroke-width:0.04;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
-       id="rect50745-2"
-       width="12"
-       height="11.999998"
-       x="11.999998"
-       y="48"
-       inkscape:label="arrow_right_area"
-       sodipodi:insensitive="true" />
-    <rect
-       style="display:none;opacity:0.358434;fill:#1e90ff;fill-opacity:1;stroke:none;stroke-width:0.04;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
-       id="rect50747"
-       width="12"
-       height="12"
-       x="5.9999995"
-       y="36"
-       inkscape:label="arrow_left_area"
+       style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.07996;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+       id="machineVerticalPos"
+       width="31.5"
+       height="26.5"
+       x="-2"
+       y="34.5"
+       inkscape:label="machineVerticalPos"
        sodipodi:insensitive="true" />
     <g
        id="g57611"
@@ -811,6 +841,10 @@
        style="display:inline"
        transform="translate(-4.0000014,-8)">
       <path
+         style="display:inline;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.04px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         d="M 5,42.5 6,41 h 20 l 1,1.5 z"
+         id="path60648" />
+      <path
          id="rect50879"
          style="opacity:1;fill:#ffffff;fill-opacity:0.6;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
          d="M 9.489373,40 H 5 C 4.4460006,40 4,39.553999 4,39 V 9 C 4,8.5 4,8 3.5,8 3,8 3,8.5 3,9 v 30 c 0,1.107999 0.8920011,2 2,2 h 22 c 1.107999,0 2,-0.892001 2,-2 V 9 C 29,8.5 29,8 28.5,8 28,8 28,8.5 28,9 v 30 c 0,0.553999 -0.446001,1 -1,1 h -4.5 m -1,0 h -5 m -1,0 h -5"
@@ -825,7 +859,9 @@
     <g
        id="g61446"
        inkscape:label="conveyer"
-       transform="translate(-4.0000014,-8)">
+       transform="translate(-4.0000014,-8)"
+       style="display:inline"
+       sodipodi:insensitive="true">
       <circle
          style="opacity:1;fill:#d8d8d8;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
          id="path61428"
@@ -844,16 +880,6 @@
          d="M 40.5,6.5 C 40.776142,6.5 41,6.7238576 41,7 41,7.2761424 40.776142,7.5 40.5,7.5 M 23,7.5 C 22.723858,7.5 22.5,7.2761424 22.5,7 22.5,6.7238576 22.723858,6.5 23,6.5 m 0,1 H 40.5 M 23,6.5 h 17.5"
          sodipodi:nodetypes="csccsccccc" />
     </g>
-    <path
-       style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.04px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-       d="m 2.9999997,59.5 v 1 L 0.99999967,61 H 5.9999996 L 3.9999997,60.5 v -1"
-       id="path62598" />
-    <use
-       x="0"
-       y="0"
-       xlink:href="#path62598"
-       id="use62600"
-       transform="translate(20.5)" />
   </g>
   <g
      inkscape:label="Ebene 1"
@@ -1839,4 +1865,22 @@
       </g>
     </g>
   </g>
+  <rect
+     style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.07996;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+     id="portraitViewBox"
+     width="34.5"
+     height="69"
+     x="-4"
+     y="-8"
+     inkscape:label="portraitViewBox"
+     sodipodi:insensitive="true" />
+  <rect
+     style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.07996;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+     id="landscapeViewBox"
+     width="65"
+     height="42.5"
+     x="-4"
+     y="-8"
+     inkscape:label="landscapeViewBox"
+     sodipodi:insensitive="true" />
 </svg>
