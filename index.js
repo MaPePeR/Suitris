@@ -95,6 +95,7 @@ class SVGRenderer {
             console.log("Creating box for", box)
             box.domEl = document.createElementNS('http://www.w3.org/2000/svg', 'use')
             box.domEl.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#box_size_${box.size}`)
+            box.domEl.classList.add('animatedbox')
             console.log("Creating box for", box.domEl)
             $board.appendChild(box.domEl)
         }

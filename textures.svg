@@ -26,6 +26,9 @@ svg.portrait #machine_portrait {
 }
 svg.landscape #machine_portrait {
     display: none !important;
+}
+.animatedbox {
+   transition: transform 0.125s linear
 }</style>
   <sodipodi:namedview
      id="namedview7"
