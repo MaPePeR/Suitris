@@ -134,3 +134,9 @@ function start() {
     current_game = new GameState(GAME_WIDTH, GAME_HEIGHT, new SVGRenderer())
     current_game.start()
 }
+
+const $startbutton = $game_svg.getElementById('startbutton')
+$startbutton.addEventListener('click', () => {
+    $startbutton.style.display = 'none';
+    start()
+})

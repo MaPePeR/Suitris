@@ -60,6 +60,12 @@ svg.landscape #machine_portrait {
   </sodipodi:namedview>
   <defs
      id="defs2">
+    <rect
+       x="75"
+       y="1087.5"
+       width="737.5"
+       height="225"
+       id="rect7396" />
     <pattern
        inkscape:collect="always"
        xlink:href="#Checkerboard"
@@ -948,6 +954,29 @@ svg.landscape #machine_portrait {
          id="use59794-3"
          transform="rotate(-90,19,53)"
          style="display:inline" />
+      <g
+         id="startbutton"
+         inkscape:label="startbutton"
+         style="display:inline;user-select: none;cursor: pointer;">
+        <rect
+           style="opacity:1;fill:#6f6f6f;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+           id="rect4895"
+           width="30"
+           height="23"
+           x="3"
+           y="43.5"
+           ry="1.5" />
+        <text
+           xml:space="preserve"
+           transform="matrix(0.04,0,0,0.04,-0.06937452,7.1693935)"
+           id="text7394"
+           style="font-size:192px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect7396);shape-padding:1.41421;display:inline;fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"><tspan
+             x="130.90625"
+             y="1261.8589"
+             id="tspan8250"><tspan
+               style="font-weight:bold;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans Bold';fill:#d8d8d8"
+               id="tspan8248">START</tspan></tspan></text>
+      </g>
     </g>
   </g>
   <g
