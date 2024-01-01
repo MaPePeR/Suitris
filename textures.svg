@@ -769,14 +769,18 @@ svg.landscape #machine_portrait {
          transform="translate(12)"
          style="display:inline" />
     </g>
-    <rect
-       style="display:none;opacity:0.337349;fill:url(#pattern53427);fill-opacity:1;stroke:none;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
-       id="rect50882"
-       width="24"
-       height="32"
-       x="0"
-       y="0"
-       inkscape:label="board" />
+    <g
+       id="board">
+      <rect
+         style="display:none;opacity:0.337349;fill:url(#pattern53427);fill-opacity:1;stroke:none;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+         id="boardpattern"
+         width="24"
+         height="32"
+         x="0"
+         y="0"
+         inkscape:label="board"
+         sodipodi:insensitive="true" />
+    </g>
     <g
        id="g52519"
        inkscape:label="container"
@@ -831,7 +835,7 @@ svg.landscape #machine_portrait {
     <use
        x="0"
        y="0"
-       xlink:href="#use43210"
+       xlink:href="#box_size_1"
        id="use43218-3"
        transform="matrix(0.95054843,0,0,0.95054846,-18.793994,-42.973906)"
        style="display:inline;stroke-width:1.05202" />
@@ -976,8 +980,8 @@ svg.landscape #machine_portrait {
            id="rect368"
            width="11"
            height="11"
-           x="-8.9406971e-10"
-           y="-8.9406971e-10" />
+           x="0"
+           y="0" />
       </g>
     </g>
     <g
@@ -994,8 +998,8 @@ svg.landscape #machine_portrait {
            id="rect366"
            width="10"
            height="10"
-           x="-9.1092162e-10"
-           y="-9.1092162e-10" />
+           x="0"
+           y="0" />
       </g>
     </g>
     <g
@@ -1012,8 +1016,8 @@ svg.landscape #machine_portrait {
            id="rect364"
            width="9"
            height="9"
-           x="-9.1709945e-10"
-           y="-9.1709945e-10" />
+           x="0"
+           y="0" />
       </g>
     </g>
     <g
@@ -1039,7 +1043,6 @@ svg.landscape #machine_portrait {
        id="layer12"
        inkscape:label="Size7Pear"
        style="display:none"
-       transform="translate(35.9125,-18.700001)"
        sodipodi:insensitive="true">
       <g
          id="box_size_7"
@@ -1047,10 +1050,10 @@ svg.landscape #machine_portrait {
         <rect
            style="display:inline;fill:#00ff69;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none"
            id="rect358"
-           width="6.9999986"
+           width="7"
            height="7"
-           x="-35.912498"
-           y="18.700001" />
+           x="0"
+           y="0" />
       </g>
     </g>
     <g
@@ -1869,18 +1872,17 @@ svg.landscape #machine_portrait {
        inkscape:groupmode="layer"
        id="layer7"
        inkscape:label="Size1Cherry"
-       transform="translate(-21.166666,-52.916664)"
-       style="display:inline"
+       style="display:none"
        sodipodi:insensitive="true">
       <use
          x="0"
          y="0"
-         xlink:href="#use43210"
+         xlink:href="#box_size_1"
          id="use43218"
          transform="matrix(0.92592589,0,0,0.9259259,3.604939,3.956791)"
          style="display:inline;stroke-width:1.05202" />
       <g
-         id="use43210"
+         id="box_size_1"
          inkscape:label="box_size_1"
          style="display:inline;stroke-width:0.08;stroke-dasharray:none">
         <rect
@@ -1888,8 +1890,8 @@ svg.landscape #machine_portrait {
            id="rect43214"
            width="1"
            height="1"
-           x="21.166666"
-           y="52.916664" />
+           x="0"
+           y="0" />
       </g>
     </g>
   </g>

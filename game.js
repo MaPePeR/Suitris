@@ -47,7 +47,7 @@ function swapOut(arr, idx) {
 }
 
 class GameState {
-    constructor(width, height) {
+    constructor(width, height, renderer) {
         this.width = width;
         this.height = height;
         this.board = new Array(width * height);
@@ -59,6 +59,7 @@ class GameState {
         this.running = false;
         this.tickCount = 0;
         this.gravityTick = 0;
+        this.renderer = renderer;
     }
 
     start() {
@@ -567,6 +568,7 @@ class GameState {
                 this.insertBoxIntoBoard(this.fallingBox)
             }
         }
+        this.renderer.render(this)
         this.switchBoxStatesForNextTick(this.fixedBoxes)
         this.switchBoxStatesForNextTick(this.growingBoxes)
 
