@@ -28,7 +28,8 @@ svg.landscape #machine_portrait {
     display: none !important;
 }
 .animatedbox {
-   transition: transform 0.125s linear
+   transition: transform 0.125s linear;
+   will-change: transform;
 }
 
 #startbutton {
