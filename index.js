@@ -86,24 +86,36 @@ function down() {
     current_game.renderer.render(current_game)
 }
 
-function handleKeyPress(e) {
-    if (!current_game) return;
-    if (e.code === "ArrowLeft") {
-        left()
-    } else if (e.code === "ArrowRight") {
-        right()
-    } else if (e.code === "ArrowDown") {
-        down()
+function repeatEvent($element, downevent, upevent, handler, filter) {
+    let interval = null;
+    function downhandler(ev) {
+        if (interval || (filter && !filter(ev))) return;
+        handler()
+        interval = setInterval(handler, 50)
+    }
+    function uphandler(ev) {
+        if (!interval || (filter && !filter(ev))) return;
+        clearInterval(interval)
+        interval = null;
+    }
+    for(const e of downevent.split(" ")) {
+        $element.addEventListener(e, downhandler)
+    }
+    for(const e of upevent.split(" ")) {
+        $element.addEventListener(e, uphandler)
     }
 }
-document.addEventListener('keydown', handleKeyPress);
-$game_svg.addEventListener('keydown', handleKeyPress);
-$game_svg.getElementById('arrow_left_area').addEventListener('click', left)
-$game_svg.getElementById('arrow_right_area').addEventListener('click', right)
-$game_svg.getElementById('arrow_down_area').addEventListener('click', down)
 
+repeatEvent(document, 'keydown', 'keyup', left, (ev) => ev.code === "ArrowLeft")
+repeatEvent(document, 'keydown', 'keyup', right, (ev) => ev.code === "ArrowRight")
+repeatEvent(document, 'keydown', 'keyup', down, (ev) => ev.code === "ArrowDown")
+repeatEvent($game_svg, 'keydown', 'keyup', left, (ev) => ev.code === "ArrowLeft")
+repeatEvent($game_svg, 'keydown', 'keyup', right, (ev) => ev.code === "ArrowRight")
+repeatEvent($game_svg, 'keydown', 'keyup', down, (ev) => ev.code === "ArrowDown")
 
-
+repeatEvent($game_svg.getElementById('arrow_left_area'), 'mousedown touchstart', 'mouseup mouseleave touchend', left)
+repeatEvent($game_svg.getElementById('arrow_right_area'), 'mousedown touchstart', 'mouseup mouseleave touchend', right)
+repeatEvent($game_svg.getElementById('arrow_down_area'), 'mousedown touchstart', 'mouseup mouseleave touchend', down)
 const $board = $game_svg.getElementById('board')
 
 class SVGRenderer {
