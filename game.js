@@ -12,8 +12,10 @@ const BoxState = {
     REMOVED: "REMOVED",
 }
 
+let boxcount = 0;
 class Box {
     constructor(x, y, size, width, height) {
+        this.id = boxcount++;
         this.x = x;
         this.y = y;
         this.center_x = width / 2;
