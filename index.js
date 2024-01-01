@@ -89,20 +89,22 @@ function down() {
 function repeatEvent($element, downevent, upevent, handler, filter) {
     let interval = null;
     function downhandler(ev) {
-        if (interval || (filter && !filter(ev))) return;
+        if (interval !== null || (filter && !filter(ev))) return;
         handler()
-        interval = setInterval(handler, 50)
+        interval = setInterval(handler, 100)
+        ev.preventDefault()
     }
     function uphandler(ev) {
-        if (!interval || (filter && !filter(ev))) return;
+        if (interval === null || (filter && !filter(ev))) return;
         clearInterval(interval)
         interval = null;
+        ev.preventDefault()
     }
     for(const e of downevent.split(" ")) {
-        $element.addEventListener(e, downhandler, {passive: true})
+        $element.addEventListener(e, downhandler, {passive: false})
     }
     for(const e of upevent.split(" ")) {
-        $element.addEventListener(e, uphandler, {passive: true})
+        $element.addEventListener(e, uphandler, {passive: false})
     }
 }
 
@@ -113,9 +115,9 @@ repeatEvent($game_svg, 'keydown', 'keyup', left, (ev) => ev.code === "ArrowLeft"
 repeatEvent($game_svg, 'keydown', 'keyup', right, (ev) => ev.code === "ArrowRight")
 repeatEvent($game_svg, 'keydown', 'keyup', down, (ev) => ev.code === "ArrowDown")
 
-repeatEvent($game_svg.getElementById('arrow_left_area'), 'mousedown touchstart', 'mouseup mouseleave touchend', left)
-repeatEvent($game_svg.getElementById('arrow_right_area'), 'mousedown touchstart', 'mouseup mouseleave touchend', right)
-repeatEvent($game_svg.getElementById('arrow_down_area'), 'mousedown touchstart', 'mouseup mouseleave touchend', down)
+repeatEvent($game_svg.getElementById('arrow_left_area'), 'mousedown touchstart', 'mouseup mouseleave touchend touchcancel', left)
+repeatEvent($game_svg.getElementById('arrow_right_area'), 'mousedown touchstart', 'mouseup mouseleave touchend touchcancel', right)
+repeatEvent($game_svg.getElementById('arrow_down_area'), 'mousedown touchstart', 'mouseup mouseleave touchend touchcancel', down)
 const $board = $game_svg.getElementById('board')
 
 
