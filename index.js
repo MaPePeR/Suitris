@@ -68,21 +68,39 @@ handleResize()
 
 let current_game = null;
 
+function left() {
+    if (!current_game) return;
+    current_game.move(-1);
+    current_game.renderer.render(current_game)
+}
+
+function right() {
+    if (!current_game) return;
+    current_game.move(1);
+    current_game.renderer.render(current_game)
+}
+
+function down() {
+    if (!current_game) return;
+    current_game.moveDown();
+    current_game.renderer.render(current_game)
+}
+
 function handleKeyPress(e) {
     if (!current_game) return;
     if (e.code === "ArrowLeft") {
-        current_game.move(-1);
+        left()
     } else if (e.code === "ArrowRight") {
-        current_game.move(1);
+        right()
     } else if (e.code === "ArrowDown") {
-        current_game.moveDown();
-    } else {
-        return;
+        down()
     }
-    current_game.renderer.render(current_game)
 }
 document.addEventListener('keydown', handleKeyPress);
 $game_svg.addEventListener('keydown', handleKeyPress);
+$game_svg.getElementById('arrow_left_area').addEventListener('click', left)
+$game_svg.getElementById('arrow_right_area').addEventListener('click', right)
+$game_svg.getElementById('arrow_down_area').addEventListener('click', down)
 
 
 
