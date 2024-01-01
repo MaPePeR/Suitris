@@ -497,10 +497,10 @@ class GameState {
     }
 
     nextTick() {
-        this.tickCount = (this.tickCount + 1) % 4;
+        this.tickCount = this.tickCount + 1;
         console.log(this.tickCount, "tick", this.fallingBox, this.growingBoxes.length, this.fixedBoxes.length)
         console.log(this.board.slice((this.height - 1 ) * this.width))
-        if (this.tickCount == 0 && this.fallingBox) {
+        if (this.tickCount % 4 == 0 && this.fallingBox) {
             if (!this.canFall(this.fallingBox)) {
                 this.fixedBoxes.push(this.fallingBox);
                 this.fallingBox = null;
@@ -527,7 +527,7 @@ class GameState {
                 this.growBox(this.growingBoxes[i])
             }
         }
-        if (this.tickCount == 0 && this.running) {
+        if (this.tickCount % 4 == 0 && this.running) {
             this.gravityTick = (this.gravityTick + 1) % 2
             let didGravity = false;
             do {
