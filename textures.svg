@@ -29,6 +29,14 @@ svg.landscape #machine_portrait {
 }
 .animatedbox {
    transition: transform 0.125s linear
+}
+
+#startbutton {
+cursor: pointer;
+user-select: none;
+}
+#button {
+cursor: pointer;
 }</style>
   <sodipodi:namedview
      id="namedview7"
@@ -957,7 +965,7 @@ svg.landscape #machine_portrait {
       <g
          id="startbutton"
          inkscape:label="startbutton"
-         style="display:inline;user-select: none;cursor: pointer;">
+         style="display:inline">
         <rect
            style="opacity:1;fill:#6f6f6f;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
            id="rect4895"
