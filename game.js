@@ -62,6 +62,7 @@ class GameState {
         this.tickCount = 0;
         this.gravityTick = 0;
         this.renderer = renderer;
+        this.upcomingSize = this.randomSize()
     }
 
     start() {
@@ -69,12 +70,17 @@ class GameState {
         this.interval = setInterval(this.nextTick.bind(this), 500 / 4);
     }
 
+    randomSize() {
+        return 1 + Math.floor(Math.random() * 4)
+    }
+
     nextBox() {
         if (this.fallingBox) {
             throw "Invalid state. Already have falling box";
         }
-        const size = 1 + Math.floor(Math.random() * 4)
+        const size = this.upcomingSize
         this.fallingBox = new Box(Math.floor(this.width / 2) - Math.floor(size / 2), 0, size, size, size);
+        this.upcomingSize = this.randomSize()
     }
 
     canFall(box) {

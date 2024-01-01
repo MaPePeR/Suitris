@@ -118,7 +118,16 @@ repeatEvent($game_svg.getElementById('arrow_right_area'), 'mousedown touchstart'
 repeatEvent($game_svg.getElementById('arrow_down_area'), 'mousedown touchstart', 'mouseup mouseleave touchend', down)
 const $board = $game_svg.getElementById('board')
 
+
+
+$upcomingBox = $game_svg.getElementById('nextBox')
+
 class SVGRenderer {
+
+    constructor() {
+        this.lastFalling = null;
+        this.upcomingSize = null;
+    }
 
     drawBox(box) {
         if (!box.domEl) {
@@ -158,6 +167,11 @@ class SVGRenderer {
                 continue
             }
             this.drawBox(box)
+        }
+        if (this.upcomingSize === null || this.upcomingSize !== game.upcomingSize) {
+            this.upcomingSize = game.upcomingSize
+            $upcomingBox.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#box_size_${this.upcomingSize}`)
+            $upcomingBox.setAttribute('transform', `translate(${-this.upcomingSize + 1}, ${-this.upcomingSize + 1})`)
         }
     }
     gameOver() {
