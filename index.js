@@ -152,7 +152,9 @@ class SVGRenderer {
         }
         for (const box of game.growingBoxes) {
             if (box.state == BoxState.TO_BE_REMOVED) {
-                box.domEl.remove()
+                if (box.domEl) {
+                    box.domEl.remove()
+                }
                 continue
             }
             this.drawBox(box)
