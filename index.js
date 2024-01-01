@@ -16,7 +16,7 @@ const colors = [
 ]
 
 const PIX_PER_BOX = 600 / GAME_WIDTH
-
+function setup() {
 const $game_object = document.getElementById('game');
 const $game_svg = $game_object.contentDocument.querySelector('svg');
 const $portrait_viewBox_rect = $game_svg.getElementById('portraitViewBox')
@@ -166,3 +166,5 @@ $startbutton.addEventListener('click', () => {
     $startbutton.style.display = 'none';
     start()
 })
+
+}

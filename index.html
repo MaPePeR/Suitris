@@ -16,11 +16,11 @@
             height: 100%;
         }
     </style>
-    <script src="game.js" defer></script>
-    <script src="index.js" defer></script>
+    <script src="game.js"></script>
+    <script src="index.js"></script>
 </head>
 <body>
-    <object id="game" type="image/svg+xml" data="textures.svg">
+    <object id="game" onload="setup()" type="image/svg+xml" data="textures.svg">
         Your browser does not support SVG Objects
     </object>
 </body>
