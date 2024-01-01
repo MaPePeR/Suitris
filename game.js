@@ -208,6 +208,9 @@ class GameState {
             center_y += box.y + 0.5 * box.height;
             this.removeBoxFromBoard(box)
             box.state = BoxState.TO_BE_REMOVED;
+            if (box === this.fallingBox) {
+                this.fallingBox = null;
+            }
         })
         const newsize = boxes[0].size + boxes.length - 1;
         if (newsize > 11) {

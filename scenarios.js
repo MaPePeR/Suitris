@@ -3,7 +3,7 @@ function newGame() {
         current_game.running = false;
         clearInterval(current_game.interval);
     }
-    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT)
+    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT, new SVGRenderer())
 }
 
 function setFallingBox(box) {
@@ -165,4 +165,33 @@ function scenario10() {
     current_game.nonSquareBoxes.push(nonSquareBox)
     current_game.insertFixedBoxIntoBoard(new Box(8, GAME_HEIGHT - 5, 5, 5, 5)); //Propup
     current_game.insertFixedBoxIntoBoard(new Box(8 - 4, GAME_HEIGHT - 5 - 5, 5, 5, 5));
+}
+function scenario12() {
+    newGame();
+    current_game.insertFixedBoxIntoBoard(new Box(0, GAME_HEIGHT - 6, 6, 6, 6))
+    current_game.insertFixedBoxIntoBoard(new Box(6, GAME_HEIGHT - 7, 7, 7, 7))
+    current_game.insertFixedBoxIntoBoard(new Box(6 + 7, GAME_HEIGHT - 8, 8, 8, 8))
+    current_game.insertFixedBoxIntoBoard(new Box(6 + 7 + 8, GAME_HEIGHT - 8, 4, 3, 5))
+
+    current_game.insertFixedBoxIntoBoard(new Box(0, GAME_HEIGHT - 6 - 5, 5, 5, 5))
+    current_game.insertFixedBoxIntoBoard(new Box(5, GAME_HEIGHT - 6 - 5, 4, 4, 4))
+
+    current_game.insertFixedBoxIntoBoard(new Box(8, 22 - 4, 3, 3, 3)) // 1
+    current_game.insertFixedBoxIntoBoard(new Box(10, 22, 3, 3, 3)) // 2
+    setFallingBox(new Box(5 - 1, 15 - 1, 4, 4, 4))
+
+    current_game.tickCount = 2
+    current_game.running = true
+    debugger
+    current_game.nextTick() // Make Boxes not NEW
+    current_game.moveDown()
+    current_game.move(1) // Push 1 to the right
+    current_game.nextTick() // 1 and 2 touch
+    current_game.nextTick()
+    current_game.move(1)
+    current_game.nextTick()
+    current_game.move(1)
+    current_game.nextTick() // growing box and 3 touch
+    current_game.move(1)
+
 }
