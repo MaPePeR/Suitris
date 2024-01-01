@@ -146,9 +146,17 @@ class SVGRenderer {
             this.drawBox(box)
         }
     }
+    gameOver() {
+        $startbutton.style.display = 'inline';
+    }
 }
 
 function start() {
+    if (current_game) {
+        for(const el of $board.querySelectorAll('.animatedbox')) {
+            el.remove();
+        }
+    }
     current_game = new GameState(GAME_WIDTH, GAME_HEIGHT, new SVGRenderer())
     current_game.start()
 }

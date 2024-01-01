@@ -565,6 +565,7 @@ class GameState {
                             this.running = false;
                             clearInterval(this.interval);
                             console.log("Game over");
+                            this.renderer.gameOver();
                             return;
                         }
                     }
