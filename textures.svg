@@ -728,18 +728,9 @@ cursor: pointer;
        y="0"
        xlink:href="#machine"
        id="machine_landscape"
-       transform="translate(30.500001,-26.5)"
+       transform="translate(29.388887,-23.555558)"
        inkscape:label="machine_landscape"
        style="display:inline" />
-    <rect
-       style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.07996;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
-       id="machineLandscapePos"
-       width="31.5"
-       height="26.5"
-       x="28.5"
-       y="8"
-       inkscape:label="machineLandscapePos"
-       sodipodi:insensitive="true" />
     <use
        x="0"
        y="0"
@@ -747,15 +738,6 @@ cursor: pointer;
        id="machine_portrait"
        style="display:inline"
        inkscape:label="machine_portrait" />
-    <rect
-       style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.07996;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
-       id="machineVerticalPos"
-       width="31.5"
-       height="26.5"
-       x="-2"
-       y="34.5"
-       inkscape:label="machineVerticalPos"
-       sodipodi:insensitive="true" />
     <g
        id="g57611"
        inkscape:label="containerbackground"
@@ -884,29 +866,30 @@ cursor: pointer;
        style="display:inline">
       <path
          style="display:inline;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.04px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         d="m 2.9999997,59.5 v 1 L 0.99999967,61 H 5.9999996 L 3.9999997,60.5 v -1"
-         id="path62598"
-         transform="translate(4.0000014,8)" />
+         d="m 6.4444458,64.722225 v 0.888889 l -1.777778,0.444444 H 9.1111126 L 7.3333347,65.611114 v -0.888889"
+         id="path62598" />
       <use
          x="0"
          y="0"
          xlink:href="#path62598"
          id="use62600"
-         transform="translate(20.5)"
-         style="display:inline" />
+         transform="translate(18.222224)"
+         style="display:inline;stroke-width:1.125" />
       <rect
          style="display:inline;opacity:1;fill:#9f9f9f;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
          id="rect59415"
-         width="31.5"
-         height="25"
+         width="28.000002"
+         height="22.222223"
          x="2"
          y="42.5"
-         ry="1.5" />
+         ry="1.3333335" />
       <g
          id="g59792"
-         inkscape:label="button">
+         inkscape:label="button"
+         transform="matrix(0.88888896,0,0,0.88888896,0.22222209,4.7222194)"
+         style="stroke-width:1.125">
         <rect
-           style="opacity:1;fill:#6f6f6f;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#6f6f6f;fill-opacity:1;stroke:#000000;stroke-width:0.09;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
            id="rect59770"
            width="9"
            height="9"
@@ -916,7 +899,7 @@ cursor: pointer;
            ry="1.5" />
         <path
            id="rect59776"
-           style="opacity:1;fill:#d8d8d8;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#d8d8d8;fill-opacity:1;stroke:#000000;stroke-width:0.09;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
            d="M 21,59.5 V 62 h -1 l 2,2.5 2,-2.5 h -1 v -2.5 z" />
       </g>
       <use
@@ -924,14 +907,15 @@ cursor: pointer;
          y="0"
          xlink:href="#g59792"
          id="use59794"
-         transform="rotate(90,25,53)" />
+         transform="rotate(90,22.444446,51.833334)"
+         style="stroke-width:1.125" />
       <use
          x="0"
          y="0"
          xlink:href="#g59792"
          id="use59794-3"
-         transform="rotate(-90,19,53)"
-         style="display:inline" />
+         transform="rotate(-90,17.111112,51.833334)"
+         style="display:inline;stroke-width:1.125" />
       <rect
          style="display:inline;opacity:0.358434;fill:#adff2f;fill-opacity:0;stroke:none;stroke-width:0.04;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
          id="arrow_right_area"
@@ -965,9 +949,10 @@ cursor: pointer;
       <g
          id="startbutton"
          inkscape:label="startbutton"
-         style="display:inline">
+         style="display:inline;stroke-width:1.125"
+         transform="matrix(0.88888896,0,0,0.88888896,0.22222209,4.7222194)">
         <rect
-           style="opacity:1;fill:#6f6f6f;fill-opacity:1;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+           style="opacity:1;fill:#6f6f6f;fill-opacity:1;stroke:#000000;stroke-width:0.09;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
            id="rect4895"
            width="30"
            height="23"
@@ -978,7 +963,7 @@ cursor: pointer;
            xml:space="preserve"
            transform="matrix(0.04,0,0,0.04,-0.06937452,7.1693935)"
            id="text7394"
-           style="font-size:192px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect7396);shape-padding:1.41421;display:inline;fill:none;stroke:#000000;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"><tspan
+           style="font-size:192px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:center;letter-spacing:0px;word-spacing:0px;white-space:pre;shape-inside:url(#rect7396);shape-padding:1.41421;display:inline;fill:none;stroke:#000000;stroke-width:1.125;stroke-linecap:butt;stroke-linejoin:miter;stroke-dasharray:none;stroke-opacity:1"><tspan
              x="130.90625"
              y="1261.8589"
              id="tspan15348"><tspan
@@ -1938,19 +1923,19 @@ cursor: pointer;
   <rect
      style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.07996;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
      id="portraitViewBox"
-     width="34.5"
-     height="69"
+     width="33"
+     height="66"
      x="-4"
      y="-8"
      inkscape:label="portraitViewBox"
      sodipodi:insensitive="true" />
   <rect
-     style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.07996;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+     style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.0799601;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
      id="landscapeViewBox"
-     width="65"
-     height="42.5"
+     width="62.705883"
+     height="41"
      x="-4"
-     y="-8"
+     y="-6.5"
      inkscape:label="landscapeViewBox"
      sodipodi:insensitive="true" />
 </svg>
