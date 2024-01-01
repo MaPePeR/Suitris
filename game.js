@@ -489,7 +489,7 @@ class GameState {
 
     switchBoxStatesForNextTick(arr) {
         for (let i = 0; i < arr.length; ++i) {
-            if (arr[i].state === BoxState.TO_BE_REMOVED) {
+            if (arr[i].state === BoxState.TO_BE_REMOVED || arr[i].state == BoxState.REMOVED) {
                 arr[i].state == BoxState.REMOVED;
                 swapOut(arr, i);
                 --i;
@@ -574,6 +574,7 @@ class GameState {
         this.renderer.render(this)
         this.switchBoxStatesForNextTick(this.fixedBoxes)
         this.switchBoxStatesForNextTick(this.growingBoxes)
+        this.switchBoxStatesForNextTick(this.nonSquareBoxes)
 
         if (VALIDATION) {
             for (let y = 0; y < GAME_HEIGHT; ++y) {

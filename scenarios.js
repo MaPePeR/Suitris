@@ -195,3 +195,31 @@ function scenario12() {
     current_game.move(1)
 
 }
+
+function scenario13() {
+    newGame();
+
+    current_game.insertFixedBoxIntoBoard(new Box(6, 26, 6, 6, 6));
+    current_game.insertFixedBoxIntoBoard(new Box(12, 22, 10, 10, 10));
+    current_game.insertFixedBoxIntoBoard(new Box(8, 22, 4, 4, 4));
+    current_game.insertFixedBoxIntoBoard(new Box(22, 30, 2, 2, 2));
+
+    current_game.insertFixedBoxIntoBoard(new Box(0, 27, 3, 2, 5)); // 1
+    current_game.nonSquareBoxes.push(current_game.fixedBoxes[current_game.fixedBoxes.length - 1])
+    current_game.insertFixedBoxIntoBoard(new Box(2 + 1, 25, 3, 3, 3)); // 2
+
+    current_game.insertFixedBoxIntoBoard(new Box(2, 28, 4, 4, 4)); // 3
+    setFallingBox(new Box(0 + 6, 31 - 1 - 4 - 1, 1, 1, 1));
+    current_game.running = true
+    current_game.tickCount = 6045
+    current_game.nextTick() // 6046
+    current_game.move(-1) // 1 and 2 touch
+    current_game.nextTick()
+    current_game.move(-1) 
+    current_game.nextTick() // Gravity, Grow and 3 and new box touching
+    current_game.move(-1)
+    current_game.nextTick()
+    current_game.move(-1)
+    current_game.nextTick()
+
+}
