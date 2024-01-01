@@ -99,10 +99,10 @@ function repeatEvent($element, downevent, upevent, handler, filter) {
         interval = null;
     }
     for(const e of downevent.split(" ")) {
-        $element.addEventListener(e, downhandler)
+        $element.addEventListener(e, downhandler, {passive: true})
     }
     for(const e of upevent.split(" ")) {
-        $element.addEventListener(e, uphandler)
+        $element.addEventListener(e, uphandler, {passive: true})
     }
 }
 
