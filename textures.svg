@@ -911,7 +911,7 @@ cursor: pointer;
       <g
          id="g59792"
          inkscape:label="button"
-         transform="matrix(0.88888896,0,0,0.88888896,0.22222209,4.7222194)"
+         transform="matrix(0.88888889,0,0,0.88888889,0.44444582,4.3888888)"
          style="stroke-width:1.125">
         <rect
            style="opacity:1;fill:#6f6f6f;fill-opacity:1;stroke:#000000;stroke-width:0.09;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
@@ -932,44 +932,41 @@ cursor: pointer;
          y="0"
          xlink:href="#g59792"
          id="use59794"
-         transform="rotate(90,22.444446,51.833334)"
+         transform="rotate(90,22.500001,51.5)"
          style="stroke-width:1.125" />
       <use
          x="0"
          y="0"
          xlink:href="#g59792"
          id="use59794-3"
-         transform="rotate(-90,17.111112,51.833334)"
+         transform="rotate(-90,17.250001,51.75)"
          style="display:inline;stroke-width:1.125" />
       <rect
          style="display:inline;opacity:0.358434;fill:#adff2f;fill-opacity:0;stroke:none;stroke-width:0.04;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
          id="arrow_right_area"
-         width="12"
-         height="12"
-         x="18"
-         y="36"
+         width="10"
+         height="10"
+         x="20.000002"
+         y="44"
          inkscape:label="arrow_right_area"
-         transform="translate(4.0000014,8)"
          sodipodi:insensitive="true" />
       <rect
          style="display:inline;opacity:0.358434;fill:#ff8c00;fill-opacity:0;stroke:none;stroke-width:0.04;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
          id="arrow_down_area"
-         width="12"
-         height="11.999998"
-         x="11.999998"
-         y="48"
+         width="10"
+         height="10"
+         x="15.000001"
+         y="54.5"
          inkscape:label="arrow_down_area"
-         transform="translate(4.0000014,8)"
          sodipodi:insensitive="true" />
       <rect
          style="display:inline;opacity:0.358434;fill:#1e90ff;fill-opacity:0;stroke:none;stroke-width:0.04;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
          id="arrow_left_area"
-         width="12"
-         height="12"
-         x="5.9999995"
-         y="36"
+         width="10"
+         height="10"
+         x="9.500001"
+         y="44"
          inkscape:label="arrow_left_area"
-         transform="translate(4.0000014,8)"
          sodipodi:insensitive="true" />
       <g
          id="startbutton"
