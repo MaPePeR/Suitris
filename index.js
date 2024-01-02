@@ -17,7 +17,14 @@ const colors = [
 
 let current_game = null;
 
-const PIX_PER_BOX = 600 / GAME_WIDTH
+const [p_renderer, resolve_renderer] = (() => {
+    let resolver;
+    let p = new Promise((resolve) => {
+        resolver = resolve;
+    })
+    return [p, resolver];
+})();
+
 function setup() {
 const $game_object = document.getElementById('game');
 const $game_svg = $game_object.contentDocument.querySelector('svg');
@@ -131,6 +138,12 @@ class SVGRenderer {
         this.upcomingSize = null;
     }
 
+    newGame() {
+        for(const el of $board.querySelectorAll('.animatedbox')) {
+            el.remove();
+        }
+    }
+
     drawBox(box) {
         if (!box.domEl) {
             console.log("Creating box for", box)
@@ -181,13 +194,10 @@ class SVGRenderer {
     }
 }
 
-function start() {
-    if (current_game) {
-        for(const el of $board.querySelectorAll('.animatedbox')) {
-            el.remove();
-        }
-    }
-    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT, new SVGRenderer())
+async function start() {
+    const renderer = await p_renderer
+    renderer.newGame()
+    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT, renderer)
     current_game.start()
 }
 
@@ -197,4 +207,5 @@ $startbutton.addEventListener('click', () => {
     start()
 })
 
+resolve_renderer(new SVGRenderer())
 }

@@ -1,9 +1,11 @@
-function newGame() {
+async function newGame() {
+    renderer = await p_renderer
+    renderer.newGame()
     if (current_game) {
         current_game.running = false;
         clearInterval(current_game.interval);
     }
-    current_game = new GameState(GAME_WIDTH, GAME_HEIGHT, new SVGRenderer())
+    return current_game = new GameState(GAME_WIDTH, GAME_HEIGHT, renderer)
 }
 
 function setFallingBox(box) {
@@ -12,8 +14,8 @@ function setFallingBox(box) {
     current_game.insertBoxIntoBoard(current_game.fallingBox)
 }
 
-function scenario1() {
-    newGame();
+async function scenario1() {
+    await newGame();
     current_game.insertFixedBoxIntoBoard(new Box(0, 21, 5, 3, 9));
     setFallingBox(new Box(2, 14, 5, 5, 5));
     current_game.insertFixedBoxIntoBoard(new Box(1, GAME_HEIGHT - 2, 2, 2, 2));
@@ -21,16 +23,16 @@ function scenario1() {
     current_game.start()
 }
 
-function scenario2() {
-    newGame();
+async function scenario2() {
+    await newGame();
     current_game.insertFixedBoxIntoBoard(new Box(12, 29, 3, 3, 3));
     setFallingBox(new Box(14, 29 - 3 - 2, 3, 3, 3));
     current_game.insertFixedBoxIntoBoard(new Box(12, 29 - 2, 2, 2, 2));
     current_game.start()
 }
 
-function scenario3() {
-    newGame();
+async function scenario3() {
+    await newGame();
     current_game.insertFixedBoxIntoBoard(new Box (12, 29, 1, 1, 1));
     setFallingBox(new Box (12, 26, 1, 1, 1));
     current_game.insertFixedBoxIntoBoard(new Box (11, 30, 2, 2, 2));
@@ -39,8 +41,8 @@ function scenario3() {
 }
 
 
-function scenario4() {
-    newGame();
+async function scenario4() {
+    await newGame();
     const growingBox = new GrowingBox(11, 26, 7, 5, 5)
     growingBox.center_x = 13.5
     growingBox.center_y = 28
@@ -52,8 +54,8 @@ function scenario4() {
 
 
 
-function scenario5() {
-    newGame();
+async function scenario5() {
+    await newGame();
     current_game.insertFixedBoxIntoBoard(new Box(0, 22, 1, 1, 1))
     setFallingBox(new Box(0, 18, 1, 1, 1));
     current_game.insertFixedBoxIntoBoard(new Box(1, 21, 2, 2, 2));
@@ -65,8 +67,8 @@ function scenario5() {
 
 }
 
-function scenario6() {
-    newGame();
+async function scenario6() {
+    await newGame();
     current_game.insertFixedBoxIntoBoard(new Box(0, GAME_HEIGHT - 6, 4, 3, 6));
     setFallingBox(new Box(3, GAME_HEIGHT - 6 - 4 - 3, 4, 4, 4));
     current_game.start()
@@ -99,8 +101,8 @@ function scenario6() {
 }
 */
 
-function scenario7() {
-    newGame();
+async function scenario7() {
+    await newGame();
     setFallingBox(new Box(5, 30, 1, 1, 1));
     current_game.insertFixedBoxIntoBoard(new Box(6, 30, 2, 2, 2));
     current_game.insertFixedBoxIntoBoard(new Box(13, 30, 2, 2, 2));
@@ -126,8 +128,8 @@ function scenario7() {
     current_game.nextTick()
 }
 
-function scenario8() {
-    newGame();
+async function scenario8() {
+    await newGame();
     current_game.insertFixedBoxIntoBoard(new Box(0, GAME_HEIGHT - 1, 1, 1,1));
     current_game.insertFixedBoxIntoBoard(new Box(1, GAME_HEIGHT - 3, 3, 3, 3));
     current_game.insertFixedBoxIntoBoard(new Box(4, GAME_HEIGHT - 1, 1, 1, 1));
@@ -143,8 +145,8 @@ function scenario8() {
     }
 }
 
-function scenario9() {
-    newGame();
+async function scenario9() {
+    await newGame();
 
     const nonSquareBox = new Box(0, GAME_HEIGHT - 5, 4, 3, 5)
     current_game.insertFixedBoxIntoBoard(nonSquareBox);
@@ -157,8 +159,8 @@ function scenario9() {
     }
 }
 
-function scenario10() {
-    newGame();
+async function scenario10() {
+    await newGame();
 
     const nonSquareBox = new Box(0, GAME_HEIGHT - 4, 5, 5, 4)
     current_game.insertFixedBoxIntoBoard(nonSquareBox);
@@ -166,8 +168,9 @@ function scenario10() {
     current_game.insertFixedBoxIntoBoard(new Box(8, GAME_HEIGHT - 5, 5, 5, 5)); //Propup
     current_game.insertFixedBoxIntoBoard(new Box(8 - 4, GAME_HEIGHT - 5 - 5, 5, 5, 5));
 }
-function scenario12() {
-    newGame();
+
+async function scenario12() {
+    await newGame();
     current_game.insertFixedBoxIntoBoard(new Box(0, GAME_HEIGHT - 6, 6, 6, 6))
     current_game.insertFixedBoxIntoBoard(new Box(6, GAME_HEIGHT - 7, 7, 7, 7))
     current_game.insertFixedBoxIntoBoard(new Box(6 + 7, GAME_HEIGHT - 8, 8, 8, 8))
@@ -196,8 +199,8 @@ function scenario12() {
 
 }
 
-function scenario13() {
-    newGame();
+async function scenario13() {
+    await newGame();
 
     current_game.insertFixedBoxIntoBoard(new Box(6, 26, 6, 6, 6));
     current_game.insertFixedBoxIntoBoard(new Box(12, 22, 10, 10, 10));
