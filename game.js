@@ -1,7 +1,4 @@
-const groundBox = new Object()
-
 const VALIDATION = true;
-WALL = "WALL!!";
 
 const ALLOW_PUSH = true;
 
@@ -38,6 +35,21 @@ class Box {
     rightX() {
         return this.x  + this.width - 1;
     }
+
+    *allNeigbors() {
+        for(const n of this.neighbors_t) {
+            yield n
+        }
+        for(const n of this.neighbors_b) {
+            yield n
+        }
+        for(const n of this.neighbors_l) {
+            yield n
+        }
+        for(const n of this.neighbors_r) {
+            yield n
+        }
+    }
 }
 
 function swapOut(arr, idx) {
@@ -45,6 +57,19 @@ function swapOut(arr, idx) {
         arr.pop()
     } else {
         arr[idx] = arr.pop()
+    }
+}
+
+function swapOutEl(arr, el) {
+    const idx = arr.indexOf(el);
+    if (idx < 0) return;
+    swapOut(arr, idx);
+}
+
+function fillArrFromGen(arr, gen) {
+    arr.length = 0;
+    for (let obj of gen) {
+        arr.push(obj)
     }
 }
 
@@ -104,10 +129,12 @@ class GameState {
         }
         this.fixedBoxes.push(box)
         this.insertBoxIntoBoard(box)
-        this.setFixedNeighbors(box)
     }
 
     insertBoxIntoBoard(box) {
+        if (box.y < 0 || box.x < 0 || box.x + box.width > this.width || box.y + box.height > this.height) {
+            throw new Error("Box outside of board")
+        }
         for (let i = 0; i < box.height; ++i) {
             for (let j = 0; j < box.width; ++j) {
                 if (VALIDATION) {
@@ -117,6 +144,19 @@ class GameState {
                 }
                 this.board[(box.y + i) * this.width + box.x + j] = box;
             }
+        }
+        this.setFixedNeighbors(box)
+        for(const other of box.neighbors_t) {
+            other.neighbors_b.push(box)
+        }
+        for(const other of box.neighbors_b) {
+            other.neighbors_t.push(box)
+        }
+        for(const other of box.neighbors_l) {
+            other.neighbors_r.push(box)
+        }
+        for(const other of box.neighbors_r) {
+            other.neighbors_l.push(box)
         }
     }
 
@@ -137,51 +177,84 @@ class GameState {
                 this.board[(box.y + i) * this.width + box.x + j] = null;
             }
         }
+        for(const other of box.neighbors_t) {
+            swapOutEl(other.neighbors_b, box)
+        }
+        for(const other of box.neighbors_b) {
+            swapOutEl(other.neighbors_t, box)
+        }
+        for(const other of box.neighbors_l) {
+            swapOutEl(other.neighbors_r, box)
+        }
+        for(const other of box.neighbors_r) {
+            swapOutEl(other.neighbors_l, box)
+        }
     }
 
-    getNeighbors(start, stride, end) {
-        const neighbors = [];
-        if (0 <= start && start < this.board.length && 0 <= end) {
-            end = Math.min(end, this.board.length)
-            for (let pos = start; pos < end; pos += stride) {
-                if (this.board[pos] && (neighbors.length == 0 || neighbors[neighbors.length - 1] !== this.board[pos])) {
-                    neighbors.push(this.board[pos]);
-                }
+    *getIndices(start, stride, end) {
+        if (start < 0 || end > this.board.length + stride - 1) {
+            throw new Error("Indices are outside of range")
+        }
+        for (let pos = start; pos < end; pos += stride) {
+            yield pos;
+        }
+    }
+
+    *getUniqueBoxesFromIndices(indices) {
+        let lastBox = null;
+        for(let i of indices) {
+            const box = this.board[i]
+            if (box && lastBox !== box) {
+                lastBox = box
+                yield box
             }
         }
-        return neighbors;
+    }
+
+    getTopIndices(box) {
+        if (box.y == 0) return [];
+        return this.getIndices((box.y - 1) * this.width + box.x, 1, (box.y - 1) * this.width + box.rightX() + 1);
+    }
+
+    getBottomIndices(box) {
+        if (box.y + box.height >= this.height) return [];
+        return this.getIndices((box.bottomY() + 1) * this.width + box.x, 1, (box.bottomY() + 1) * this.width + box.rightX() + 1);
+    }
+
+    getLeftIndices(box) {
+        if (box.x == 0) return [];
+        return this.getIndices(box.y * this.width + box.x - 1, this.width, (box.bottomY() + 1) * this.width + box.x - 1);
+    }
+
+    getRightIndices(box) {
+        if (box.rightX() + 1 >= this.width) return [];
+        return this.getIndices(box.y * this.width + box.rightX() + 1, this.width, (box.bottomY() + 1) * this.width + box.rightX() + 1);
     }
 
     getTopNeighbors(box) {
-        return this.getNeighbors((box.y - 1) * this.width + box.x, 1, (box.y - 1) * this.width + box.rightX() + 1);
+        return this.getUniqueBoxesFromIndices(this.getTopIndices(box));
     }
 
     getBottomNeighbors(box) {
-        return this.getNeighbors((box.bottomY() + 1) * this.width + box.x, 1, (box.bottomY() + 1) * this.width + box.rightX() + 1);
+        return this.getUniqueBoxesFromIndices(this.getBottomIndices(box))
     }
 
     getLeftNeighbors(box) {
-        if (box.x == 0) return [];
-        return this.getNeighbors(box.y * this.width + box.x - 1, this.width, (box.bottomY() + 1) * this.width + box.x - 1);
+        return this.getUniqueBoxesFromIndices(this.getLeftIndices(box))
     }
 
     getRightNeighbors(box) {
-        if (box.rightX() + 1 >= this.width) return [];
-        return this.getNeighbors(box.y * this.width + box.rightX() + 1, this.width, (box.bottomY() + 1) * this.width + box.rightX() + 1);
+        return this.getUniqueBoxesFromIndices(this.getRightIndices(box))
     }
 
     getSameSizeTouchingBoxes(box) {
         // TODO: Only touching if touching along half of their size
         const touching = [];
-        function appendSameSize(other) {
+        for(const other of box.allNeigbors()) {
             if (other.size == box.size) {
                 touching.push(other);
             }
         }
-        this.getTopNeighbors(box).forEach(appendSameSize);
-        this.getBottomNeighbors(box).forEach(appendSameSize);
-        this.getLeftNeighbors(box).forEach(appendSameSize);
-        this.getRightNeighbors(box).forEach(appendSameSize);
         if (touching.length > 0) {
             touching.push(box)
             console.log("Touching", touching)
@@ -190,22 +263,26 @@ class GameState {
     }
 
     setFixedNeighbors(box) {
-        box.neighbors_t = this.getTopNeighbors(box);
-        if (box.y == 0) {
-            box.neighbors_t.push(WALL)
-        }
-        box.neighbors_b = this.getBottomNeighbors(box);
-        if (box.bottomY() == this.height - 1) {
-            box.neighbors_b.push(WALL)
-        }
-        box.neighbors_l = this.getLeftNeighbors(box);
-        if (box.x == 0) {
-            box.neighbors_l.push(WALL)
-        }
-        box.neighbors_r = this.getRightNeighbors(box);
-        if (box.rightX() == this.width - 1) {
-            box.neighbors_r.push(WALL)
-        }
+        this.setFixedTopNeighbors(box)
+        this.setFixedBottomNeighbors(box)
+        this.setFixedLeftNeighbors(box)
+        this.setFixedRightNeighbors(box)
+    }
+
+    setFixedTopNeighbors(box) {
+        fillArrFromGen(box.neighbors_t, this.getTopNeighbors(box));
+    }
+
+    setFixedBottomNeighbors(box) {
+        fillArrFromGen(box.neighbors_b, this.getBottomNeighbors(box));
+    }
+
+    setFixedLeftNeighbors(box) {
+        fillArrFromGen(box.neighbors_l, this.getLeftNeighbors(box));
+    }
+
+    setFixedRightNeighbors(box) {
+        fillArrFromGen(box.neighbors_r, this.getRightNeighbors(box));
     }
 
     combineBoxes(boxes) {
@@ -259,30 +336,24 @@ class GameState {
         const newBox = new Box(Math.floor(newx), Math.floor(newy), newsize, 1, 1);
         newBox.center_x = newx - newBox.x;
         newBox.center_y = newy - newBox.y;
-        this.setFixedNeighbors(newBox)
         this.growingBoxes.push(newBox)
         this.insertBoxIntoBoard(newBox)
     }
 
     move(direction) {
         if (this.running && this.fallingBox) {
-            this.setFixedNeighbors(this.fallingBox)
             const newx = Math.max(0, Math.min(this.width - this.fallingBox.width, this.fallingBox.x + direction))
             if (this.fallingBox.x != newx) {
                 let didshift = false;
-                if (ALLOW_PUSH) {
-                    this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
-                    this.growingBoxes.forEach((box) => this.setFixedNeighbors(box));
-                }
                 if (direction < 0 && this.fallingBox.neighbors_l.length > 0) {
-                    if (ALLOW_PUSH && this.shift(this.fallingBox.neighbors_l, 'x', -1, 'neighbors_l')) {
+                    if (ALLOW_PUSH && this.shift(this.fallingBox.neighbors_l, 'x', -1, 'width', this.width, 'neighbors_l')) {
                         didshift = true;
                     } else {
                         return;
                     }
                 }
                 if (direction > 0 && this.fallingBox.neighbors_r.length > 0) {
-                    if (ALLOW_PUSH && this.shift(this.fallingBox.neighbors_r, 'x', 1, 'neighbors_r')) {
+                    if (ALLOW_PUSH && this.shift(this.fallingBox.neighbors_r, 'x', 1, 'width', this.width, 'neighbors_r')) {
                         didshift = true;
                     } else {
                         return;
@@ -291,10 +362,6 @@ class GameState {
                 this.removeBoxFromBoard(this.fallingBox)
                 this.fallingBox.x = newx;
                 this.insertBoxIntoBoard(this.fallingBox)
-                if (didshift) {
-                    this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
-                    this.growingBoxes.forEach((box) => this.setFixedNeighbors(box));
-                }
                 if (this.checkTouching(this.fallingBox)) {
                     this.fallingBox = null;
                 }
@@ -329,14 +396,14 @@ class GameState {
         }
     }
 
-    shift(boxes, dir_param, dir, neighbor_param) {
+    shift(boxes, dir_param, dir, dir_size_param, dir_size, neighbor_param) {
         const boxes_to_shift = new Set();
         function r_shift(boxes, nextBoxes) {
             if (boxes.length == 0) {
                 return true;
             }
             for (const box of boxes) {
-                if (box === WALL) {
+                if (box[dir_param] + dir < 0 || box[dir_param] + dir + box[dir_size_param] > dir_size) {
                     return false;
                 }
                 for (const neighbor of box[neighbor_param]) {
@@ -394,8 +461,6 @@ class GameState {
         }
     }
     growBoxX(box) {
-        this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
-        this.setFixedNeighbors(box)
         const preferLeft = box.center_x < box.width / 2;
         return (preferLeft && this.growBoxLeft(box))
             || this.growBoxRight(box)
@@ -405,7 +470,7 @@ class GameState {
     growBoxLeft(box) {
         const free_left = box.neighbors_l.length == 0;
         const free_right = box.neighbors_r.length == 0;
-        if (free_left || (!free_left && !free_right && this.shift(box.neighbors_l, 'x', -1, 'neighbors_l'))) {
+        if (free_left || (!free_left && !free_right && this.shift(box.neighbors_l, 'x', -1, 'width', this.width, 'neighbors_l'))) {
             if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             this.removeBoxFromBoard(box);
             box.width += 1;
@@ -420,7 +485,7 @@ class GameState {
     growBoxRight(box) {
         const free_left = box.neighbors_l.length == 0;
         const free_right = box.neighbors_r.length == 0;
-        if (free_right || (!free_left && !free_right && this.shift(box.neighbors_r, 'x', 1, 'neighbors_r'))) {
+        if (free_right || (!free_left && !free_right && this.shift(box.neighbors_r, 'x', 1, 'width', this.width, 'neighbors_r'))) {
             if (VALIDATION && this.getRightNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             this.removeBoxFromBoard(box);
             box.width += 1;
@@ -431,8 +496,6 @@ class GameState {
     }
 
     growBoxY(box) {
-        this.fixedBoxes.forEach((box) => this.setFixedNeighbors(box)); // TODO only update neighbors that need updating
-        this.setFixedNeighbors(box)
         const prefer_top = box.height / 2 > box.center_y;
         return (prefer_top && this.growBoxTop(box))
             || this.growBoxBottom(box)
@@ -442,7 +505,7 @@ class GameState {
     growBoxTop(box) {
         const free_top = box.neighbors_t.length == 0;
         const free_bottom = box.neighbors_b.length == 0;
-        if (free_top || (!free_top && !free_bottom &&this.shift(box.neighbors_t, 'y', -1, 'neighbors_t'))) {
+        if (free_top || (!free_top && !free_bottom &&this.shift(box.neighbors_t, 'y', -1, 'height', this.height, 'neighbors_t'))) {
             // Top is free
             this.removeBoxFromBoard(box);
             box.height += 1;
@@ -455,7 +518,7 @@ class GameState {
     }
 
     growBoxBottom(box, free_top, free_bottom) {
-        if (free_bottom || (!free_top && !free_bottom && this.shift(box.neighbors_b, 'y', 1, 'neighbors_b'))) {
+        if (free_bottom || (!free_top && !free_bottom && this.shift(box.neighbors_b, 'y', 1, 'height', this.height, 'neighbors_b'))) {
             // Bottom is free
             this.removeBoxFromBoard(box);
             box.height += 1;
@@ -625,6 +688,19 @@ class GameState {
                     }
                 }
             }
+            function checkNoNeighborTwice(neighbors) {
+                for(let i = 0; i < neighbors.length; ++i) {
+                    if (neighbors.indexOf(neighbors[i], i+1) >= 0) {
+                        throw new Error("Neighbor is contained twice.")
+                    }
+                }
+            }
+            for (const box of [...this.fixedBoxes, ...this.growingBoxes]) {
+                checkNoNeighborTwice(box.neighbors_t)
+                checkNoNeighborTwice(box.neighbors_b)
+                checkNoNeighborTwice(box.neighbors_l)
+                checkNoNeighborTwice(box.neighbors_r)
+            }
         }
     }
 }
@@ -663,31 +739,25 @@ function test_neighbors() {
             state.insertFixedBoxIntoBoard(box)
         });
     });
-    [l, r, t, b].forEach(arr => {
-        arr.forEach(box => {
-            state.setFixedNeighbors(box)
-        });
-    });
 
     const box = new Box(1, 1, 3, 3, 3);
     state.insertFixedBoxIntoBoard(box)
-    state.setFixedNeighbors(box)
-    compare_test(state.getBottomNeighbors(box), b, "bottom", box);
-    compare_test(state.getTopNeighbors(box), t, "top", box);
-    compare_test(state.getLeftNeighbors(box), l, "left", box);
-    compare_test(state.getRightNeighbors(box), r, "right", box);
+    compare_test([...state.getBottomNeighbors(box)], b, "bottom", box);
+    compare_test([...state.getTopNeighbors(box)], t, "top", box);
+    compare_test([...state.getLeftNeighbors(box)], l, "left", box);
+    compare_test([...state.getRightNeighbors(box)], r, "right", box);
 
     for (const box of l) {
-        compare_test(box.neighbors_l, [WALL], "wall left", box)
+        compare_test(box.neighbors_l, [], "wall left", box)
     }
     for (const box of r) {
-        compare_test(box.neighbors_r, [WALL], "wall right", box)
+        compare_test(box.neighbors_r, [], "wall right", box)
     }
     for (const box of t) {
-        compare_test(box.neighbors_t, [WALL], "wall top", box)
+        compare_test(box.neighbors_t, [], "wall top", box)
     }
     for (const box of b) {
-        compare_test(box.neighbors_b, [WALL], "wall bottom", box)
+        compare_test(box.neighbors_b, [], "wall bottom", box)
     }
 
     compare_test(l1.neighbors_b, [l2], "left to bottom", l1)
