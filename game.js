@@ -312,14 +312,22 @@ class GameState {
             for (const other of box[neighbor_param]) {
                 swapOutEl(other[reverse_neighbor_param], box)
             }
-            for (const other of box[other_neighbor_param]) {
-                if (!touchInCrossDirection(box, other)) {
-                    swapOutEl(other[reverse_neighbor_param], box)
+            // returns TOP, BOTTOM or LEFT, RIGHT corners
+            const corners = getCornerIndicesInDirection(box)
+            const corner1 = corners.next().value
+            if (corner1 !== null) {
+                const other = this.board[corner1]
+                if (other && !touchInCrossDirection(box, other)) {
+                    swapOutEl(other[reverse_other_neighbor_param], box)
+                    swapOutEl(box[other_neighbor_param], other)
                 }
             }
-            for (const other of box[reverse_other_neighbor_param]) {
-                if (!touchInCrossDirection(box, other)) {
+            const corner2 = corners.next().value
+            if (corner2 !== null) {
+                const other = this.board[corner2]
+                if (other && !touchInCrossDirection(box, other)) {
                     swapOutEl(other[other_neighbor_param], box)
+                    swapOutEl(box[reverse_other_neighbor_param], other)
                 }
             }
         }
