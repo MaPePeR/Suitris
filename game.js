@@ -87,70 +87,69 @@ class GameState {
         this.tickCount = 0;
         this.gravityTick = 0;
         this.renderer = renderer;
-        this.upcomingSize = this.randomSize()
-
-        this.extendBoxTop = this.extendBoxDirectionTemplate(this.getTopIndices.bind(this), 'neighbors_t', 'neighbors_b', (box) => {
-            box.y -= 1;
-            box.center_y  += 1
-            box.height += 1;
-        })
-        this.extendBoxBottom = this.extendBoxDirectionTemplate(this.getBottomIndices.bind(this), 'neighbors_b', 'neighbors_t', (box) => {
-            box.height += 1;
-        })
-        this.extendBoxLeft = this.extendBoxDirectionTemplate(this.getLeftIndices.bind(this), 'neighbors_l', 'neighbors_r', (box) => {
-            box.x -= 1;
-            box.center_x  += 1
-            box.width += 1;
-        })
-        this.extendBoxRight = this.extendBoxDirectionTemplate(this.getRightIndices.bind(this), 'neighbors_r', 'neighbors_l', (box) => {
-            box.width += 1;
-        })
+        this.upcomingSize = this.randomSize();
 
         this.shiftTop = this.shiftDirTemplate('y', -1, 'height', this.height, 'neighbors_t');
         this.shiftBottom = this.shiftDirTemplate('y', 1, 'height', this.height, 'neighbors_b');
         this.shiftLeft = this.shiftDirTemplate('x', -1, 'width', this.width, 'neighbors_l');
         this.shiftRight = this.shiftDirTemplate('x', 1, 'width', this.width, 'neighbors_r');
 
-        this.shrinkFromTop = this.shrinkBoxDirectionTemplate(
+        [this.extendBoxTop, this.shrinkFromTop] = this.changeBoxSizeDirectionTemplate(
             this.getTopIndices.bind(this),
             'neighbors_t', 'neighbors_b',
             'neighbors_l', 'neighbors_r',
             (box, other) => other.y <= box.y + box.height & other.y + other.height > box.y,
             (box) => {
+                box.height += 1;
+                box.y -= 1;
+                box.center_y  += 1
+            },
+            (box) => {
                 box.height -= 1;
                 box.y += 1;
                 box.center_y -= 1;
             }
-        )
-        this.shrinkFromBottom = this.shrinkBoxDirectionTemplate(
+        );
+        [this.extendBoxBottom, this.shrinkFromBottom] = this.changeBoxSizeDirectionTemplate(
             this.getBottomIndices.bind(this),
             'neighbors_b', 'neighbors_t',
             'neighbors_l', 'neighbors_r',
             (box, other) => other.y <=box.y + box.height & other.y + other.height > box.y,
             (box) => {
+                box.height += 1;
+            },
+            (box) => {
                 box.height -= 1;
             }
-        )
-        this.shrinkFromLeft = this.shrinkBoxDirectionTemplate(
+        );
+        [this.extendBoxLeft, this.shrinkFromLeft] = this.changeBoxSizeDirectionTemplate(
             this.getLeftIndices.bind(this),
             'neighbors_l', 'neighbors_r',
             'neighbors_t', 'neighbors_b',
             (box, other) => other.x < box.x + box.width && other.x + other.width > box.x,
             (box) => {
+                box.width += 1;
+                box.x -= 1;
+                box.center_x  += 1
+            },
+            (box) => {
                 box.width -= 1;
                 box.x += 1;
                 box.center_x -= 1;
             }
-        )
-        this.shrinkFromRight = this.shrinkBoxDirectionTemplate(
+        );
+        [this.extendBoxRight, this.shrinkFromRight] = this.changeBoxSizeDirectionTemplate(
             this.getRightIndices.bind(this),
             'neighbors_r', 'neighbors_l',
             'neighbors_t', 'neighbors_b',
             (box, other) => other.x < box.x + box.width && other.x + other.width > box.x,
             (box) => {
+                box.width += 1;
+            },
+            (box) => {
                 box.width -= 1;
             }
-        )
+        );
     }
 
     start() {
@@ -254,8 +253,8 @@ class GameState {
         }
     }
 
-    extendBoxDirectionTemplate(getIndicesInDirection, neighbor_param, reverse_neighbor_param, update) {
-        return (box) => {
+    changeBoxSizeDirectionTemplate(getIndicesInDirection, neighbor_param, reverse_neighbor_param, other_neighbor_param, reverse_other_neighbor_param, touchInCrossDirection, updateExtend, updateShrink) {
+        const extendInDirection = (box) => {
             if (VALIDATION) {
                 if ([...this.getUniqueBoxesFromIndices(getIndicesInDirection(box))].length > 0) {
                     throw new Error("Extending box, but have existing neighbors in that direction");
@@ -270,16 +269,14 @@ class GameState {
                 }
                 this.board[i] = box;
             }
-            update(box)
+            updateExtend(box)
             fillArrFromGen(box[neighbor_param], this.getUniqueBoxesFromIndices(getIndicesInDirection(box)))
             for (const other of box[neighbor_param]) {
                 other[reverse_neighbor_param].push(box)
             }
         }
-    }
 
-    shrinkBoxDirectionTemplate(getIndicesInDirection, neighbor_param, reverse_neighbor_param, other_neighbor_param, reverse_other_neighbor_param, touchInCrossDirection, update) {
-        return (box) => {
+        const shrinkFromDirection = (box) => {
             for (const i of getIndicesInDirection(box)) {
                 if (VALIDATION) {
                     const cell = this.board[i]
@@ -289,7 +286,7 @@ class GameState {
                 }
                 this.board[i] = null;
             }
-            update(box)
+            updateShrink(box)
             for (const other of box[neighbor_param]) {
                 swapOutEl(other[reverse_neighbor_param], box)
             }
@@ -304,6 +301,7 @@ class GameState {
                 }
             }
         }
+        return [extendInDirection, shrinkFromDirection]
     }
 
     *getIndices(start, stride, end) {
