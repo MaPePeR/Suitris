@@ -519,7 +519,9 @@ class GameState {
         return false;
     }
 
-    growBoxBottom(box, free_top, free_bottom) {
+    growBoxBottom(box) {
+        const free_top = box.neighbors_t.length == 0;
+        const free_bottom = box.neighbors_b.length == 0;
         if (free_bottom || (!free_top && !free_bottom && this.shift(box.neighbors_b, 'y', 1, 'height', this.height, 'neighbors_b'))) {
             // Bottom is free
             this.removeBoxFromBoard(box);
