@@ -426,17 +426,22 @@ class GameState {
 
     getSameSizeTouchingBoxes(box) {
         // TODO: Only touching if touching along half of their size
-        const touching = [];
+        const touching = new Set();
         for(const other of box.allNeigbors()) {
             if (other.size == box.size) {
-                touching.push(other);
+                if (VALIDATION) {
+                    if (touching.has(other)) {
+                        throw new Error("Box has neighbor multiple times")
+                    }
+                }
+                touching.add(other);
             }
         }
-        if (touching.length > 0) {
-            touching.push(box)
+        if (touching.size > 0) {
+            touching.add(box)
             console.log("Touching", touching)
         }
-        return touching
+        return [...touching]
     }
 
     setFixedNeighbors(box) {
