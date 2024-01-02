@@ -1,4 +1,4 @@
-const VALIDATION = true;
+const VALIDATION = false;
 
 const ALLOW_PUSH = true;
 
