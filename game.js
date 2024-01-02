@@ -88,6 +88,23 @@ class GameState {
         this.gravityTick = 0;
         this.renderer = renderer;
         this.upcomingSize = this.randomSize()
+
+        this.extendBoxTop = this.extendBoxDirectionTemplate(this.getTopIndices.bind(this), 'neighbors_t', 'neighbors_b', (box) => {
+            box.y -= 1;
+            box.center_y  += 1
+            box.height += 1;
+        })
+        this.extendBoxBottom = this.extendBoxDirectionTemplate(this.getBottomIndices.bind(this), 'neighbors_b', 'neighbors_t', (box) => {
+            box.height += 1;
+        })
+        this.extendBoxLeft = this.extendBoxDirectionTemplate(this.getLeftIndices.bind(this), 'neighbors_l', 'neighbors_r', (box) => {
+            box.x -= 1;
+            box.center_x  += 1
+            box.width += 1;
+        })
+        this.extendBoxRight = this.extendBoxDirectionTemplate(this.getRightIndices.bind(this), 'neighbors_r', 'neighbors_l', (box) => {
+            box.width += 1;
+        })
     }
 
     start() {
@@ -188,6 +205,30 @@ class GameState {
         }
         for(const other of box.neighbors_r) {
             swapOutEl(other.neighbors_l, box)
+        }
+    }
+
+    extendBoxDirectionTemplate(getIndicesInDirection, neighbor_param, reverse_neighbor_param, update) {
+        return (box) => {
+            if (VALIDATION) {
+                if ([...this.getUniqueBoxesFromIndices(getIndicesInDirection(box))].length > 0) {
+                    throw new Error("Extending box, but have existing neighbors in that direction");
+                }
+            }
+            for (const i of getIndicesInDirection(box)) {
+                if (VALIDATION) {
+                    const cell = this.board[i]
+                    if (cell !== null) {
+                        throw new Error(`Board is not empty at i=${i} x=${i % this.width} y=${Math.floor(i / this.width)}`)
+                    }
+                }
+                this.board[i] = box;
+            }
+            update(box)
+            fillArrFromGen(box[neighbor_param], this.getUniqueBoxesFromIndices(getIndicesInDirection(box)))
+            for (const other of box[neighbor_param]) {
+                other[reverse_neighbor_param].push(box)
+            }
         }
     }
 
@@ -474,12 +515,7 @@ class GameState {
         const free_left = box.neighbors_l.length == 0;
         const free_right = box.neighbors_r.length == 0 && box.x + box.width < this.width;
         if (free_left || (!free_left && !free_right && this.shift(box.neighbors_l, 'x', -1, 'width', this.width, 'neighbors_l'))) {
-            if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
-            this.removeBoxFromBoard(box);
-            box.width += 1;
-            box.center_x += 1;
-            box.x -= 1;
-            this.insertBoxIntoBoard(box);
+            this.extendBoxLeft(box)
             return true;
         }
         return false;
@@ -490,10 +526,7 @@ class GameState {
         const free_left = box.neighbors_l.length == 0 && box.x > 0;
         const free_right = box.neighbors_r.length == 0;
         if (free_right || (!free_left && !free_right && this.shift(box.neighbors_r, 'x', 1, 'width', this.width, 'neighbors_r'))) {
-            if (VALIDATION && this.getRightNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
-            this.removeBoxFromBoard(box);
-            box.width += 1;
-            this.insertBoxIntoBoard(box);
+            this.extendBoxRight(box)
             return true;
         }
         return false;
@@ -511,12 +544,7 @@ class GameState {
         const free_top = box.neighbors_t.length == 0;
         const free_bottom = box.neighbors_b.length == 0 && box.y + box.height < this.height;
         if (free_top || (!free_top && !free_bottom &&this.shift(box.neighbors_t, 'y', -1, 'height', this.height, 'neighbors_t'))) {
-            // Top is free
-            this.removeBoxFromBoard(box);
-            box.height += 1;
-            box.center_y += 1;
-            box.y -= 1;
-            this.insertBoxIntoBoard(box);
+            this.extendBoxTop(box)
             return true;
         }
         return false;
@@ -527,10 +555,7 @@ class GameState {
         const free_top = box.neighbors_t.length == 0 && this.y > 0;
         const free_bottom = box.neighbors_b.length == 0;
         if (free_bottom || (!free_top && !free_bottom && this.shift(box.neighbors_b, 'y', 1, 'height', this.height, 'neighbors_b'))) {
-            // Bottom is free
-            this.removeBoxFromBoard(box);
-            box.height += 1;
-            this.insertBoxIntoBoard(box);
+            this.extendBoxBottom(box)
             return true;
         }
         return false;
