@@ -310,6 +310,7 @@ class GameState {
             for (const other of box[neighbor_param]) {
                 swapOutEl(other[reverse_neighbor_param], box)
             }
+            box[neighbor_param].length = 0;
             // returns TOP, BOTTOM or LEFT, RIGHT corners
             const [corner1, corner2] =getCornerIndicesInDirection(box)
             if (corner1 !== null) {
