@@ -78,7 +78,7 @@ async function scenario6() {
     await newGame();
     current_game.insertFixedBoxIntoBoard(new Box(0, GAME_HEIGHT - 6, 4, 3, 6));
     setFallingBox(new Box(3, GAME_HEIGHT - 6 - 4 - 3, 4, 4, 4));
-    current_game.start()
+    runTicks(20)
 }
 
 /* Couldn't reproduce :(

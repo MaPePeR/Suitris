@@ -274,8 +274,7 @@ class GameState {
                 this.board[i] = box;
             }
             // returns TOP, BOTTOM or LEFT, RIGHT corners
-            const corners = getCornerIndicesInDirection(box)
-            const corner1 = corners.next().value
+            const [corner1, corner2] = getCornerIndicesInDirection(box)
             if (corner1 !== null) {
                 const other = this.board[corner1]
                 if (other && !touchInCrossDirection(box, other)) {
@@ -283,7 +282,6 @@ class GameState {
                     box[other_neighbor_param].push(other)
                 }
             }
-            const corner2 = corners.next().value
             if (corner2 !== null) {
                 const other = this.board[corner2]
                 if (other && !touchInCrossDirection(box, other)) {
@@ -313,8 +311,7 @@ class GameState {
                 swapOutEl(other[reverse_neighbor_param], box)
             }
             // returns TOP, BOTTOM or LEFT, RIGHT corners
-            const corners = getCornerIndicesInDirection(box)
-            const corner1 = corners.next().value
+            const [corner1, corner2] =getCornerIndicesInDirection(box)
             if (corner1 !== null) {
                 const other = this.board[corner1]
                 if (other && !touchInCrossDirection(box, other)) {
@@ -322,7 +319,6 @@ class GameState {
                     swapOutEl(box[other_neighbor_param], other)
                 }
             }
-            const corner2 = corners.next().value
             if (corner2 !== null) {
                 const other = this.board[corner2]
                 if (other && !touchInCrossDirection(box, other)) {
@@ -340,24 +336,6 @@ class GameState {
         }
         for (let pos = start; pos < end; pos += stride) {
             yield pos;
-        }
-    }
-
-    *getCornerIndices(box, dx, dy) {
-        if (dx !== 0) {
-            if (box.x + dx < 0 || box.x + dx + box.width >= this.width) {
-                yield null
-                yield null
-            }
-            yield (box.y > 0) ? (box.y - 1) * this.width + box.x + dx : null;
-            yield (box.y + box.height < this.height) ? (box.y + box.height) * this.width + box.x + box.width + dx : null;
-        } else if (dy !== 0) {
-            if (box.y + dy < 0 || box.y + dy + box.height >= this.height) {
-                yield null
-                yield null
-            }
-            yield (box.x > 0) ? (box.y + dy) * this.width + box.x - 1 : null;
-            yield (box.x + box.width < this.width) ? (box.y + dy) * this.width + box.x + box.width : null;
         }
     }
 
@@ -393,19 +371,47 @@ class GameState {
     }
 
     getTopCorners(box) {
-        return this.getCornerIndices(box, 0, -1);
+        if (box.y > 0) {
+            return [
+                (box.x > 0)                      ? (box.y - 1) * this.width + box.x - 1         : null,
+                (box.x + box.width < this.width) ? (box.y - 1) * this.width + box.x + box.width : null,
+            ];
+        } else {
+            return [null, null];
+        }
     }
 
     getBottomCorners(box) {
-        return this.getCornerIndices(box, 0, 1);
+        if (box.y + box.height < this.height) {
+            return [
+                (box.x > 0)                      ? (box.y + box.height) * this.width + box.x - 1         : null,
+                (box.x + box.width < this.width) ? (box.y + box.height) * this.width + box.x + box.width : null,
+            ];
+        } else {
+            return [null, null];
+        }
     }
 
     getLeftCorners(box) {
-        return this.getCornerIndices(box, -1, 0);
+        if (box.x > 0) {
+            return [
+                (box.y > 0)                        ? (box.y - 1)          * this.width + box.x - 1 : null,
+                (box.y + box.height < this.height) ? (box.y + box.height) * this.width + box.x - 1 : null,
+            ];
+        } else {
+            return [null, null];
+        }
     }
 
     getRightCorners(box) {
-        return this.getCornerIndices(box, 1, 0);
+        if (box.x + box.width < this.width) {
+            return [
+                (box.y > 0)                        ? (box.y - 1)          * this.width + box.x + box.width : null,
+                (box.y + box.height < this.height) ? (box.y + box.height) * this.width + box.x + box.width : null,
+            ];
+        } else {
+            return [null, null];
+        }
     }
 
     getTopNeighbors(box) {
@@ -887,6 +893,11 @@ function compare_test(expected, actual, ...msg) {
         throw "Value " + JSON.stringify(actual) + " does not match expected value" + JSON.stringify(expected);
     }*/
 }
+function compare_array(expected, actual, ...msg) {
+    if (JSON.stringify(expected) != JSON.stringify(actual)) {
+        console.log("Arrays do not match: ", actual, expected, ...msg)
+    }
+}
 function test_neighbors() {
     const state = new GameState(5, 5)
     const l1 = new Box(0, 1, 1, 1, 1);
@@ -962,4 +973,9 @@ function test_neighbors() {
     compare_test(b1.neighbors_l, [], "bottom to left", b1)
     compare_test(b2.neighbors_l, [b1], "bottom to left", b2)
     compare_test(b3.neighbors_l, [b2], "bottom to left", b3)
+
+    compare_array(state.getTopCorners(box),    [0 * 5 + 0, 0 * 5 + 4], "top corners")
+    compare_array(state.getBottomCorners(box), [4 * 5 + 0, 4 * 5 + 4], "bottom corners")
+    compare_array(state.getLeftCorners(box),   [0 * 5 + 0, 4 * 5 + 0], "left corners")
+    compare_array(state.getRightCorners(box),  [0 * 5 + 4, 4 * 5 + 4], "right corners")
 }
