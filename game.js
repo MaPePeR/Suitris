@@ -96,6 +96,7 @@ class GameState {
 
         [this.extendBoxTop, this.shrinkFromTop] = this.changeBoxSizeDirectionTemplate(
             this.getTopIndices.bind(this),
+            this.getTopCorners.bind(this),
             'neighbors_t', 'neighbors_b',
             'neighbors_l', 'neighbors_r',
             (box, other) => other.y <= box.y + box.height & other.y + other.height > box.y,
@@ -112,6 +113,7 @@ class GameState {
         );
         [this.extendBoxBottom, this.shrinkFromBottom] = this.changeBoxSizeDirectionTemplate(
             this.getBottomIndices.bind(this),
+            this.getBottomCorners.bind(this),
             'neighbors_b', 'neighbors_t',
             'neighbors_l', 'neighbors_r',
             (box, other) => other.y <=box.y + box.height & other.y + other.height > box.y,
@@ -124,6 +126,7 @@ class GameState {
         );
         [this.extendBoxLeft, this.shrinkFromLeft] = this.changeBoxSizeDirectionTemplate(
             this.getLeftIndices.bind(this),
+            this.getLeftCorners.bind(this),
             'neighbors_l', 'neighbors_r',
             'neighbors_t', 'neighbors_b',
             (box, other) => other.x < box.x + box.width && other.x + other.width > box.x,
@@ -140,6 +143,7 @@ class GameState {
         );
         [this.extendBoxRight, this.shrinkFromRight] = this.changeBoxSizeDirectionTemplate(
             this.getRightIndices.bind(this),
+            this.getRightCorners.bind(this),
             'neighbors_r', 'neighbors_l',
             'neighbors_t', 'neighbors_b',
             (box, other) => other.x < box.x + box.width && other.x + other.width > box.x,
@@ -253,7 +257,7 @@ class GameState {
         }
     }
 
-    changeBoxSizeDirectionTemplate(getIndicesInDirection, neighbor_param, reverse_neighbor_param, other_neighbor_param, reverse_other_neighbor_param, touchInCrossDirection, updateExtend, updateShrink) {
+    changeBoxSizeDirectionTemplate(getIndicesInDirection, getCornerIndicesInDirection, neighbor_param, reverse_neighbor_param, other_neighbor_param, reverse_other_neighbor_param, touchInCrossDirection, updateExtend, updateShrink) {
         const extendInDirection = (box) => {
             if (VALIDATION) {
                 if ([...this.getUniqueBoxesFromIndices(getIndicesInDirection(box))].length > 0) {
@@ -268,6 +272,24 @@ class GameState {
                     }
                 }
                 this.board[i] = box;
+            }
+            // returns TOP, BOTTOM or LEFT, RIGHT corners
+            const corners = getCornerIndicesInDirection(box)
+            const corner1 = corners.next().value
+            if (corner1 !== null) {
+                const other = this.board[corner1]
+                if (other && !touchInCrossDirection(box, other)) {
+                    other[reverse_other_neighbor_param].push(box)
+                    box[other_neighbor_param].push(other)
+                }
+            }
+            const corner2 = corners.next().value
+            if (corner2 !== null) {
+                const other = this.board[corner2]
+                if (other && !touchInCrossDirection(box, other)) {
+                    other[other_neighbor_param].push(box)
+                    box[reverse_other_neighbor_param].push(other)
+                }
             }
             updateExtend(box)
             fillArrFromGen(box[neighbor_param], this.getUniqueBoxesFromIndices(getIndicesInDirection(box)))
@@ -313,6 +335,24 @@ class GameState {
         }
     }
 
+    *getCornerIndices(box, dx, dy) {
+        if (dx !== 0) {
+            if (box.x + dx < 0 || box.x + dx + box.width >= this.width) {
+                yield null
+                yield null
+            }
+            yield (box.y > 0) ? (box.y - 1) * this.width + box.x + dx : null;
+            yield (box.y + box.height < this.height) ? (box.y + box.height) * this.width + box.x + box.width + dx : null;
+        } else if (dy !== 0) {
+            if (box.y + dy < 0 || box.y + dy + box.height >= this.height) {
+                yield null
+                yield null
+            }
+            yield (box.x > 0) ? (box.y + dy) * this.width + box.x - 1 : null;
+            yield (box.x + box.width < this.width) ? (box.y + dy) * this.width + box.x + box.width : null;
+        }
+    }
+
     *getUniqueBoxesFromIndices(indices) {
         let lastBox = null;
         for(let i of indices) {
@@ -342,6 +382,22 @@ class GameState {
     getRightIndices(box) {
         if (box.rightX() + 1 >= this.width) return [];
         return this.getIndices(box.y * this.width + box.rightX() + 1, this.width, (box.bottomY() + 1) * this.width + box.rightX() + 1);
+    }
+
+    getTopCorners(box) {
+        return this.getCornerIndices(box, 0, -1);
+    }
+
+    getBottomCorners(box) {
+        return this.getCornerIndices(box, 0, 1);
+    }
+
+    getLeftCorners(box) {
+        return this.getCornerIndices(box, -1, 0);
+    }
+
+    getRightCorners(box) {
+        return this.getCornerIndices(box, 1, 0);
     }
 
     getTopNeighbors(box) {
