@@ -110,6 +110,47 @@ class GameState {
         this.shiftBottom = this.shiftDirTemplate('y', 1, 'height', this.height, 'neighbors_b');
         this.shiftLeft = this.shiftDirTemplate('x', -1, 'width', this.width, 'neighbors_l');
         this.shiftRight = this.shiftDirTemplate('x', 1, 'width', this.width, 'neighbors_r');
+
+        this.shrinkFromTop = this.shrinkBoxDirectionTemplate(
+            this.getTopIndices.bind(this),
+            'neighbors_t', 'neighbors_b',
+            'neighbors_l', 'neighbors_r',
+            (box, other) => other.y <= box.y + box.height & other.y + other.height > box.y,
+            (box) => {
+                box.height -= 1;
+                box.y += 1;
+                box.center_y -= 1;
+            }
+        )
+        this.shrinkFromBottom = this.shrinkBoxDirectionTemplate(
+            this.getBottomIndices.bind(this),
+            'neighbors_b', 'neighbors_t',
+            'neighbors_l', 'neighbors_r',
+            (box, other) => other.y <=box.y + box.height & other.y + other.height > box.y,
+            (box) => {
+                box.height -= 1;
+            }
+        )
+        this.shrinkFromLeft = this.shrinkBoxDirectionTemplate(
+            this.getLeftIndices.bind(this),
+            'neighbors_l', 'neighbors_r',
+            'neighbors_t', 'neighbors_b',
+            (box, other) => other.x < box.x + box.width && other.x + other.width > box.x,
+            (box) => {
+                box.width -= 1;
+                box.x += 1;
+                box.center_x -= 1;
+            }
+        )
+        this.shrinkFromRight = this.shrinkBoxDirectionTemplate(
+            this.getRightIndices.bind(this),
+            'neighbors_r', 'neighbors_l',
+            'neighbors_t', 'neighbors_b',
+            (box, other) => other.x < box.x + box.width && other.x + other.width > box.x,
+            (box) => {
+                box.width -= 1;
+            }
+        )
     }
 
     start() {
@@ -233,6 +274,34 @@ class GameState {
             fillArrFromGen(box[neighbor_param], this.getUniqueBoxesFromIndices(getIndicesInDirection(box)))
             for (const other of box[neighbor_param]) {
                 other[reverse_neighbor_param].push(box)
+            }
+        }
+    }
+
+    shrinkBoxDirectionTemplate(getIndicesInDirection, neighbor_param, reverse_neighbor_param, other_neighbor_param, reverse_other_neighbor_param, touchInCrossDirection, update) {
+        return (box) => {
+            for (const i of getIndicesInDirection(box)) {
+                if (VALIDATION) {
+                    const cell = this.board[i]
+                    if (cell !== box) {
+                        throw new Error(`Box in board does not match box to remove at i=${i} x=${i % this.width} y=${Math.floor(i / this.width)}`)
+                    }
+                }
+                this.board[i] = null;
+            }
+            update(box)
+            for (const other of box[neighbor_param]) {
+                swapOutEl(other[reverse_neighbor_param], box)
+            }
+            for (const other of box[other_neighbor_param]) {
+                if (!touchInCrossDirection(box, other)) {
+                    swapOutEl(other[reverse_neighbor_param], box)
+                }
+            }
+            for (const other of box[reverse_other_neighbor_param]) {
+                if (!touchInCrossDirection(box, other)) {
+                    swapOutEl(other[other_neighbor_param], box)
+                }
             }
         }
     }
@@ -583,19 +652,13 @@ class GameState {
         }
         if (box.width > box.size && (box.width - 1) * box.height >= box.size * box.size) {
             const shrinkLeft = box.center_x > box.width / 2;
-            this.removeBoxFromBoard(box)
             if (shrinkLeft) {
-                box.x += 1;
-                box.center_x -= 1;
+                this.shrinkFromLeft(box)
+            } else {
+                this.shrinkFromRight(box)
             }
-            box.width -=1;
-            this.insertBoxIntoBoard(box)
         } else if (box.height > box.size && box.width * (box.height - 1) >= box.size * box.size) {
-            this.removeBoxFromBoard(box)
-            box.y += 1;
-            box.center_y -= 1;
-            box.height -= 1
-            this.insertBoxIntoBoard(box)
+            this.shrinkFromTop(box)
         }
     }
 
