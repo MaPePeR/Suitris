@@ -8,6 +8,13 @@ async function newGame() {
     return current_game = new GameState(GAME_WIDTH, GAME_HEIGHT, renderer)
 }
 
+function runTicks(n) {
+    current_game.running = true;
+    for (let i = 0; i < n; ++i) {
+        current_game.nextTick()
+    }
+}
+
 function setFallingBox(box) {
     current_game.fallingBox = box
     current_game.fallingBox.state = BoxState.ACTIVE
@@ -20,7 +27,7 @@ async function scenario1() {
     setFallingBox(new Box(2, 14, 5, 5, 5));
     current_game.insertFixedBoxIntoBoard(new Box(1, GAME_HEIGHT - 2, 2, 2, 2));
     current_game.insertFixedBoxIntoBoard(new Box(3, GAME_HEIGHT - 11, 11, 4, 11));
-    current_game.start()
+    runTicks(20)
 }
 
 async function scenario2() {
@@ -28,7 +35,7 @@ async function scenario2() {
     current_game.insertFixedBoxIntoBoard(new Box(12, 29, 3, 3, 3));
     setFallingBox(new Box(14, 29 - 3 - 2, 3, 3, 3));
     current_game.insertFixedBoxIntoBoard(new Box(12, 29 - 2, 2, 2, 2));
-    current_game.start()
+    runTicks(20)
 }
 
 async function scenario3() {
@@ -37,19 +44,19 @@ async function scenario3() {
     setFallingBox(new Box (12, 26, 1, 1, 1));
     current_game.insertFixedBoxIntoBoard(new Box (11, 30, 2, 2, 2));
     current_game.insertFixedBoxIntoBoard(new Box (11 - 3, 29, 3, 3, 3));
-    current_game.start()
+    runTicks(20)
 }
 
 
 async function scenario4() {
     await newGame();
-    const growingBox = new GrowingBox(11, 26, 7, 5, 5)
+    const growingBox = new Box(11, 26, 7, 5, 5)
     growingBox.center_x = 13.5
     growingBox.center_y = 28
     current_game.insertBoxIntoBoard(growingBox);
     current_game.growingBoxes.push(growingBox)
     setFallingBox(new Box (12, 21, 4, 4, 4));
-    current_game.start()
+    runTicks(20)
 }
 
 
@@ -63,7 +70,7 @@ async function scenario5() {
     
     current_game.insertFixedBoxIntoBoard(new Box(0, 26, 6, 6, 6));
     current_game.insertFixedBoxIntoBoard(new Box(4, 22, 4, 4, 4));
-    current_game.start()
+    runTicks(20)
 
 }
 
