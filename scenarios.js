@@ -133,6 +133,8 @@ async function scenario7() {
     current_game.move(1)
     current_game.move(1)
     current_game.nextTick()
+
+    runTicks(20)
 }
 
 async function scenario8() {
@@ -146,10 +148,7 @@ async function scenario8() {
     current_game.fallingBox.state = BoxState.ACTIVE
     current_game.insertBoxIntoBoard(current_game.fallingBox)
 
-    current_game.running = true;
-    for (let i = 0; i < 8 * 4; ++i) {
-        current_game.nextTick()
-    }
+    runTicks(8 * 4)
 }
 
 async function scenario9() {
@@ -160,10 +159,7 @@ async function scenario9() {
     current_game.nonSquareBoxes.push(nonSquareBox)
     current_game.insertFixedBoxIntoBoard(new Box(4, GAME_HEIGHT - 4, 4, 4, 4));
 
-    current_game.running = true;
-    for (let i = 0; i < 8 * 4; ++i) {
-        current_game.nextTick()
-    }
+    runTicks(8 * 4)
 }
 
 async function scenario10() {
@@ -174,6 +170,8 @@ async function scenario10() {
     current_game.nonSquareBoxes.push(nonSquareBox)
     current_game.insertFixedBoxIntoBoard(new Box(8, GAME_HEIGHT - 5, 5, 5, 5)); //Propup
     current_game.insertFixedBoxIntoBoard(new Box(8 - 4, GAME_HEIGHT - 5 - 5, 5, 5, 5));
+
+    runTicks(10)
 }
 
 async function scenario12() {
@@ -192,7 +190,6 @@ async function scenario12() {
 
     current_game.tickCount = 2
     current_game.running = true
-    debugger
     current_game.nextTick() // Make Boxes not NEW
     current_game.moveDown()
     current_game.move(1) // Push 1 to the right
