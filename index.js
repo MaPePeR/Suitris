@@ -15,6 +15,8 @@ const colors = [
     '#028000ff',
 ]
 
+let current_game = null;
+
 const PIX_PER_BOX = 600 / GAME_WIDTH
 function setup() {
 const $game_object = document.getElementById('game');
@@ -65,8 +67,6 @@ window.addEventListener('resize', handleResize)
 handleResize()
 
 
-
-let current_game = null;
 
 function left() {
     if (!current_game) return;
