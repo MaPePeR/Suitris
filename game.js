@@ -421,8 +421,10 @@ class GameState {
             });
             boxes_to_shift.forEach(box => {
                 this.insertBoxIntoBoard(box)
-                this.checkTouching(box)
             });
+            boxes_to_shift.forEach(box => {
+                this.checkTouching(box)
+            })
             return true;
         }
         return false;
