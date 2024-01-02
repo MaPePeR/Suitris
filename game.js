@@ -470,8 +470,9 @@ class GameState {
     }
 
     growBoxLeft(box) {
+        if (box.x == 0) return false;
         const free_left = box.neighbors_l.length == 0;
-        const free_right = box.neighbors_r.length == 0;
+        const free_right = box.neighbors_r.length == 0 && box.x + box.width < this.width;
         if (free_left || (!free_left && !free_right && this.shift(box.neighbors_l, 'x', -1, 'width', this.width, 'neighbors_l'))) {
             if (VALIDATION && this.getLeftNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
             this.removeBoxFromBoard(box);
@@ -485,7 +486,8 @@ class GameState {
     }
 
     growBoxRight(box) {
-        const free_left = box.neighbors_l.length == 0;
+        if (box.x + box.width >= this.width) return false;
+        const free_left = box.neighbors_l.length == 0 && box.x > 0;
         const free_right = box.neighbors_r.length == 0;
         if (free_right || (!free_left && !free_right && this.shift(box.neighbors_r, 'x', 1, 'width', this.width, 'neighbors_r'))) {
             if (VALIDATION && this.getRightNeighbors(box).length > 0) throw "Growing left, but neighbors exist";
@@ -505,8 +507,9 @@ class GameState {
     }
 
     growBoxTop(box) {
+        if (this.y == 0) return false;
         const free_top = box.neighbors_t.length == 0;
-        const free_bottom = box.neighbors_b.length == 0;
+        const free_bottom = box.neighbors_b.length == 0 && box.y + box.height < this.height;
         if (free_top || (!free_top && !free_bottom &&this.shift(box.neighbors_t, 'y', -1, 'height', this.height, 'neighbors_t'))) {
             // Top is free
             this.removeBoxFromBoard(box);
@@ -520,7 +523,8 @@ class GameState {
     }
 
     growBoxBottom(box) {
-        const free_top = box.neighbors_t.length == 0;
+        if (box.y + box.height >= this.height) return false;
+        const free_top = box.neighbors_t.length == 0 && this.y > 0;
         const free_bottom = box.neighbors_b.length == 0;
         if (free_bottom || (!free_top && !free_bottom && this.shift(box.neighbors_b, 'y', 1, 'height', this.height, 'neighbors_b'))) {
             // Bottom is free
