@@ -89,10 +89,10 @@ class GameState {
         this.renderer = renderer;
         this.upcomingSize = this.randomSize();
 
-        this.shiftTop = this.shiftDirTemplate('y', -1, 'height', this.height, 'neighbors_t');
-        this.shiftBottom = this.shiftDirTemplate('y', 1, 'height', this.height, 'neighbors_b');
-        this.shiftLeft = this.shiftDirTemplate('x', -1, 'width', this.width, 'neighbors_l');
-        this.shiftRight = this.shiftDirTemplate('x', 1, 'width', this.width, 'neighbors_r');
+        this.shiftTop = this.shiftDirTemplate(this.moveBoxUp.bind(this), 'y', -1, 'height', this.height, 'neighbors_t');
+        this.shiftBottom = this.shiftDirTemplate(this.moveBoxDown.bind(this), 'y', 1, 'height', this.height, 'neighbors_b');
+        this.shiftLeft = this.shiftDirTemplate(this.moveBoxLeft.bind(this), 'x', -1, 'width', this.width, 'neighbors_l');
+        this.shiftRight = this.shiftDirTemplate(this.moveBoxRight.bind(this), 'x', 1, 'width', this.width, 'neighbors_r');
 
         [this.extendBoxTop, this.shrinkFromTop] = this.changeBoxSizeDirectionTemplate(
             this.getTopIndices.bind(this),
@@ -532,24 +532,21 @@ class GameState {
         if (this.running && this.fallingBox) {
             const newx = Math.max(0, Math.min(this.width - this.fallingBox.width, this.fallingBox.x + direction))
             if (this.fallingBox.x != newx) {
-                let didshift = false;
                 if (direction < 0 && this.fallingBox.neighbors_l.length > 0) {
-                    if (ALLOW_PUSH && this.shiftLeft(this.fallingBox.neighbors_l)) {
-                        didshift = true;
-                    } else {
+                    if (!ALLOW_PUSH || !this.shiftLeft(this.fallingBox.neighbors_l)) {
                         return;
                     }
                 }
                 if (direction > 0 && this.fallingBox.neighbors_r.length > 0) {
-                    if (ALLOW_PUSH && this.shiftRight(this.fallingBox.neighbors_r)) {
-                        didshift = true;
-                    } else {
+                    if (!ALLOW_PUSH || !this.shiftRight(this.fallingBox.neighbors_r)) {
                         return;
                     }
                 }
-                this.removeBoxFromBoard(this.fallingBox)
-                this.fallingBox.x = newx;
-                this.insertBoxIntoBoard(this.fallingBox)
+                if (direction < 0) {
+                    this.moveBoxLeft(this.fallingBox)
+                } else if (direction > 0) {
+                    this.moveBoxRight(this.fallingBox)
+                }
                 if (this.checkTouching(this.fallingBox)) {
                     this.fallingBox = null;
                 }
@@ -560,9 +557,7 @@ class GameState {
     moveDown() {
         if (this.running && this.fallingBox) {
             if (this.canFall(this.fallingBox)) {
-                this.removeBoxFromBoard(this.fallingBox)
-                this.fallingBox.y += 1
-                this.insertBoxIntoBoard(this.fallingBox)
+                this.moveBoxDown(this.fallingBox)
                 if (this.checkTouching(this.fallingBox)) {
                     this.fallingBox = null;
                 }
@@ -584,7 +579,7 @@ class GameState {
         }
     }
 
-    shiftDirTemplate(dir_param, dir, dir_size_param, dir_size, neighbor_param) {
+    shiftDirTemplate(move, dir_param, dir, dir_size_param, dir_size, neighbor_param) {
         function r_shift(boxes, nextBoxes, boxes_to_shift) {
             if (boxes.length == 0) {
                 return true;
@@ -596,29 +591,47 @@ class GameState {
                 for (const neighbor of box[neighbor_param]) {
                     nextBoxes.push(neighbor);
                 }
-                boxes_to_shift.add(box);
+                boxes_to_shift.push(box);
             }
             boxes.length = 0;
             return r_shift(nextBoxes, boxes, boxes_to_shift);
         };
         return (boxes) => {
-            const boxes_to_shift = new Set();
+            const boxes_to_shift = [];
             if (r_shift([...boxes], [], boxes_to_shift)) {
-                //TODO reverse order and shift without removing full box
-                boxes_to_shift.forEach(box => {
-                    this.removeBoxFromBoard(box)
-                    box[dir_param] += dir;
-                });
-                boxes_to_shift.forEach(box => {
-                    this.insertBoxIntoBoard(box)
-                });
-                boxes_to_shift.forEach(box => {
+                const boxes_already_shifted = new Set()
+                for (let i = boxes_to_shift.length - 1; i >= 0; --i) {
+                    const box = boxes_to_shift[i];
+                    if (boxes_already_shifted.has(box)) continue;
+                    move(box)
+                }
+                for(const box of boxes_already_shifted) {
                     this.checkTouching(box)
-                })
+                }
                 return true;
             }
             return false;
         }
+    }
+
+    moveBoxUp(box) {
+        this.extendBoxTop(box)
+        this.shrinkFromBottom(box)
+    }
+    
+    moveBoxDown(box) {
+        this.extendBoxBottom(box)
+        this.shrinkFromTop(box)
+    }
+
+    moveBoxLeft(box) {
+        this.extendBoxLeft(box)
+        this.shrinkFromRight(box)
+    }
+    
+    moveBoxRight(box) {
+        this.extendBoxRight(box)
+        this.shrinkFromLeft(box)
     }
 
     growBox(box) {
@@ -794,9 +807,7 @@ class GameState {
                     if (this.gravityTick != box.lastGravity && this.canFall(box)) {
                         box.lastGravity = this.gravityTick;
                         didGravity = true;
-                        this.removeBoxFromBoard(box);
-                        box.y += 1;
-                        this.insertBoxIntoBoard(box)
+                        this.moveBoxDown(box)
                         if (this.checkTouching(box)) {
                             break;
                         }
