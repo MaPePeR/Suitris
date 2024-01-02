@@ -99,7 +99,7 @@ class GameState {
             this.getTopCorners.bind(this),
             'neighbors_t', 'neighbors_b',
             'neighbors_l', 'neighbors_r',
-            (box, other) => other.y <= box.y + box.height & other.y + other.height > box.y,
+            (box, other) => other.y < box.y + box.height && other.y + other.height > box.y,
             (box) => {
                 box.height += 1;
                 box.y -= 1;
@@ -116,7 +116,7 @@ class GameState {
             this.getBottomCorners.bind(this),
             'neighbors_b', 'neighbors_t',
             'neighbors_l', 'neighbors_r',
-            (box, other) => other.y <=box.y + box.height & other.y + other.height > box.y,
+            (box, other) => other.y < box.y + box.height && other.y + other.height > box.y,
             (box) => {
                 box.height += 1;
             },
@@ -604,6 +604,7 @@ class GameState {
                     const box = boxes_to_shift[i];
                     if (boxes_already_shifted.has(box)) continue;
                     move(box)
+                    boxes_already_shifted.add(box)
                 }
                 for(const box of boxes_already_shifted) {
                     this.checkTouching(box)
@@ -883,11 +884,23 @@ class GameState {
                     }
                 }
             }
-            for (const box of [...this.fixedBoxes, ...this.growingBoxes]) {
+            function checkNeighbors(box, a, b) {
+                [a, b] = [[...a], [...b]]
+                if (!(a.length == b.length && (new Set([...a, ...b])).size == a.length)) {
+                    throw new Error("Neighbors do not match for box")
+                }
+            }
+            for (const box of [this.fallingBox, ...this.fixedBoxes, ...this.growingBoxes]) {
+                if (!box) continue;
                 checkNoNeighborTwice(box.neighbors_t)
                 checkNoNeighborTwice(box.neighbors_b)
                 checkNoNeighborTwice(box.neighbors_l)
                 checkNoNeighborTwice(box.neighbors_r)
+                checkNeighbors(box, box.neighbors_t, this.getTopNeighbors(box))
+                checkNeighbors(box, box.neighbors_b, this.getBottomNeighbors(box))
+                checkNeighbors(box, box.neighbors_l, this.getLeftNeighbors(box))
+                checkNeighbors(box, box.neighbors_r, this.getRightNeighbors(box))
+
             }
         }
     }
@@ -989,4 +1002,9 @@ function test_neighbors() {
     compare_array(state.getBottomCorners(box), [4 * 5 + 0, 4 * 5 + 4], "bottom corners")
     compare_array(state.getLeftCorners(box),   [0 * 5 + 0, 4 * 5 + 0], "left corners")
     compare_array(state.getRightCorners(box),  [0 * 5 + 4, 4 * 5 + 4], "right corners")
+
+    compare_array([...state.getTopIndices(box)],    [0*5 + 1, 0*5 + 2, 0*5 + 3], "top")
+    compare_array([...state.getBottomIndices(box)], [4*5 + 1, 4*5 + 2, 4*5 + 3], "bottom")
+    compare_array([...state.getLeftIndices(box)],   [1*5 + 0, 2*5 + 0, 3*5 + 0], "left")
+    compare_array([...state.getRightIndices(box)],  [1*5 + 4, 2*5 + 4, 3*5 + 4], "right")
 }
