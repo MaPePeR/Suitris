@@ -297,6 +297,7 @@ class GameState {
         }
 
         const shrinkFromDirection = (box) => {
+            updateShrink(box)
             for (const i of getIndicesInDirection(box)) {
                 if (VALIDATION) {
                     const cell = this.board[i]
@@ -306,7 +307,6 @@ class GameState {
                 }
                 this.board[i] = null;
             }
-            updateShrink(box)
             for (const other of box[neighbor_param]) {
                 swapOutEl(other[reverse_neighbor_param], box)
             }
