@@ -766,7 +766,7 @@ class GameState {
     }
 
     growBoxTop(box) {
-        if (this.y == 0) return false;
+        if (box.y == 0) return false;
         const free_top = box.neighbors_t.length == 0;
         if (free_top || this.shiftTop(box.neighbors_t)) {
             this.extendBoxTop(box)
