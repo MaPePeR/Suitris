@@ -227,5 +227,15 @@ $pauserestartbutton.addEventListener('click', () => {
     }
 })
 
+if ("hidden" in document) {
+    document.addEventListener("visibilitychange", () => {
+        if (document.hidden) {
+            $board.style.filter = 'url(#filter_blur)'
+            current_game.pause()
+            $pauserestartbuttontext.textContent = 'UNPAUSE';
+        }
+    });
+}
+
 resolve_renderer(new SVGRenderer())
 }
