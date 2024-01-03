@@ -158,7 +158,7 @@ class GameState {
 
     start() {
         this.running = true;
-        this.interval = setInterval(this.nextTick.bind(this), 500 / 4);
+        this.interval = setInterval(this.nextTick.bind(this), 500 / 2);
     }
 
     randomSize() {
@@ -652,22 +652,63 @@ class GameState {
             }
             return;
         }
-        if (this.growBoxX(box)) {
-            console.log("GrowX successful", box)
-        } else {
-            console.log("GrowX failed", box)
-        }
-        if (box.height * box.width < box.size * box.size) {
-            if (this.growBoxY(box)) {
-                console.log("GrowY successful", box)
-            } else {
-                console.log("GrowY failed", box)
+        let didGrow = true;
+        let growXcount = 0;
+        let growYcount = 0;
+        outer: while(box.width * box.height < box.size * box.size && growXcount < 2 && growYcount < 2 && didGrow) {
+            didGrow = false;
+            // Box is right of center of board => prefer growing left
+            const preferTop = false;
+            const preferLeft = box.x + box.width / 2 > this.width / 2
+            const topCenterDistance = box.center_y;
+            const bottomCenterDistance = box.height - box.center_y;
+            const leftCenterDistance = box.center_x;
+            const rightCenterDistance = box.width - box.center_x;
+            
+            // Set offset so we expand vertical first if the vertical center distance is larger than the horizontal center distance.
+            const offset = Math.max(topCenterDistance, bottomCenterDistance) >= Math.max(leftCenterDistance, rightCenterDistance) ? 0 : 1;
+            for(let step = 0; step < 2; ++step) {
+                if (this.checkTouching(box)) {
+                    box.state = BoxState.TO_BE_REMOVED;
+                    break outer;
+                }
+                if (box.width * box.height >= box.size * box.size) break outer;
+                if (growYcount <= 2 && (step + offset) % 2 == 0) {
+                    if (topCenterDistance < bottomCenterDistance || (preferTop && topCenterDistance == bottomCenterDistance)) {
+                        if (this.growBoxTop(box) || this.growBoxBottom(box)) {
+                            ++growYcount;
+                            didGrow = true;
+                        }
+                    } else {
+                        if (this.growBoxBottom(box) || this.growBoxTop(box)) {
+                            ++growYcount;
+                            didGrow = true;
+                        }
+                    }
+                } else if (growXcount <= 2 && (step + offset) % 2 == 1) {
+                    if (leftCenterDistance < rightCenterDistance || (preferLeft && leftCenterDistance == rightCenterDistance)) {
+                        if (this.growBoxLeft(box) || this.growBoxRight(box)) {
+                            ++growXcount;
+                            didGrow = true;
+                        }
+                    } else {
+                        if (this.growBoxRight(box) || this.growBoxLeft(box)) {
+                            ++growXcount;
+                            didGrow = true;
+                        }
+                    }
+                }
             }
+
+
+
         }
+
         if (this.checkTouching(box)) {
             box.state = BoxState.TO_BE_REMOVED;
         }
     }
+
     growBoxX(box) {
         const preferLeft = box.center_x < box.width / 2;
         return (preferLeft && this.growBoxLeft(box))
@@ -766,7 +807,7 @@ class GameState {
         this.tickCount = this.tickCount + 1;
         console.log(this.tickCount, "tick", this.fallingBox, this.growingBoxes.length, this.fixedBoxes.length)
         console.log(this.board.slice((this.height - 1 ) * this.width))
-        if (this.tickCount % 4 == 0 && this.fallingBox) {
+        if (this.tickCount % 2 == 0 && this.fallingBox) {
             if (!this.canFall(this.fallingBox)) {
                 this.fixedBoxes.push(this.fallingBox);
                 this.fallingBox = null;
@@ -793,7 +834,7 @@ class GameState {
                 this.growBox(this.growingBoxes[i])
             }
         }
-        if (this.tickCount % 4 == 0 && this.running) {
+        if (this.tickCount % 2 == 0 && this.running) {
             this.gravityTick = (this.gravityTick + 1) % 2
             let didGravity = false;
             do {
