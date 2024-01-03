@@ -777,14 +777,16 @@ cursor: pointer;
        id="machine_landscape"
        transform="translate(29.388887,-23.555558)"
        inkscape:label="machine_landscape"
-       style="display:inline" />
+       style="display:inline"
+       class="viewBoxDependent landscape-viewBox" />
     <use
        x="0"
        y="0"
        xlink:href="#machine"
        id="machine_portrait"
        style="display:inline"
-       inkscape:label="machine_portrait" />
+       inkscape:label="machine_portrait"
+       class="viewBoxDependent portrait-viewBox1 portrait-viewBox2" />
     <g
        id="g57611"
        inkscape:label="containerbackground"
@@ -854,15 +856,17 @@ cursor: pointer;
        xlink:href="#g61446"
        id="conveyer_portrait"
        style="display:inline"
-       inkscape:label="conveyer_portrait" />
+       inkscape:label="conveyer_portrait"
+       class="viewBoxDependent  portrait-viewBox1" />
     <use
        x="0"
        y="0"
        xlink:href="#g61446"
        id="conveyer_landscape"
        style="display:inline"
-       transform="translate(10.000001,8.5)"
-       inkscape:label="conveyer_landscape" />
+       transform="translate(7.0000014,8.75)"
+       inkscape:label="conveyer_landscape"
+       class="viewBoxDependent landscape-viewBox portrait-viewBox2" />
   </g>
   <g
      inkscape:label="Ebene 1"
@@ -2018,21 +2022,36 @@ cursor: pointer;
     </g>
   </g>
   <rect
-     style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.07996;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+     style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.0754673;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
      id="portraitViewBox"
-     width="29.5"
-     height="64.250061"
-     x="-2.75"
-     y="-6.25"
+     width="26.5"
+     height="63.75"
+     x="-1.25"
+     y="-5.75"
      inkscape:label="portraitViewBox"
+     class="viewBoxRect"
+     data-viewBoxClass="portrait-viewBox1"
      sodipodi:insensitive="true" />
   <rect
-     style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:0.0799601;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+     style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.0809101;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+     id="portraitViewBox2"
+     width="33.5"
+     height="57.25"
+     x="-1.25"
+     y="-0.25"
+     inkscape:label="portraitViewBox2"
+     class="viewBoxRect"
+     data-viewBoxClass="portrait-viewBox2"
+     sodipodi:insensitive="true" />
+  <rect
+     style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.0799601;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
      id="landscapeViewBox"
-     width="60"
-     height="36.25"
-     x="-2.75"
-     y="-1.75"
+     width="56.25"
+     height="34.75"
+     x="-1.25"
+     y="-0.25"
      inkscape:label="landscapeViewBox"
+     class="viewBoxRect"
+     data-viewBoxClass="landscape-viewBox"
      sodipodi:insensitive="true" />
 </svg>

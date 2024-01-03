@@ -30,42 +30,45 @@ const $game_object = document.getElementById('game');
 const $game_svg = $game_object.contentDocument.querySelector('svg');
 const $portrait_viewBox_rect = $game_svg.getElementById('portraitViewBox')
 const $landscape_viewBox_rect = $game_svg.getElementById('landscapeViewBox')
+const $$viewBoxes = $game_svg.querySelectorAll('.viewBoxRect')
+let $currentViewBox = null;
 function handleResize() {
     const width = $game_svg.clientWidth;
     const height = $game_svg.clientHeight;
-
-    const p_viewBox_height = +$portrait_viewBox_rect.getAttribute('height')
-    const p_viewBox_width = +$portrait_viewBox_rect.getAttribute('width')
-    const p_aspect = p_viewBox_width / p_viewBox_height
-
-    const p_height =  Math.min(height, width / p_aspect)
-    const p_width =  p_height * p_aspect
-    const p_area = p_width * p_height / (p_viewBox_width * p_viewBox_height)
-
-    const l_viewBox_height = +$landscape_viewBox_rect.getAttribute('height')
-    const l_viewBox_width = +$landscape_viewBox_rect.getAttribute('width')
-    const l_aspect = l_viewBox_width / l_viewBox_height
+    let maxArea = 0;
+    let $maxViewBox = null;
+    let max_width = null;
+    let max_height = null;
+    for (const $viewBox of $$viewBoxes) {
+        const viewBox_height = +$viewBox.getAttribute('height')
+        const viewBox_width = +$viewBox.getAttribute('width')
+        const aspect = viewBox_width / viewBox_height
     
-    const l_height =  Math.min(height, width / l_aspect)
-    const l_width = l_height * l_aspect
-    const l_area = l_width  * l_height / (l_viewBox_width * l_viewBox_height)
-
-    if (p_area > l_area) { // Portrait Mode
-        const pix_per_n = (width / p_viewBox_width)
-        const dx = Math.max(0, (width - p_width) / pix_per_n)
-        const dy = Math.max(0, (height - p_height) / pix_per_n)
-        const portrait_viewBox_string = `${$portrait_viewBox_rect.getAttribute('x') - dx/2} ${+$portrait_viewBox_rect.getAttribute('y') - dy} ${p_viewBox_width + dx} ${p_viewBox_height + dy}`
-        $game_svg.setAttribute('viewBox', portrait_viewBox_string)
-        $game_svg.classList.remove('landscape')
-        $game_svg.classList.add('portrait')
-    } else { // Landscape Mode
-        const pix_per_n = (width / l_viewBox_width)
-        const dx = Math.max(0, (width - l_width) / pix_per_n)
-        const dy = Math.max(0, (height - l_height) / pix_per_n)
-        const landscape_viewBox_string = `${$landscape_viewBox_rect.getAttribute('x') -dx/2} ${+$landscape_viewBox_rect.getAttribute('y') - dy} ${l_viewBox_width + dx} ${l_viewBox_height + dy}`
-        $game_svg.setAttribute('viewBox', landscape_viewBox_string)
-        $game_svg.classList.add('landscape')
-        $game_svg.classList.remove('portrait')
+        const actual_height =  Math.min(height, width / aspect)
+        const actual_width =  actual_height * aspect
+        const area = actual_width * actual_height / (viewBox_width * viewBox_height)
+        if (area > maxArea) {
+            maxArea = area;
+            $maxViewBox = $viewBox;
+            max_width = actual_width;
+            max_height = actual_height;
+        }
+    }
+    const viewBox_width = +$maxViewBox.getAttribute('width')
+    const viewBox_height = +$maxViewBox.getAttribute('height')
+    const pix_per_n = (width / viewBox_width)
+    const dx = Math.max(0, (width - max_width) / pix_per_n)
+    const dy = Math.max(0, (height - max_height) / pix_per_n)
+    const portrait_viewBox_string = `${$maxViewBox.getAttribute('x') - dx/2} ${+$maxViewBox.getAttribute('y') - dy} ${viewBox_width + dx} ${viewBox_height + dy}`
+    $game_svg.setAttribute('viewBox', portrait_viewBox_string)
+    if ($currentViewBox !== $maxViewBox) {
+        $currentViewBox = $maxViewBox
+        $game_svg.querySelectorAll(`.viewBoxDependent:not(.${$maxViewBox.dataset.viewBoxClass})`).forEach(($el) => {
+            $el.style.display = 'none';
+        })
+        $game_svg.querySelectorAll(`.viewBoxDependent.${$maxViewBox.dataset.viewBoxClass}`).forEach(($el) => {
+            $el.style.display = 'inline';
+        })
     }
     $game_svg.setAttribute('width', width)
     $game_svg.setAttribute('height', height)
