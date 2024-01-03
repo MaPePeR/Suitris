@@ -235,6 +235,8 @@ $pauserestartbutton.addEventListener('click', () => {
 if ("hidden" in document) {
     document.addEventListener("visibilitychange", () => {
         if (document.hidden) {
+            if (!current_game) return;
+            if (current_game.paused || !current_game.running || current_game.over) return;
             $board.style.filter = 'url(#filter_blur)'
             current_game.pause()
             $pauserestartbuttontext.textContent = 'UNPAUSE';
