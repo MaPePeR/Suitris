@@ -28,8 +28,6 @@ const [p_renderer, resolve_renderer] = (() => {
 function setup() {
 const $game_object = document.getElementById('game');
 const $game_svg = $game_object.contentDocument.querySelector('svg');
-const $portrait_viewBox_rect = $game_svg.getElementById('portraitViewBox')
-const $landscape_viewBox_rect = $game_svg.getElementById('landscapeViewBox')
 const $$viewBoxes = $game_svg.querySelectorAll('.viewBoxRect')
 let $currentViewBox = null;
 function handleResize() {
