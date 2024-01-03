@@ -219,7 +219,9 @@ $pauserestartbutton.addEventListener('click', () => {
     else if (current_game.paused) {
         current_game.start()
         $pauserestartbuttontext.textContent = 'PAUSE';
+        $board.style.filter = ''
     } else if (!current_game.paused) {
+        $board.style.filter = 'url(#filter_blur)'
         current_game.pause()
         $pauserestartbuttontext.textContent = 'UNPAUSE';
     }

@@ -748,6 +748,14 @@ cursor: pointer;
        r="0.54"
        gradientUnits="userSpaceOnUse"
        gradientTransform="matrix(0.46296294,0.92592589,-0.92592594,0.46296298,0.0972222,0.03703706)" />
+    <filter
+       style="color-interpolation-filters:sRGB"
+       id="filter_blur"
+       inkscape:label="filter_blur">
+      <feGaussianBlur
+         stdDeviation="1"
+         id="feGaussianBlur46151" />
+    </filter>
   </defs>
   <g
      inkscape:groupmode="layer"
@@ -893,7 +901,7 @@ cursor: pointer;
        xlink:href="#box_size_4"
        id="use37259-2"
        transform="matrix(0.98748053,0,0,0.98748131,12.032173,3.6339815)"
-       style="display:inline;stroke-width:1.01268" />
+       style="display:inline;stroke-width:1.01268;filter:url(#filter_blur)" />
     <g
        id="g61446"
        inkscape:label="conveyer"
