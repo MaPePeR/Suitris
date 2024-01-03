@@ -190,10 +190,15 @@ class SVGRenderer {
             $upcomingBox.setAttribute('transform', `translate(${-this.upcomingSize + 1}, ${-this.upcomingSize + 1})`)
         }
     }
+    updateScore(score) {
+        $scoretext.textContent = 'Score: ' + score.toFixed(0)
+    }
     gameOver() {
         $pauserestartbuttontext.textContent = 'RESTART';
     }
 }
+
+const $scoretext = $game_svg.getElementById('scoretext')
 
 const $pauserestartbutton = $game_svg.getElementById('pauserestartbutton');
 const $pauserestartbuttontext = $pauserestartbutton.querySelector('text')

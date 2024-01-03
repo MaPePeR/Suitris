@@ -90,6 +90,7 @@ class GameState {
         this.gravityTick = 0;
         this.renderer = renderer;
         this.upcomingSize = this.randomSize();
+        this.score = 0;
 
         this.shiftTop = this.shiftDirTemplate(this.moveBoxUp.bind(this), 'y', -1, 'height', this.height, 'neighbors_t');
         this.shiftBottom = this.shiftDirTemplate(this.moveBoxDown.bind(this), 'y', 1, 'height', this.height, 'neighbors_b');
@@ -163,6 +164,7 @@ class GameState {
         this.paused = false;
         this.running = true;
         this.interval = setInterval(this.nextTick.bind(this), 500 / 2);
+        this.renderer.updateScore(this.score)
     }
 
     pause() {
@@ -172,6 +174,16 @@ class GameState {
 
     randomSize() {
         return 1 + Math.floor(Math.random() * 4)
+    }
+
+    addScoreNewBoxPlaced(box) {
+        this.score += box.size;
+        this.renderer.updateScore(this.score)
+    }
+
+    addScoreTouching(touching, resulting) {
+        this.renderer.updateScore(this.score)
+        this.score += Math.floor(resulting.size * (resulting.size - 1) / 2)
     }
 
     nextBox() {
@@ -536,6 +548,7 @@ class GameState {
         newBox.center_y = newy - newBox.y;
         this.growingBoxes.push(newBox)
         this.insertBoxIntoBoard(newBox)
+        this.addScoreTouching(boxes, newBox)
     }
 
     move(direction) {
@@ -878,6 +891,7 @@ class GameState {
                 }
                 this.fallingBox.state = BoxState.ACTIVE
                 this.insertBoxIntoBoard(this.fallingBox)
+                this.addScoreNewBoxPlaced(this.fallingBox)
             }
         }
         this.renderer.render(this)

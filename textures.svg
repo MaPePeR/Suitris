@@ -1054,6 +1054,13 @@ cursor: pointer;
            inkscape:label="pauseresstartbuttonarea"
            sodipodi:insensitive="true" />
       </g>
+      <text
+         xml:space="preserve"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.28px;line-height:125%;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.04px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="2.9520831"
+         y="55.73698"
+         id="scoretext"
+         inkscape:label="scoretext">Score: 123456</text>
       <g
          id="startbutton"
          inkscape:label="startbutton"
