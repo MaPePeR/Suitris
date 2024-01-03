@@ -719,8 +719,7 @@ class GameState {
     growBoxLeft(box) {
         if (box.x == 0) return false;
         const free_left = box.neighbors_l.length == 0;
-        const free_right = box.neighbors_r.length == 0 && box.x + box.width < this.width;
-        if (free_left || (!free_left && !free_right && this.shiftLeft(box.neighbors_l))) {
+        if (free_left || this.shiftLeft(box.neighbors_l)) {
             this.extendBoxLeft(box)
             return true;
         }
@@ -729,9 +728,8 @@ class GameState {
 
     growBoxRight(box) {
         if (box.x + box.width >= this.width) return false;
-        const free_left = box.neighbors_l.length == 0 && box.x > 0;
         const free_right = box.neighbors_r.length == 0;
-        if (free_right || (!free_left && !free_right && this.shiftRight(box.neighbors_r))) {
+        if (free_right || this.shiftRight(box.neighbors_r)) {
             this.extendBoxRight(box)
             return true;
         }
@@ -748,8 +746,7 @@ class GameState {
     growBoxTop(box) {
         if (this.y == 0) return false;
         const free_top = box.neighbors_t.length == 0;
-        const free_bottom = box.neighbors_b.length == 0 && box.y + box.height < this.height;
-        if (free_top || (!free_top && !free_bottom && this.shiftTop(box.neighbors_t))) {
+        if (free_top || this.shiftTop(box.neighbors_t)) {
             this.extendBoxTop(box)
             return true;
         }
@@ -758,9 +755,8 @@ class GameState {
 
     growBoxBottom(box) {
         if (box.y + box.height >= this.height) return false;
-        const free_top = box.neighbors_t.length == 0 && this.y > 0;
         const free_bottom = box.neighbors_b.length == 0;
-        if (free_bottom || (!free_top && !free_bottom && this.shiftBottom(box.neighbors_b))) {
+        if (free_bottom || this.shiftBottom(box.neighbors_b)) {
             this.extendBoxBottom(box)
             return true;
         }
