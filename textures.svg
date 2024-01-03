@@ -32,7 +32,7 @@ svg.landscape #machine_portrait, svg.landscape #conveyer_portrait {
    will-change: transform;
 }
 
-#startbutton {
+#startbutton, #pauserestartbutton {
 cursor: pointer;
 user-select: none;
 }
@@ -50,15 +50,15 @@ cursor: pointer;
      inkscape:deskcolor="#d1d1d1"
      inkscape:document-units="mm"
      showgrid="true"
-     inkscape:zoom="0.70710678"
-     inkscape:cx="717.71338"
-     inkscape:cy="755.19004"
+     inkscape:zoom="0.3535534"
+     inkscape:cx="428.5067"
+     inkscape:cy="1233.1942"
      inkscape:window-width="1920"
      inkscape:window-height="1009"
      inkscape:window-x="-8"
      inkscape:window-y="-8"
      inkscape:window-maximized="1"
-     inkscape:current-layer="svg5">
+     inkscape:current-layer="machine">
     <inkscape:grid
        type="xygrid"
        id="grid132"
@@ -767,7 +767,7 @@ cursor: pointer;
        y="0"
        xlink:href="#machine"
        id="machine_landscape"
-       transform="translate(29.388887,-23.555558)"
+       transform="translate(27.388886,10.944442)"
        inkscape:label="machine_landscape"
        style="display:inline"
        class="viewBoxDependent landscape-viewBox" />
@@ -778,7 +778,8 @@ cursor: pointer;
        id="machine_portrait"
        style="display:inline"
        inkscape:label="machine_portrait"
-       class="viewBoxDependent portrait-viewBox1 portrait-viewBox2" />
+       class="viewBoxDependent portrait-viewBox1 portrait-viewBox2"
+       transform="translate(-2.0000014,34.5)" />
     <g
        id="g57611"
        inkscape:label="containerbackground"
@@ -936,7 +937,7 @@ cursor: pointer;
     <g
        id="machine"
        inkscape:label="machine"
-       transform="translate(-4.0000014,-8)"
+       transform="translate(-2,-42.5)"
        style="display:inline">
       <path
          style="display:inline;fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:0.04px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
@@ -1017,6 +1018,34 @@ cursor: pointer;
          y="44"
          inkscape:label="arrow_left_area"
          sodipodi:insensitive="true" />
+      <g
+         id="pauserestartbutton"
+         inkscape:label="pauserestartbutton">
+        <rect
+           style="fill:#6f6f6f;fill-opacity:1;stroke:#000000;stroke-width:0.16;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+           id="rect7956"
+           width="8.25"
+           height="4.25"
+           x="3"
+           y="59.5"
+           ry="1.25" />
+        <text
+           xml:space="preserve"
+           id="text8277"
+           style="font-weight:bold;font-size:1.70667px;line-height:125%;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans Bold';text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;white-space:pre;display:inline;fill:#b2b2b2;fill-opacity:1;stroke:none"
+           x="7.0770831"
+           y="62.212502">RESTART</text>
+        <rect
+           style="fill:#ff6565;fill-opacity:0;stroke:none;stroke-width:0.15995;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+           id="rect9264"
+           width="10.25"
+           height="6.25"
+           x="2.0000014"
+           y="58.5"
+           ry="0"
+           inkscape:label="pauseresstartbuttonarea"
+           sodipodi:insensitive="true" />
+      </g>
       <g
          id="startbutton"
          inkscape:label="startbutton"

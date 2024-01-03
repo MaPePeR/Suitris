@@ -26,6 +26,8 @@ class Box {
         this.neighbors_r = [];
         this.state = BoxState.NEW;
         this.lastGravity = 0;
+        this.paused = false;
+        this.over =  false;
     }
 
     bottomY() {
@@ -157,8 +159,15 @@ class GameState {
     }
 
     start() {
+        if (this.over) return;
+        this.paused = false;
         this.running = true;
         this.interval = setInterval(this.nextTick.bind(this), 500 / 2);
+    }
+
+    pause() {
+        clearInterval(this.interval)
+        this.paused = true;
     }
 
     randomSize() {
@@ -862,6 +871,7 @@ class GameState {
                             clearInterval(this.interval);
                             console.log("Game over");
                             this.renderer.gameOver();
+                            this.over = true;
                             return;
                         }
                     }

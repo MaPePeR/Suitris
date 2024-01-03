@@ -191,21 +191,38 @@ class SVGRenderer {
         }
     }
     gameOver() {
-        $startbutton.style.display = 'inline';
+        $pauserestartbuttontext.textContent = 'RESTART';
     }
 }
 
+const $pauserestartbutton = $game_svg.getElementById('pauserestartbutton');
+const $pauserestartbuttontext = $pauserestartbutton.querySelector('text')
 async function start() {
     const renderer = await p_renderer
     renderer.newGame()
     current_game = new GameState(GAME_WIDTH, GAME_HEIGHT, renderer)
     current_game.start()
+    $pauserestartbuttontext.textContent = 'PAUSE';
 }
 
 const $startbutton = $game_svg.getElementById('startbutton')
 $startbutton.addEventListener('click', () => {
     $startbutton.style.display = 'none';
     start()
+})
+
+$pauserestartbutton.addEventListener('click', () => {
+    if (!current_game) return;
+    if (current_game.over) {
+        start()
+    }
+    else if (current_game.paused) {
+        current_game.start()
+        $pauserestartbuttontext.textContent = 'PAUSE';
+    } else if (!current_game.paused) {
+        current_game.pause()
+        $pauserestartbuttontext.textContent = 'UNPAUSE';
+    }
 })
 
 resolve_renderer(new SVGRenderer())
