@@ -662,6 +662,7 @@ class GameState {
             }
         }
         if (box.width * box.height >= box.size * box.size) {
+            this.fixedBoxes.push(box);
             if (box.width !== box.height) {
                 this.nonSquareBoxes.push(box);
             }
