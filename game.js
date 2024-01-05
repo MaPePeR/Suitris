@@ -500,6 +500,7 @@ class GameState {
             this.removeBoxFromBoard(box)
             box.state = BoxState.TO_BE_REMOVED;
             if (box === this.fallingBox) {
+                this.fixedBoxes.push(this.fallingBox) // Add the "To remove"-box to fixed boxes, so it can be rendered touching
                 this.fallingBox = null;
             }
         })

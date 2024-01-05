@@ -139,12 +139,14 @@ class SVGRenderer {
         this.lastFalling = null;
         this.upcomingSize = null;
         this.updateHighScore(0)
+        this.boxesToRemove = [];
     }
 
     newGame() {
         for(const el of $board.querySelectorAll('.animatedbox')) {
             el.remove();
         }
+        this.boxesToRemove.length = 0;
     }
 
     drawBox(box) {
@@ -153,17 +155,22 @@ class SVGRenderer {
             box.domEl = document.createElementNS('http://www.w3.org/2000/svg', 'use')
             box.domEl.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#box_size_${box.size}`)
             box.domEl.classList.add('animatedbox')
+            box.domEl.setAttribute('transform', `translate(${box.x + box.width / 2}, ${box.y + box.height / 2}) scale(0)`)
             console.log("Creating box for", box.domEl)
             $board.appendChild(box.domEl)
+            setTimeout(this.drawBox.bind(this, box))
+        } else {
+            box.domEl.setAttribute('transform', `translate(${box.x}, ${box.y}) scale(${box.width / box.size}, ${box.height / box.size})`)
         }
-        box.domEl.setAttribute('transform', `translate(${box.x}, ${box.y}) scale(${box.width / box.size}, ${box.height / box.size})`)
     }
     render(game) {
-        if (this.lastFalling && (this.lastFalling.state == BoxState.TO_BE_REMOVED || this.lastFalling.state == BoxState.REMOVED)) {
-            if (this.lastFalling.domEl) {
-                this.lastFalling.domEl.remove()
-            }
+        for (const box of this.boxesToRemove) {
+            box.domEl.addEventListener('transitionend', function(ev) {
+                ev.target.remove()
+            })
+            box.domEl.setAttribute('transform', `translate(${box.x + box.width / 2}, ${box.y + box.height / 2}) scale(0)`)
         }
+        this.boxesToRemove.length = 0
         if (game.fallingBox) {
             this.lastFalling = game.fallingBox
             this.drawBox(game.fallingBox)
@@ -171,18 +178,16 @@ class SVGRenderer {
         for (const box of game.fixedBoxes) {
             if (box.state == BoxState.TO_BE_REMOVED) {
                 if (box.domEl) {
-                    box.domEl.remove()
+                    this.boxesToRemove.push(box)
                 }
-                continue
             }
             this.drawBox(box)
         }
         for (const box of game.growingBoxes) {
             if (box.state == BoxState.TO_BE_REMOVED) {
                 if (box.domEl) {
-                    box.domEl.remove()
+                    this.boxesToRemove.push(box)
                 }
-                continue
             }
             this.drawBox(box)
         }
