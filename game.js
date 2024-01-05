@@ -170,6 +170,7 @@ class GameState {
     pause() {
         clearInterval(this.interval)
         this.paused = true;
+        this.running = false;
     }
 
     randomSize() {
@@ -822,6 +823,7 @@ class GameState {
     }
 
     nextTick() {
+        if (!this.running) return;
         this.tickCount = this.tickCount + 1;
         console.log(this.tickCount, "tick", this.fallingBox, this.growingBoxes.length, this.fixedBoxes.length)
         console.log(this.board.slice((this.height - 1 ) * this.width))
@@ -852,7 +854,7 @@ class GameState {
                 this.growBox(this.growingBoxes[i])
             }
         }
-        if (this.tickCount % 2 == 0 && this.running) {
+        if (this.tickCount % 2 == 0) {
             this.gravityTick = (this.gravityTick + 1) % 2
             let didGravity = false;
             do {
