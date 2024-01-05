@@ -197,15 +197,10 @@ class GameState {
     }
 
     canFall(box) {
-        if (box.bottomY() + 1 == this.height) {
+        if (box.bottomY() + 1 == this.height || box.neighbors_b.length > 0) {
             return false;
         }
-        const h = (box.bottomY() + 1) * this.width + box.x;
-        for (let i = 0; i < box.width; ++i) {
-            if (this.board[h + i]) {
-                return false;
-            }
-        }
+        
         return true;
     }
 
