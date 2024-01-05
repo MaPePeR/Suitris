@@ -882,7 +882,7 @@ class GameState {
                             this.running = false;
                             clearInterval(this.interval);
                             console.log("Game over");
-                            this.renderer.gameOver();
+                            this.renderer.gameOver(this.score);
                             this.over = true;
                             return;
                         }

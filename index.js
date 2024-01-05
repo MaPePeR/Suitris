@@ -131,12 +131,14 @@ const $board = $game_svg.getElementById('board')
 
 
 $upcomingBox = $game_svg.getElementById('nextBox')
+const $highscore_text = $game_svg.getElementById('highscoretext')
 
 class SVGRenderer {
 
     constructor() {
         this.lastFalling = null;
         this.upcomingSize = null;
+        this.updateHighScore(0)
     }
 
     newGame() {
@@ -191,10 +193,19 @@ class SVGRenderer {
         }
     }
     updateScore(score) {
-        $scoretext.textContent = 'Score: ' + score.toFixed(0)
+        $scoretext.textContent = score.toFixed(0)
     }
-    gameOver() {
+    gameOver(finalScore) {
         $pauserestartbuttontext.textContent = 'RESTART';
+        this.updateHighScore(finalScore);
+    }
+
+    updateHighScore(score) {
+        const current_highscore = localStorage.getItem('suitris_highscore')
+        if (current_highscore === null || +current_highscore < score) {
+            localStorage.setItem('suitris_highscore', score.toFixed(0));
+        }
+        $highscore_text.textContent = localStorage.getItem('suitris_highscore');
     }
 }
 

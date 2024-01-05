@@ -1054,13 +1054,69 @@ cursor: pointer;
            inkscape:label="pauseresstartbuttonarea"
            sodipodi:insensitive="true" />
       </g>
+      <g
+         id="g1695"
+         transform="translate(-1,-9.75)">
+        <rect
+           style="fill:#ffffff;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+           id="rect1085"
+           width="4.75"
+           height="1.5"
+           x="4"
+           y="54.5"
+           rx="0.25"
+           ry="0.25" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.28px;line-height:125%;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.04px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="8.5"
+           y="55.690624"
+           id="scoretext"
+           inkscape:label="scoretext">123456</text>
+      </g>
+      <g
+         id="g1695-7"
+         transform="translate(-1,-7.25)"
+         style="display:inline">
+        <rect
+           style="fill:#ffffff;stroke:#000000;stroke-width:0.08;stroke-linecap:round;stroke-linejoin:round;paint-order:stroke fill markers"
+           id="rect1085-0"
+           width="4.75"
+           height="1.5"
+           x="4"
+           y="54.5"
+           rx="0.25"
+           ry="0.25" />
+        <text
+           xml:space="preserve"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.28px;line-height:125%;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';text-align:end;letter-spacing:0px;word-spacing:0px;text-anchor:end;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.04px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           x="8.5"
+           y="55.690624"
+           id="highscoretext"
+           inkscape:label="highscoretext">999999</text>
+      </g>
       <text
          xml:space="preserve"
-         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:1.28px;line-height:125%;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.04px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
-         x="2.9520831"
-         y="55.73698"
-         id="scoretext"
-         inkscape:label="scoretext">Score: 123456</text>
+         style="font-size:0.64px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;display:inline;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.04px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="3"
+         y="47"
+         id="text1699-4"><tspan
+           id="tspan1697-0"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.64px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';text-align:start;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.04px"
+           x="3"
+           y="47"
+           sodipodi:role="line">Highscore:</tspan></text>
+      <text
+         xml:space="preserve"
+         style="font-size:0.64px;line-height:125%;font-family:Arial;-inkscape-font-specification:Arial;text-align:start;letter-spacing:0px;word-spacing:0px;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.04px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+         x="3"
+         y="44.5"
+         id="text1699"><tspan
+           sodipodi:role="line"
+           id="tspan1697"
+           style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:0.64px;font-family:'Liberation Sans';-inkscape-font-specification:'Liberation Sans';text-align:start;text-anchor:start;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.04px"
+           x="3"
+           y="44.5">Score:</tspan></text>
       <g
          id="startbutton"
          inkscape:label="startbutton"
