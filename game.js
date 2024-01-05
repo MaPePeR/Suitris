@@ -661,14 +661,10 @@ class GameState {
             }
         }
         if (box.width * box.height >= box.size * box.size) {
-            this.removeBoxFromBoard(box)
-            box.state = BoxState.TO_BE_REMOVED
-            const newbox = new Box(box.x, box.y, box.size, box.width, box.height)
-            this.insertFixedBoxIntoBoard(newbox);
-            if (newbox.width !== newbox.height) {
-                this.nonSquareBoxes.push(newbox);
+            if (box.width !== box.height) {
+                this.nonSquareBoxes.push(box);
             }
-            return;
+            return true;
         }
         let didGrow = true;
         let growXcount = 0;
@@ -725,6 +721,7 @@ class GameState {
         if (this.checkTouching(box)) {
             box.state = BoxState.TO_BE_REMOVED;
         }
+        return false;
     }
 
     growBoxX(box) {
@@ -838,7 +835,10 @@ class GameState {
                 if (this.growingBoxes[i].state !== BoxState.ACTIVE) {
                     continue;
                 }
-                this.growBox(this.growingBoxes[i])
+                if (this.growBox(this.growingBoxes[i])) {
+                    swapOut(this.growingBoxes, i)
+                    --i;
+                }
             }
         }
         if (this.tickCount % 2 == 0) {
