@@ -231,6 +231,21 @@ async function scenario13() {
 
 }
 
+async function scenario14() {
+    await newGame();
+    current_game.insertFixedBoxIntoBoard(new Box(0, GAME_HEIGHT - 10, 10, 10, 10))
+    const shrinkingBox = new Box(10,  GAME_HEIGHT - 9, 3, 1, 9)
+    current_game.insertFixedBoxIntoBoard(shrinkingBox)
+    current_game.nonSquareBoxes.push(shrinkingBox)
+    current_game.insertFixedBoxIntoBoard(new Box(11,  GAME_HEIGHT - 12, 10, 9, 12))
+    current_game.insertFixedBoxIntoBoard(new Box(GAME_WIDTH - 3,  GAME_HEIGHT - 3, 3, 3, 3))
+    const growingBox = new Box(GAME_WIDTH - 4,  GAME_HEIGHT - 10, 6, 1, 10)
+    current_game.insertFixedBoxIntoBoard(growingBox)
+    current_game.growingBoxes.push(growingBox)
+    
+    runTicks(20)
+}
+
 
 function compare_test(expected, actual, ...msg) {
     const e = new Set(expected);
