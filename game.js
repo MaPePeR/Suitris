@@ -580,7 +580,7 @@ class GameState {
 
     moveDown() {
         if (this.running && this.fallingBox) {
-            if (this.canFall(this.fallingBox)) {
+            if (this.canFall(this.fallingBox) || (this.fallingBox.neighbors_b.length > 0 && this.shiftBottom(this.fallingBox.neighbors_b))) {
                 this.moveBoxDown(this.fallingBox)
                 if (this.checkTouching(this.fallingBox)) {
                     this.fallingBox = null;
@@ -827,14 +827,6 @@ class GameState {
         this.tickCount = this.tickCount + 1;
         console.log(this.tickCount, "tick", this.fallingBox, this.growingBoxes.length, this.fixedBoxes.length)
         console.log(this.board.slice((this.height - 1 ) * this.width))
-        if (this.tickCount % 2 == 0 && this.fallingBox) {
-            if (!this.canFall(this.fallingBox)) {
-                this.fixedBoxes.push(this.fallingBox);
-                this.fallingBox = null;
-            } else {
-                this.moveDown()
-            }
-        }
         if (this.nonSquareBoxes.length > 0) {
             for (let i = 0; i < this.nonSquareBoxes.length; ++i) {
                 const box = this.nonSquareBoxes[i];
@@ -877,7 +869,17 @@ class GameState {
                     }
                 }
             } while(didGravity);
-            if (!this.fallingBox) {
+            if (this.fallingBox) {
+                if (this.canFall(this.fallingBox)) {
+                    this.moveBoxDown(this.fallingBox)
+                    if (this.checkTouching(this.fallingBox)) {
+                        this.fallingBox = null;
+                    }
+                } else {
+                    this.fixedBoxes.push(this.fallingBox);
+                    this.fallingBox = null;
+                }
+            } else {
                 this.nextBox();
                 for (let i = 0; i < this.fallingBox.height; ++i) {
                     for (let j = 0; j < this.fallingBox.width; ++j) {

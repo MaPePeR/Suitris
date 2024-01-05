@@ -246,6 +246,21 @@ async function scenario14() {
     runTicks(20)
 }
 
+async function scenario15() {
+    await newGame();
+    current_game.insertFixedBoxIntoBoard(new Box(GAME_WIDTH / 2 - 2, 3, 4, 4, 4));
+    setFallingBox(new Box(GAME_WIDTH / 2, 0, 1, 1, 1))
+    current_game.running = true;
+    current_game.moveDown()
+    current_game.moveDown()
+    current_game.moveDown()
+    current_game.moveDown()
+    current_game.moveDown()
+    if (current_game.fixedBoxes[0].y <= 4) {
+        throw new Error("Did not push down box with controls")
+    }
+}
+
 
 function compare_test(expected, actual, ...msg) {
     const e = new Set(expected);
