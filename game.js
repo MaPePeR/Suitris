@@ -672,6 +672,11 @@ class GameState {
         let growXcount = 0;
         let growYcount = 0;
         outer: while(box.width * box.height < box.size * box.size && growXcount < 2 && growYcount < 2 && didGrow) {
+            if (this.checkTouching(box)) {
+                box.state = BoxState.TO_BE_REMOVED;
+                break;
+            }
+
             didGrow = false;
             // Box is right of center of board => prefer growing left
             const preferTop = false;
@@ -684,10 +689,6 @@ class GameState {
             // Set offset so we expand vertical first if the vertical center distance is larger than the horizontal center distance.
             const offset = Math.max(topCenterDistance, bottomCenterDistance) >= Math.max(leftCenterDistance, rightCenterDistance) ? 0 : 1;
             for(let step = 0; step < 2; ++step) {
-                if (this.checkTouching(box)) {
-                    box.state = BoxState.TO_BE_REMOVED;
-                    break outer;
-                }
                 if (box.width * box.height >= box.size * box.size) break outer;
                 if (growYcount <= 2 && (step + offset) % 2 == 0) {
                     if (topCenterDistance < bottomCenterDistance || (preferTop && topCenterDistance == bottomCenterDistance)) {
