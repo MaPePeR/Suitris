@@ -69,6 +69,27 @@ cursor: pointer;
   </sodipodi:namedview>
   <defs
      id="defs2">
+    <pattern
+       inkscape:collect="always"
+       xlink:href="#Strips1_1"
+       id="pattern14331"
+       patternTransform="matrix(1,0,0,5,1,0)" />
+    <pattern
+       inkscape:collect="always"
+       patternUnits="userSpaceOnUse"
+       width="2"
+       height="1"
+       patternTransform="translate(0,0) scale(10,10)"
+       id="Strips1_1"
+       inkscape:stockid="Stripes 1:1">
+      <rect
+         style="fill:#3bd756;stroke:none;fill-opacity:1.0"
+         x="0"
+         y="-0.5"
+         width="1"
+         height="2"
+         id="rect13299" />
+    </pattern>
     <linearGradient
        inkscape:collect="always"
        id="linearGradient8443">
@@ -1187,7 +1208,16 @@ cursor: pointer;
            width="11"
            height="11"
            x="0"
-           y="0" />
+           y="0"
+           ry="0.2" />
+        <rect
+           style="display:inline;fill:url(#pattern14331);fill-opacity:1;stroke:#0a2f10;stroke-width:0.08;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
+           id="rect368-4"
+           width="11"
+           height="11"
+           x="0"
+           y="0"
+           ry="0.2" />
       </g>
     </g>
     <g
