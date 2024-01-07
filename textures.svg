@@ -64,8 +64,8 @@ cursor: pointer;
        id="grid132"
        originx="0"
        originy="0"
-       spacingx="0.25"
-       spacingy="0.25" />
+       spacingx="0.2"
+       spacingy="0.2" />
   </sodipodi:namedview>
   <defs
      id="defs2">
