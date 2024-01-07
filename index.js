@@ -129,6 +129,9 @@ repeatEvent($game_svg.getElementById('arrow_down_area'), 'mousedown touchstart',
 const $board = $game_svg.getElementById('board')
 
 
+$game_svg.addEventListener('touchmove', (ev) => {
+    ev.preventDefault();
+})
 
 $upcomingBox = $game_svg.getElementById('nextBox')
 const $highscore_text = $game_svg.getElementById('highscoretext')
