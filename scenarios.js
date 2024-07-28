@@ -279,21 +279,21 @@ function compare_array(expected, actual, ...msg) {
 }
 function test_neighbors() {
     const state = new GameState(5, 5)
-    const l1 = new Box(0, 1, 1, 1, 1);
-    const l2 = new Box(0, 2, 1, 1, 1);
-    const l3 = new Box(0, 3, 1, 1, 1);
+    const l1 = new Box(0, 5 - 1 - 1 , 1, 1, 1);
+    const l2 = new Box(0, 5 - 1 - 2 , 1, 1, 1);
+    const l3 = new Box(0, 5 - 1 - 3 , 1, 1, 1);
     const l = [l1, l2, l3];
-    const r1 = new Box(4, 1, 1, 1, 1);
-    const r2 = new Box(4, 2, 1, 1, 1);
-    const r3 = new Box(4, 3, 1, 1, 1);
+    const r1 = new Box(4, 5 - 1 - 1 , 1, 1, 1);
+    const r2 = new Box(4, 5 - 1 - 2 , 1, 1, 1);
+    const r3 = new Box(4, 5 - 1 - 3 , 1, 1, 1);
     const r = [r1, r2, r3];
-    const t1 = new Box(1, 0, 1, 1, 1);
-    const t2 = new Box(2, 0, 1, 1, 1);
-    const t3 = new Box(3, 0, 1, 1, 1);
+    const t1 = new Box(1, 5 - 1 - 0 , 1, 1, 1);
+    const t2 = new Box(2, 5 - 1 - 0 , 1, 1, 1);
+    const t3 = new Box(3, 5 - 1 - 0 , 1, 1, 1);
     const t = [t1, t2, t3];
-    const b1 = new Box(1, 4, 1, 1, 1);
-    const b2 = new Box(2, 4, 1, 1, 1);
-    const b3 = new Box(3, 4, 1, 1, 1);
+    const b1 = new Box(1, 5 - 1 - 4 , 1, 1, 1);
+    const b2 = new Box(2, 5 - 1 - 4 , 1, 1, 1);
+    const b3 = new Box(3, 5 - 1 - 4 , 1, 1, 1);
     const b = [b1, b2, b3];
     [l, r, t, b].forEach(arr => {
         arr.forEach(box => {
@@ -353,13 +353,13 @@ function test_neighbors() {
     compare_test(b2.neighbors_l, [b1], "bottom to left", b2)
     compare_test(b3.neighbors_l, [b2], "bottom to left", b3)
 
-    compare_array(state.getTopCorners(box),    [0 * 5 + 0, 0 * 5 + 4], "top corners")
-    compare_array(state.getBottomCorners(box), [4 * 5 + 0, 4 * 5 + 4], "bottom corners")
+    compare_array(state.getTopCorners(box),    [4 * 5 + 0, 4 * 5 + 4], "top corners")
+    compare_array(state.getBottomCorners(box), [0 * 5 + 0, 0 * 5 + 4], "bottom corners")
     compare_array(state.getLeftCorners(box),   [0 * 5 + 0, 4 * 5 + 0], "left corners")
     compare_array(state.getRightCorners(box),  [0 * 5 + 4, 4 * 5 + 4], "right corners")
 
-    compare_array([...state.getTopIndices(box)],    [0*5 + 1, 0*5 + 2, 0*5 + 3], "top")
-    compare_array([...state.getBottomIndices(box)], [4*5 + 1, 4*5 + 2, 4*5 + 3], "bottom")
+    compare_array([...state.getTopIndices(box)],    [4*5 + 1, 4*5 + 2, 4*5 + 3], "top")
+    compare_array([...state.getBottomIndices(box)], [0*5 + 1, 0*5 + 2, 0*5 + 3], "bottom")
     compare_array([...state.getLeftIndices(box)],   [1*5 + 0, 2*5 + 0, 3*5 + 0], "left")
     compare_array([...state.getRightIndices(box)],  [1*5 + 4, 2*5 + 4, 3*5 + 4], "right")
 }
