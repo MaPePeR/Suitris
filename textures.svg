@@ -2178,7 +2178,7 @@ cursor: pointer;
      y="-5.75"
      inkscape:label="portraitViewBox"
      class="viewBoxRect"
-     data-viewBoxClass="portrait-viewBox1"
+     data-view-box-class="portrait-viewBox1"
      sodipodi:insensitive="true" />
   <rect
      style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.0809101;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
@@ -2189,7 +2189,7 @@ cursor: pointer;
      y="-0.25"
      inkscape:label="portraitViewBox2"
      class="viewBoxRect"
-     data-viewBoxClass="portrait-viewBox2"
+     data-view-box-class="portrait-viewBox2"
      sodipodi:insensitive="true" />
   <rect
      style="display:none;opacity:0.433735;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.0799601;stroke-linecap:round;stroke-dasharray:none;stroke-opacity:1"
@@ -2200,6 +2200,6 @@ cursor: pointer;
      y="-0.25"
      inkscape:label="landscapeViewBox"
      class="viewBoxRect"
-     data-viewBoxClass="landscape-viewBox"
+     data-view-box-class="landscape-viewBox"
      sodipodi:insensitive="true" />
 </svg>
