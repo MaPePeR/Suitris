@@ -26,6 +26,23 @@ const [p_renderer, resolve_renderer] = (() => {
 })();
 
 function setup() {
+    if (navigator.userAgent.toLowerCase().includes('firefox')) {
+        //Firefox doesn't work because of https://bugzilla.mozilla.org/show_bug.cgi?id=265895
+        const date1 = new Date();
+        const date2 = new Date(2004, 10, 24);
+        //https://stackoverflow.com/a/62922738/2256700
+        let years = new Date(date1).getFullYear() - new Date(date2).getFullYear();
+        let month = new Date(date1).getMonth() - new Date(date2).getMonth();
+        let dateDiff = new Date(date1).getDay() - new Date(date2).getDay();
+        if (dateDiff < 0) {
+            month -= 1;
+        }
+        if (month < 0) {
+            years -= 1;
+        }
+        console.log(years)
+        alert(`Because of a ${years} year old Firefox bug, that was marked as WONTFIX, this game sadly does not work in Firefox at the moment.`);
+    }
 const $game_object = document.getElementById('game');
 const $game_svg = $game_object.contentDocument.querySelector('svg');
 const $$viewBoxes = $game_svg.querySelectorAll('.viewBoxRect')
