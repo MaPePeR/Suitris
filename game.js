@@ -13,8 +13,13 @@ let boxcount = 0;
 class Box {
     constructor(x, y, size, width, height) {
         this.id = boxcount++;
-        this.x = x;
-        this.y = y;
+        if (VALIDATION) {
+            this.x_ = x;
+            this.y_ = y;
+        } else {
+            this.x = x;
+            this.y = y;
+        }
         this.center_x = width / 2;
         this.center_y = height / 2;
         this.size = size;
@@ -28,6 +33,33 @@ class Box {
         this.lastGravity = 0;
         this.paused = false;
         this.over =  false;
+
+        if (VALIDATION) {
+            Object.defineProperties(this, {
+                "x": {
+                    get() {
+                        return this.x_
+                    },
+                    set(val) {
+                        if (val < 0 || val >= GAME_WIDTH) {
+                            throw new Error("Wrong x value: " + val)
+                        }
+                        this.x_ = val;
+                    },
+                },
+                "y": {
+                    get() {
+                        return this.y_;
+                    },
+                    set(val) {
+                        if (val < 0 || val >= GAME_HEIGHT) {
+                            throw new Error("Wrong y value: " + val)
+                        }
+                        this.y_ = val;
+                    }
+                }
+            })
+        }
     }
 
     topY() {
