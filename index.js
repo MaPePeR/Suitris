@@ -167,10 +167,20 @@ class SVGRenderer {
         }
     }
     render(game) {
-        for (const box of this.boxesToRemove) {
-            box.domEl.addEventListener('transitionend', function(ev) {
+        function setRemoveHandlers(domEl) {
+            domEl.addEventListener('transitionend', function(ev) {
                 ev.target.remove()
             })
+            const elRef = new WeakRef(domEl);
+            setTimeout(function() {
+                const el = elRef.deref();
+                if (el) {
+                    el.remove();
+                }
+            }, 256);
+        }
+        for (const box of this.boxesToRemove) {
+            setRemoveHandlers(box.domEl);
             box.domEl.setAttribute('transform', `translate(${box.x + box.width / 2}, ${box.y + box.height / 2}) scale(0)`)
         }
         this.boxesToRemove.length = 0
