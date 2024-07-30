@@ -31,8 +31,6 @@ class Box {
         this.neighbors_r = [];
         this.state = BoxState.NEW;
         this.lastGravity = 0;
-        this.paused = false;
-        this.over =  false;
 
         if (VALIDATION) {
             Object.defineProperties(this, {
@@ -127,6 +125,8 @@ class GameState {
         this.renderer = renderer;
         this.upcomingSize = this.randomSize();
         this.score = 0;
+        this.paused = false;
+        this.over =  false;
 
         this.shiftTop = this.shiftDirTemplate(this.moveBoxUp.bind(this), 'y', 1, 'height', this.height, 'neighbors_t');
         this.shiftBottom = this.shiftDirTemplate(this.moveBoxDown.bind(this), 'y', -1, 'height', this.height, 'neighbors_b');
