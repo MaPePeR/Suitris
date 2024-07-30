@@ -13,8 +13,13 @@ let boxcount = 0;
 class Box {
     constructor(x, y, size, width, height) {
         this.id = boxcount++;
-        this.x = x;
-        this.y = y;
+        if (VALIDATION) {
+            this.x_ = x;
+            this.y_ = y;
+        } else {
+            this.x = x;
+            this.y = y;
+        }
         this.center_x = width / 2;
         this.center_y = height / 2;
         this.size = size;
@@ -28,10 +33,41 @@ class Box {
         this.lastGravity = 0;
         this.paused = false;
         this.over =  false;
+
+        if (VALIDATION) {
+            Object.defineProperties(this, {
+                "x": {
+                    get() {
+                        return this.x_
+                    },
+                    set(val) {
+                        if (val < 0 || val >= GAME_WIDTH) {
+                            throw new Error("Wrong x value: " + val)
+                        }
+                        this.x_ = val;
+                    },
+                },
+                "y": {
+                    get() {
+                        return this.y_;
+                    },
+                    set(val) {
+                        if (val < 0 || val >= GAME_HEIGHT) {
+                            throw new Error("Wrong y value: " + val)
+                        }
+                        this.y_ = val;
+                    }
+                }
+            })
+        }
+    }
+
+    topY() {
+        return this.y + this.height - 1;
     }
 
     bottomY() {
-        return this.y + this.height - 1;
+        return this.y;
     }
 
     rightX() {
@@ -92,8 +128,8 @@ class GameState {
         this.upcomingSize = this.randomSize();
         this.score = 0;
 
-        this.shiftTop = this.shiftDirTemplate(this.moveBoxUp.bind(this), 'y', -1, 'height', this.height, 'neighbors_t');
-        this.shiftBottom = this.shiftDirTemplate(this.moveBoxDown.bind(this), 'y', 1, 'height', this.height, 'neighbors_b');
+        this.shiftTop = this.shiftDirTemplate(this.moveBoxUp.bind(this), 'y', 1, 'height', this.height, 'neighbors_t');
+        this.shiftBottom = this.shiftDirTemplate(this.moveBoxDown.bind(this), 'y', -1, 'height', this.height, 'neighbors_b');
         this.shiftLeft = this.shiftDirTemplate(this.moveBoxLeft.bind(this), 'x', -1, 'width', this.width, 'neighbors_l');
         this.shiftRight = this.shiftDirTemplate(this.moveBoxRight.bind(this), 'x', 1, 'width', this.width, 'neighbors_r');
 
@@ -102,16 +138,15 @@ class GameState {
             this.getTopCorners.bind(this),
             'neighbors_t', 'neighbors_b',
             'neighbors_l', 'neighbors_r',
+            //           (other box upper edge is above box lower edge) and (other box lower edge is below box upper edge)
             (box, other) => other.y < box.y + box.height && other.y + other.height > box.y,
             (box) => {
                 box.height += 1;
-                box.y -= 1;
-                box.center_y  += 1
+                box.center_y  += 0.5
             },
             (box) => {
                 box.height -= 1;
-                box.y += 1;
-                box.center_y -= 1;
+                box.center_y -= 0.5;
             }
         );
         [this.extendBoxBottom, this.shrinkFromBottom] = this.changeBoxSizeDirectionTemplate(
@@ -122,9 +157,13 @@ class GameState {
             (box, other) => other.y < box.y + box.height && other.y + other.height > box.y,
             (box) => {
                 box.height += 1;
+                box.y -= 1;
+                box.center_y  += 0.5
             },
             (box) => {
                 box.height -= 1;
+                box.y += 1;
+                box.center_y -= 0.5;
             }
         );
         [this.extendBoxLeft, this.shrinkFromLeft] = this.changeBoxSizeDirectionTemplate(
@@ -136,12 +175,12 @@ class GameState {
             (box) => {
                 box.width += 1;
                 box.x -= 1;
-                box.center_x  += 1
+                box.center_x  += 0.5
             },
             (box) => {
                 box.width -= 1;
                 box.x += 1;
-                box.center_x -= 1;
+                box.center_x -= 0.5;
             }
         );
         [this.extendBoxRight, this.shrinkFromRight] = this.changeBoxSizeDirectionTemplate(
@@ -152,9 +191,11 @@ class GameState {
             (box, other) => other.x < box.x + box.width && other.x + other.width > box.x,
             (box) => {
                 box.width += 1;
+                box.center_x  += 0.5
             },
             (box) => {
                 box.width -= 1;
+                box.center_x -= 0.5;
             }
         );
     }
@@ -192,12 +233,12 @@ class GameState {
             throw "Invalid state. Already have falling box";
         }
         const size = this.upcomingSize
-        this.fallingBox = new Box(Math.floor(this.width / 2) - Math.floor(size / 2), 0, size, size, size);
+        this.fallingBox = new Box(Math.floor(this.width / 2) - Math.floor(size / 2), GAME_HEIGHT - size, size, size, size);
         this.upcomingSize = this.randomSize()
     }
 
     canFall(box) {
-        if (box.bottomY() + 1 == this.height || box.neighbors_b.length > 0) {
+        if (box.bottomY() == 0 || box.neighbors_b.length > 0) {
             return false;
         }
         
@@ -369,26 +410,26 @@ class GameState {
     }
 
     getTopIndices(box) {
-        if (box.y == 0) return [];
-        return this.getIndices((box.y - 1) * this.width + box.x, 1, (box.y - 1) * this.width + box.rightX() + 1);
+        if (box.y + box.height >= this.height) return [];
+        return this.getIndices((box.topY() + 1) * this.width + box.x, 1, (box.topY() + 1) * this.width + box.rightX() + 1);
     }
 
     getBottomIndices(box) {
-        if (box.y + box.height >= this.height) return [];
-        return this.getIndices((box.bottomY() + 1) * this.width + box.x, 1, (box.bottomY() + 1) * this.width + box.rightX() + 1);
+        if (box.bottomY() <= 0) return [];
+        return this.getIndices((box.bottomY() - 1) * this.width + box.x, 1, (box.bottomY() - 1) * this.width + box.rightX() + 1);
     }
 
     getLeftIndices(box) {
         if (box.x == 0) return [];
-        return this.getIndices(box.y * this.width + box.x - 1, this.width, (box.bottomY() + 1) * this.width + box.x - 1);
+        return this.getIndices(box.bottomY() * this.width + box.x - 1, this.width, (box.topY() + 1) * this.width + box.x - 1);
     }
 
     getRightIndices(box) {
         if (box.rightX() + 1 >= this.width) return [];
-        return this.getIndices(box.y * this.width + box.rightX() + 1, this.width, (box.bottomY() + 1) * this.width + box.rightX() + 1);
+        return this.getIndices(box.bottomY() * this.width + box.rightX() + 1, this.width, (box.topY() + 1) * this.width + box.rightX() + 1);
     }
 
-    getTopCorners(box) {
+    getBottomCorners(box) {
         if (box.y > 0) {
             return [
                 (box.x > 0)                      ? (box.y - 1) * this.width + box.x - 1         : null,
@@ -399,7 +440,7 @@ class GameState {
         }
     }
 
-    getBottomCorners(box) {
+    getTopCorners(box) {
         if (box.y + box.height < this.height) {
             return [
                 (box.x > 0)                      ? (box.y + box.height) * this.width + box.x - 1         : null,
@@ -413,8 +454,8 @@ class GameState {
     getLeftCorners(box) {
         if (box.x > 0) {
             return [
-                (box.y > 0)                        ? (box.y - 1)          * this.width + box.x - 1 : null,
                 (box.y + box.height < this.height) ? (box.y + box.height) * this.width + box.x - 1 : null,
+                (box.y > 0)                        ? (box.y - 1)          * this.width + box.x - 1 : null,
             ];
         } else {
             return [null, null];
@@ -424,8 +465,8 @@ class GameState {
     getRightCorners(box) {
         if (box.x + box.width < this.width) {
             return [
-                (box.y > 0)                        ? (box.y - 1)          * this.width + box.x + box.width : null,
                 (box.y + box.height < this.height) ? (box.y + box.height) * this.width + box.x + box.width : null,
+                (box.y > 0)                        ? (box.y - 1)          * this.width + box.x + box.width : null,
             ];
         } else {
             return [null, null];
@@ -681,8 +722,8 @@ class GameState {
             // Box is right of center of board => prefer growing left
             const preferTop = false;
             const preferLeft = box.x + box.width / 2 > this.width / 2
-            const topCenterDistance = box.center_y;
-            const bottomCenterDistance = box.height - box.center_y;
+            const topCenterDistance = box.height - box.center_y;
+            const bottomCenterDistance = box.center_y;
             const leftCenterDistance = box.center_x;
             const rightCenterDistance = box.width - box.center_x;
             
@@ -762,7 +803,7 @@ class GameState {
     }
 
     growBoxTop(box) {
-        if (box.y == 0) return false;
+        if (box.y + box.height >= this.height) return false;
         const free_top = box.neighbors_t.length == 0;
         if (free_top || this.shiftTop(box.neighbors_t)) {
             this.extendBoxTop(box)
@@ -772,7 +813,7 @@ class GameState {
     }
 
     growBoxBottom(box) {
-        if (box.y + box.height >= this.height) return false;
+        if (box.y == 0) return false;
         const free_bottom = box.neighbors_b.length == 0;
         if (free_bottom || this.shiftBottom(box.neighbors_b)) {
             this.extendBoxBottom(box)
@@ -907,7 +948,7 @@ class GameState {
                     const cell = this.board[y * this.width + x];
                     if (cell) {
                         if (cell !== null) {
-                            if (cell.x <= x && x <= cell.rightX() && cell.y <= y && y <= cell.bottomY()) {
+                            if (cell.x <= x && x <= cell.rightX() && cell.bottomY() <= y && y <= cell.topY()) {
 
                             } else {
                                 throw new Error("Found box in board at wrong place")
