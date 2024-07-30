@@ -1117,11 +1117,17 @@ function createGameStateFromBuffer(buffer) {
     game.gravityTick = view.getUint8(offset); offset += 1;
     game.over = view.getUint8(offset) > 0; offset += 1;
     game.fallingBox = createBoxFromView(view, offset); offset += boxSerializationSize;
+    if (game.fallingBox) {
+        game.insertBoxIntoBoard(game.fallingBox);
+    }
     for (const boxarr of [game.fixedBoxes, game.growingBoxes, game.nonSquareBoxes]) {
         const n = view.getUint16(offset, boxarr.length); offset += 2;
         for (let i = 0; i < n; i++) {
-            boxarr.push(createBoxFromView(view, offset))
+            const box = createBoxFromView(view, offset);
             offset += boxSerializationSize;
+
+            boxarr.push(box)
+            game.insertBoxIntoBoard(box);
         }
     }
     if (VALIDATION && offset != buffer.byteLength) {
