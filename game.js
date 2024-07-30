@@ -142,9 +142,11 @@ class GameState {
             (box, other) => other.y < box.y + box.height && other.y + other.height > box.y,
             (box) => {
                 box.height += 1;
+                box.center_y  += 0.5
             },
             (box) => {
                 box.height -= 1;
+                box.center_y -= 0.5;
             }
         );
         [this.extendBoxBottom, this.shrinkFromBottom] = this.changeBoxSizeDirectionTemplate(
@@ -156,12 +158,12 @@ class GameState {
             (box) => {
                 box.height += 1;
                 box.y -= 1;
-                box.center_y  += 1
+                box.center_y  += 0.5
             },
             (box) => {
                 box.height -= 1;
                 box.y += 1;
-                box.center_y -= 1;
+                box.center_y -= 0.5;
             }
         );
         [this.extendBoxLeft, this.shrinkFromLeft] = this.changeBoxSizeDirectionTemplate(
@@ -173,12 +175,12 @@ class GameState {
             (box) => {
                 box.width += 1;
                 box.x -= 1;
-                box.center_x  += 1
+                box.center_x  += 0.5
             },
             (box) => {
                 box.width -= 1;
                 box.x += 1;
-                box.center_x -= 1;
+                box.center_x -= 0.5;
             }
         );
         [this.extendBoxRight, this.shrinkFromRight] = this.changeBoxSizeDirectionTemplate(
@@ -189,9 +191,11 @@ class GameState {
             (box, other) => other.x < box.x + box.width && other.x + other.width > box.x,
             (box) => {
                 box.width += 1;
+                box.center_x  += 0.5
             },
             (box) => {
                 box.width -= 1;
+                box.center_x -= 0.5;
             }
         );
     }
