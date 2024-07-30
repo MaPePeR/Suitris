@@ -233,6 +233,9 @@ class SVGRenderer {
     gameOver(finalScore) {
         $pauserestartbuttontext.textContent = 'RESTART';
         this.updateHighScore(finalScore);
+        if (current_game) {
+            saveGame(current_game)
+        }
     }
 
     updateHighScore(score) {
@@ -300,22 +303,23 @@ document.addEventListener("beforeunload", function(ev) {
 const loadedGame = loadGame();
 if (loadedGame) {
     $startbutton.style.display = 'none';
-    current_game = loadedGame;
-    current_game.paused = true;
-    current_game.running = false;
+    
+    loadedGame.paused = true;
+    loadedGame.running = false;
     (async () => {
         const renderer = await p_renderer;
-        current_game.renderer = renderer;
-        renderer.render(current_game);
-        renderer.updateScore(current_game.score);
-        if (current_game.over) {
-            renderer.gameOver(current_game.score);
+        loadedGame.renderer = renderer;
+        renderer.render(loadedGame);
+        renderer.updateScore(loadedGame.score);
+        if (loadedGame.over) {
+            renderer.gameOver(loadedGame.score);
+            loadedGame.fallingBox = null;
         } else {
             $board.style.filter = 'url(#filter_blur)'
-            current_game.pause()
+            loadedGame.pause()
             $pauserestartbuttontext.textContent = 'UNPAUSE';
         }
-        
+        current_game = loadedGame;
     })();
 }
 
