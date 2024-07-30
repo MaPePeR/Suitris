@@ -275,6 +275,7 @@ $pauserestartbutton.addEventListener('click', () => {
         $board.style.filter = 'url(#filter_blur)'
         current_game.pause()
         $pauserestartbuttontext.textContent = 'UNPAUSE';
+        saveGame(current_game);
     }
 })
 
@@ -286,9 +287,23 @@ if ("hidden" in document) {
             $board.style.filter = 'url(#filter_blur)'
             current_game.pause()
             $pauserestartbuttontext.textContent = 'UNPAUSE';
+            saveGame(current_game);
         }
     });
 }
 
+document.addEventListener("beforeunload", function(ev) {
+    if (!current_game) return;
+    saveGame(current_game);
+})
+
 resolve_renderer(new SVGRenderer())
+}
+
+function bufferToB64(buffer) {
+    return btoa(Array.from(new Uint8Array(buffer)).map(b => String.fromCharCode(b)).join(''));
+}
+function saveGame(game) {
+    const buffer = game.serialize();
+    localStorage.setItem('saved_game', bufferToB64(buffer));
 }
