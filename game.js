@@ -984,6 +984,7 @@ class GameState {
         this.switchBoxStatesForNextTick(this.nonSquareBoxes)
 
         if (VALIDATION) {
+            createGameStateFromBuffer(this.serialize());
             for (let y = 0; y < GAME_HEIGHT; ++y) {
                 for (let x = 0; x < GAME_WIDTH; ++x) {
                     const cell = this.board[y * this.width + x];
