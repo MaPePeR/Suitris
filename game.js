@@ -9,6 +9,19 @@ const BoxState = {
     REMOVED: "REMOVED",
 }
 
+const boxStatesToInt = {
+    NEW: 1,
+    ACTIVE: 2,
+    TO_BE_REMOVED: 3,
+    REMOVED: 4,
+}
+const intToBoxState = {
+    1: BoxState.NEW,
+    2: BoxState.ACTIVE,
+    3: BoxState.TO_BE_REMOVED,
+    4: BoxState.REMOVED,
+}
+
 let boxcount = 0;
 class Box {
     constructor(x, y, size, width, height) {
@@ -86,6 +99,33 @@ class Box {
             yield n
         }
     }
+    serializeBox(dataview, offset) {
+        dataview.setInt8(offset, this.x); offset += 1;
+        dataview.setInt8(offset, this.y); offset += 1;
+        dataview.setUint8(offset, this.width); offset += 1;
+        dataview.setUint8(offset, this.height); offset += 1;
+        dataview.setFloat32(offset, this.center_x); offset += 4;
+        dataview.setFloat32(offset, this.center_y); offset += 4;
+        dataview.setUint8(offset, this.size); offset += 1;
+        dataview.setUint8(offset, (this.lastGravity << 3) | boxStatesToInt[this.state]); offset += 1;
+    }
+}
+const boxSerializationSize = 6 + 2 * 4;
+function createBoxFromView(dataview, offset) {
+    if (dataview.getInt32(offset) == -1) {
+        return null;
+    }
+    const box = new Box();
+    box.x = dataview.getInt8(offset); offset += 1;
+    box.y = dataview.getInt8(offset); offset += 1;
+    box.width = dataview.getUint8(offset); offset += 1;
+    box.height = dataview.getUint8(offset); offset += 1;
+    box.center_x = dataview.getFloat32(offset); offset += 4;
+    box.center_y = dataview.getFloat32(offset); offset += 4;
+    box.size = dataview.getUint8(offset); offset += 1;
+    box.state = intToBoxState[dataview.getUint8(offset) & (4 + 2 + 1)];
+    box.lastGravity = dataview.getUint8(offset) >> 3; offset += 1;
+    return box;
 }
 
 function swapOut(arr, idx) {
@@ -926,8 +966,9 @@ class GameState {
                             this.running = false;
                             clearInterval(this.interval);
                             console.log("Game over");
-                            this.renderer.gameOver(this.score);
                             this.over = true;
+                            this.renderer.render(this)
+                            this.renderer.gameOver(this.score);
                             return;
                         }
                     }
@@ -943,6 +984,7 @@ class GameState {
         this.switchBoxStatesForNextTick(this.nonSquareBoxes)
 
         if (VALIDATION) {
+            createGameStateFromBuffer(this.serialize());
             for (let y = 0; y < GAME_HEIGHT; ++y) {
                 for (let x = 0; x < GAME_WIDTH; ++x) {
                     const cell = this.board[y * this.width + x];
@@ -1009,4 +1051,89 @@ class GameState {
             }
         }
     }
+
+    serialize() {
+        let buffersize = 0;
+        buffersize += 1; // 1 byte version
+        buffersize += 1; // 1 byte width 
+        buffersize += 1; // 1 byte height
+        buffersize += 1; // 1 byte upcoming size
+        buffersize += 4; // 4 byte int score
+        buffersize += 4; // 4 byte tickCount
+        buffersize += 1; // 1 byte gravityTick
+        buffersize += 1; // 1 byte over
+        buffersize += boxSerializationSize; // falling box
+        buffersize += 2; // 2 byte n fixedBoxes;
+        buffersize += this.fixedBoxes.length * boxSerializationSize;
+        buffersize += 2; // 2 byte n growingboxes;
+        buffersize += this.growingBoxes.length * boxSerializationSize;
+        buffersize += 2; // 2 byte n nonSquareBoxes;
+        buffersize += this.nonSquareBoxes.length * boxSerializationSize;
+
+        const buffer = new ArrayBuffer(buffersize);
+        const view = new DataView(buffer);
+        let offset = 0;
+        view.setUint8(offset, 1); offset += 1;
+        view.setUint8(offset, this.width); offset += 1;
+        view.setUint8(offset, this.height); offset += 1;
+        view.setUint8(offset, this.upcomingSize); offset += 1;
+        view.setUint32(offset, this.score); offset += 4;
+        view.setUint32(offset, this.tickCount); offset += 4;
+        view.setUint8(offset, this.gravityTick); offset += 1;
+        view.setUint8(offset, this.over ? 1 : 0); offset += 1;
+        if (this.fallingBox) {
+            this.fallingBox.serializeBox(view, offset); offset += boxSerializationSize;
+        } else {
+            view.setInt32(offset, -1);
+            offset += boxSerializationSize;
+        }
+        
+        for (const boxarr of [this.fixedBoxes, this.growingBoxes, this.nonSquareBoxes]) {
+            view.setUint16(offset, boxarr.length); offset += 2;
+            for (const box of boxarr) {
+                box.serializeBox(view, offset); offset += boxSerializationSize;
+            }
+        }
+        if (VALIDATION) {
+            if (buffersize !== offset) {
+                throw new Error(`Buffersize does not equal expected offset: ${buffersize}, ${offset}`)
+            }
+        }
+        return buffer;
+    }
+}
+
+function createGameStateFromBuffer(buffer) {
+    const view = new DataView(buffer);
+    let offset = 0;
+    const version = view.getUint8(offset); offset += 1;
+    if (version != 1) {
+        throw new Error("Unknown version");
+    }
+    const width = view.getUint8(offset); offset += 1;
+    const height = view.getUint8(offset); offset += 1;
+    const game = new GameState(width, height);
+    game.upcomingSize = view.getUint8(offset); offset += 1;
+    game.score = view.getUint32(offset); offset += 4;
+    game.tickCount = view.getUint32(offset); offset += 4;
+    game.gravityTick = view.getUint8(offset); offset += 1;
+    game.over = view.getUint8(offset) > 0; offset += 1;
+    game.fallingBox = createBoxFromView(view, offset); offset += boxSerializationSize;
+    if (game.fallingBox && !game.over) {
+        game.insertBoxIntoBoard(game.fallingBox);
+    }
+    for (const boxarr of [game.fixedBoxes, game.growingBoxes, game.nonSquareBoxes]) {
+        const n = view.getUint16(offset, boxarr.length); offset += 2;
+        for (let i = 0; i < n; i++) {
+            const box = createBoxFromView(view, offset);
+            offset += boxSerializationSize;
+
+            boxarr.push(box)
+            game.insertBoxIntoBoard(box);
+        }
+    }
+    if (VALIDATION && offset != buffer.byteLength) {
+        throw new Error(`Read ${offset} bytes from buffer, but there are ${buffer.byteLength}`);
+    }
+    return game;
 }

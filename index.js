@@ -233,6 +233,9 @@ class SVGRenderer {
     gameOver(finalScore) {
         $pauserestartbuttontext.textContent = 'RESTART';
         this.updateHighScore(finalScore);
+        if (current_game) {
+            saveGame(current_game)
+        }
     }
 
     updateHighScore(score) {
@@ -275,6 +278,7 @@ $pauserestartbutton.addEventListener('click', () => {
         $board.style.filter = 'url(#filter_blur)'
         current_game.pause()
         $pauserestartbuttontext.textContent = 'UNPAUSE';
+        saveGame(current_game);
     }
 })
 
@@ -286,9 +290,55 @@ if ("hidden" in document) {
             $board.style.filter = 'url(#filter_blur)'
             current_game.pause()
             $pauserestartbuttontext.textContent = 'UNPAUSE';
+            saveGame(current_game);
         }
     });
 }
 
+document.addEventListener("beforeunload", function(ev) {
+    if (!current_game) return;
+    saveGame(current_game);
+})
+
+if (localStorage.getItem('saved_game')) ((async () => {
+    const loadedGame = loadGame();
+    $startbutton.style.display = 'none';
+    
+    loadedGame.paused = true;
+    loadedGame.running = false;
+    (async () => {
+        const renderer = await p_renderer;
+        loadedGame.renderer = renderer;
+        renderer.render(loadedGame);
+        renderer.updateScore(loadedGame.score);
+        if (loadedGame.over) {
+            renderer.gameOver(loadedGame.score);
+            loadedGame.fallingBox = null;
+        } else {
+            $board.style.filter = 'url(#filter_blur)'
+            loadedGame.pause()
+            $pauserestartbuttontext.textContent = 'UNPAUSE';
+        }
+        current_game = loadedGame;
+    })();
+})())
+
 resolve_renderer(new SVGRenderer())
+}
+
+function bufferToB64(buffer) {
+    return btoa(Array.from(new Uint8Array(buffer)).map(b => String.fromCharCode(b)).join(''));
+}
+function B64ToBuffer(b64) {
+    return Uint8Array.from(atob(b64), c => c.charCodeAt(0)).buffer;
+}
+function saveGame(game) {
+    const buffer = game.serialize();
+    localStorage.setItem('saved_game', bufferToB64(buffer));
+}
+
+function loadGame() {
+    const buffer = localStorage.getItem('saved_game');
+    if (!buffer) return null;
+    return createGameStateFromBuffer(B64ToBuffer(buffer));
 }
