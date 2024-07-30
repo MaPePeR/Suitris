@@ -297,13 +297,49 @@ document.addEventListener("beforeunload", function(ev) {
     saveGame(current_game);
 })
 
+const loadedGame = loadGame();
+if (loadedGame) {
+    $startbutton.style.display = 'none';
+    current_game = loadedGame;
+    current_game.paused = true;
+    current_game.running = false;
+    (async () => {
+        const renderer = await p_renderer;
+        current_game.renderer = renderer;
+        renderer.render(current_game);
+        renderer.updateScore(current_game.score);
+        if (current_game.over) {
+            renderer.gameOver(current_game.score);
+        } else {
+            $board.style.filter = 'url(#filter_blur)'
+            current_game.pause()
+            $pauserestartbuttontext.textContent = 'UNPAUSE';
+        }
+        
+    })();
+}
+
 resolve_renderer(new SVGRenderer())
 }
 
 function bufferToB64(buffer) {
     return btoa(Array.from(new Uint8Array(buffer)).map(b => String.fromCharCode(b)).join(''));
 }
+function B64ToBuffer(b64) {
+    return Uint8Array.from(atob(b64), c => c.charCodeAt(0)).buffer;
+}
 function saveGame(game) {
     const buffer = game.serialize();
     localStorage.setItem('saved_game', bufferToB64(buffer));
+}
+
+function loadGame() {
+    const buffer = localStorage.getItem('saved_game');
+    if (!buffer) return null;
+    try {
+        return createGameStateFromBuffer(B64ToBuffer(buffer));
+    } catch (e) {
+        console.log("Loading game state failed", e);
+    }
+    return null;
 }
