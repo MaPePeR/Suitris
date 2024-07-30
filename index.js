@@ -300,8 +300,8 @@ document.addEventListener("beforeunload", function(ev) {
     saveGame(current_game);
 })
 
-const loadedGame = loadGame();
-if (loadedGame) {
+if (localStorage.getItem('saved_game')) ((async () => {
+    const loadedGame = loadGame();
     $startbutton.style.display = 'none';
     
     loadedGame.paused = true;
@@ -321,7 +321,7 @@ if (loadedGame) {
         }
         current_game = loadedGame;
     })();
-}
+})())
 
 resolve_renderer(new SVGRenderer())
 }
@@ -340,10 +340,5 @@ function saveGame(game) {
 function loadGame() {
     const buffer = localStorage.getItem('saved_game');
     if (!buffer) return null;
-    try {
-        return createGameStateFromBuffer(B64ToBuffer(buffer));
-    } catch (e) {
-        console.log("Loading game state failed", e);
-    }
-    return null;
+    return createGameStateFromBuffer(B64ToBuffer(buffer));
 }
