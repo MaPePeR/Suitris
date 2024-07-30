@@ -1118,7 +1118,7 @@ function createGameStateFromBuffer(buffer) {
     game.gravityTick = view.getUint8(offset); offset += 1;
     game.over = view.getUint8(offset) > 0; offset += 1;
     game.fallingBox = createBoxFromView(view, offset); offset += boxSerializationSize;
-    if (game.fallingBox) {
+    if (game.fallingBox && !game.over) {
         game.insertBoxIntoBoard(game.fallingBox);
     }
     for (const boxarr of [game.fixedBoxes, game.growingBoxes, game.nonSquareBoxes]) {
